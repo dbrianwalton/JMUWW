@@ -22,7 +22,7 @@ DOCUMENT();
 
     BEGIN_TEXT
 
-        The administrators of a four-year college wanted to estimate the proportion of the senior students who intended to pursue a graduate degree. In a random sample of $n senior students, 20.5 indicated that they intended to pursue a graduate degree. Construct a $level% confidence interval for the corresponding true proportion.
+        The administrators of a four-year college wanted to estimate the proportion of the senior students who intended to pursue a graduate degree. In a random sample of $n senior students, 20.5 percent indicated that they intended to pursue a graduate degree. Construct a $level% confidence interval for the corresponding true proportion.
         $BR$BR
 
         Answer: ( \{ ans_rule(8) \} , \{ ans_rule(8) \} ) (Round to 3 decimal places.)

@@ -33,7 +33,7 @@ DOCUMENT();
 
     BEGIN_TEXT
 
-        For a particular species of a flower, $pct have smooth leaves and $pctq have hairy leaves. Suppose that you randomly pick 15 flowers of this species.
+        For a particular species of a flower, $pct percent have smooth leaves and $pctq percent have hairy leaves. Suppose that you randomly pick 15 flowers of this species.
         $BR$BR
 
         (a) Compute the expected number of flowers with smooth leaves.

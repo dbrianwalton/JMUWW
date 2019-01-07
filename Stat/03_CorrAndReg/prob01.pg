@@ -84,7 +84,7 @@ DOCUMENT();
 
     ANS( num_cmp($int,   tolType=>absolute, tolerance=>0.003) );
     ANS( num_cmp($slope, tolType=>absolute, tolerance=>0.003) );
-    ANS( num_cmp($pred,  tolType=>absolute, tolerance=>0.03 ) );
+    ANS( num_cmp($pred,  tolType=>absolute, tolerance=>0.5 ) );
     ANS( num_cmp($corr,  tolType=>absolute, tolerance=>0.003) );
 
 ENDDOCUMENT();
