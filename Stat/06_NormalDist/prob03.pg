@@ -1,38 +1,42 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-Context("Numeric");
+    $mu    = random(2.9, 3.1, 0.05);
+    $sigma = random(0.23, 0.27, 0.01);
 
-$zscore = Compute("1.145"  )->with(tolType=>'absolute', tolerance=>'0.006');
-$prob   = Compute("0.12610")->with(tolType=>'absolute', tolerance=>'0.002');
-$height = Compute("68.1075")->with(tolType=>'absolute', tolerance=>'0.030');
+    $p = random(10, 40, 10);
 
-TEXT(beginproblem());
-Context()->texStrings;
+    $sgnb = -1; # +1 if above; -1 if below.
 
-BEGIN_TEXT
+        $z1b = floor(udistr($p/100) * 100) / 100;
+        $z2b =  ceil(udistr($p/100) * 100) / 100;
 
-The height of a person can be characterized as having a normal distribution with a mean of 69.0 inches and a standard deviation of 3.5.
-$BR$BR
+        $b1 = $mu + $sgnb * $z1b * $sigma;
+        $b2 = $mu + $sgnb * $z2b * $sigma;
 
-(a) What proportion of the people are taller than 73.0 inches? (Carry 2 decimal digits for the z-score and 4 decimal digits for the probability.)
-$BR$BR
+        $b  = ($b1 + $b2) / 2;
+        $eb = abs($b1 - $b2) / 2 + 0.01;
 
-\( P(X > 73.0) = P(Z > \) \{ans_rule(8)\} \( ) = \) \{ans_rule(8)\}
-$BR$BR
+    BEGIN_TEXT
 
-(b) Above what height value do you find 60 percent of the people? (Carry 2 decimal digits.)
-$BR$BR
+        The retail price of 12-pack soda can be characterized as having a normal distribution with a mean of $mu dollars and a standard deviation of $sigma. Below what price do you find $p percent of all 12-packs?
+        $BR$BR
 
-Answer: \{ans_rule(8)\} inches.
+        Answer: \{ ans_rule(8) \} dollars. (Round to 2 decimal places.)
 
-END_TEXT
+    END_TEXT
 
-Context()->normalStrings;
-
-ANS( $zscore->cmp() );
-ANS( $prob->cmp() );
-ANS( $height->cmp() );
+    ANS( num_cmp($b, tolType=>absolute, tolerance=>$eb) );
 
 ENDDOCUMENT();

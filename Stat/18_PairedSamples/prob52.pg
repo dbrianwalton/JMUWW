@@ -1,0 +1,76 @@
+
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+
+#Context("Numeric");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"Step 1: Formulate the null and alternative hypotheses. (Before - After)",
+"\( H_0\!: \mu = 0 \) vs. \( H_a\!: \mu < 0 \)"
+);
+$mc1->extra(
+"\( H_0\!: \mu = 0 \) vs. \( H_a\!: \mu \neq 0 \)",
+"\( H_0\!: \mu = 0 \) vs. \( H_a\!: \mu > 0 \)"
+);
+
+$teststat = Compute("-1.2365")->with(tolType=>'absolute', tolerance=>'0.004');
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"Step 3: A computer gave a p-value of 0.1259 for this test. What decision should you make at a 5% significance level?",
+"Fail to Reject the null hypothesis."
+);
+$mc2->extra(
+"Reject the null hypothesis."
+);
+
+$mc3=new_multiple_choice();
+$mc3->qa(
+"Step 4: Which of the following is the most reasonable interpretation of the decision that you have made?",
+"There is insufficient evidence to conclude that the video increases the average number of strikes."
+);
+$mc3->extra(
+"There is sufficient evidence to conclude that the video increases the average number of strikes.",
+"The average number of strikes thrown is 0.",
+"The average number of strikes is greater than 0."
+);
+
+#TEXT(beginproblem());
+#Context()->texStrings;
+
+BEGIN_TEXT
+Advertisements for an instructional video claim that the techniques it shows will improve the ability of Little League pitchers to throw strikes, and that, after undergoing the training, players will be able to throw more strikes than before.  To test the claim, we have 9 Little League pitchers throw 50 pitches each, and we record the number of strikes, given below.
+$BR
+Before 28  29  30  32  32  32  32  32  32
+$BR
+ After  35  36  32  28  30  31  32  34  35
+
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+Step 2: Calculate the test statistic.
+$BR$BR
+
+\( \displaystyle t = \frac{\bar{x} - \mu_0}{3.78/\sqrt{n}} = \) \{ ans_rule(8) \} (Calculate the ave. difference by taking Before - After.  Carry 3 decimal digits.)
+$BR$BR
+
+\{ $mc2->print_q() \} $BR
+\{ $mc2->print_a() \} $BR
+
+\{ $mc3->print_q() \} $BR
+\{ $mc3->print_a() \}
+
+END_TEXT
+
+#Context()->normalStrings;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( $teststat->cmp() );
+ANS( radio_cmp( $mc2->correct_ans() ) );
+ANS( radio_cmp( $mc3->correct_ans() ) );
+
+ENDDOCUMENT();

@@ -1,50 +1,65 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-#Context("Numeric");
+    $popup1 = PopUp(["select", "equal", "not equal"], "not equal");
+    $popup2 = PopUp(["select", "are", "are not"], "are not");
 
-$mc1=new_multiple_choice();
-$mc1->qa(
-"(c) Are the two events 'the person you met regularly uses the treadmill' and 'the person you met regularly uses the swimming pool' independent?",
-"No."
-);
-$mc1->extra(
-"Yes."
-);
+    $PctA  = random(69, 72, 1);
+    $PctB  = random(43, 47, 1);
+    $PctAB = random(33, 37, 1);
 
-$a = Compute("0.800")->with(tolType=>'absolute', tolerance=>'0.005');
-$b = Compute("0.500")->with(tolType=>'absolute', tolerance=>'0.005');
+    $PrInt = $PctAB / 100;
+    $PrUni = ($PctA + $PctB - $PctAB) / 100;
 
-#TEXT(beginproblem());
-#Context()->texStrings;
+    $PrAgB = $PctAB / $PctB;
+    $PrBgA = $PctAB / $PctA;
 
-BEGIN_TEXT
+    $PrAPrB = ($PctA*$PctB) / 10000;
 
-Of all users of a gym facility, 70% of them use the treadmill regularly, 45% use the swimming pool regularly, and 35% use both the treadmill and swimming pool regularly. Suppose that you just met a person who uses the gym facility.
-$BR$BR
+    BEGIN_TEXT
 
-(a) What is the probability that the person whom you met regularly uses the treadmill, swimming pool, or both?
-$BR$BR
+        Of all users of a gym facility, $PctA% of them use the treadmill regularly, $PctB% use the swimming pool regularly, and $PctAB% use both the treadmill and swimming pool regularly. Suppose that you just met a person who uses the gym facility.
+        $BR$BR
 
-Answer: \{ans_rule(8)\} (Carry 3 decimal digits.)
-$BR$BR
+        (a) What is the probability that the person whom you met regularly uses the treadmill, swimming pool, or both?
+        $BR$BR
 
-(b) What is the probability that the person whom you met is a regular user of the swimming pool, given that he or she uses the treadmill regularly?
-$BR$BR
+            Answer: \{ ans_rule(8) \} (Round to 3 decimal places.)
+            $BR$BR
 
-Answer: \{ans_rule(8)\} (Carry 3 decimal digits.)
-$BR$BR
+        (b) What is the probability that the person whom you met is a regular user of the swimming pool, given that he or she uses the treadmill regularly?
+        $BR$BR
 
-\{ $mc1->print_q() \} $BR
-\{ $mc1->print_a() \}
+            Answer: \{ ans_rule(8) \} (Round to 3 decimal places.)
+            $BR$BR
 
-END_TEXT
+        (c) Are the two events "the person you met regularly uses the treadmill" and "the person you met regularly uses the swimming pool" independent?
+        $BR$BR
 
-#Context()->normalStrings;
+            Answer: $BITALIC P $EITALIC(treadmill and swimming pool) = \{ ans_rule(8) \} and
+            $BITALIC P $EITALIC(treadmill) $BITALIC P $EITALIC(swimming pool) = \{ ans_rule(8) \}.
+            These probabilities are \{ $popup1->menu() \} to each other.
+            Therefore, the two events \{ $popup2->menu() \} independent.
 
-ANS( $a->cmp() );
-ANS( $b->cmp() );
-ANS( radio_cmp( $mc1->correct_ans() ) );
+    END_TEXT
+
+    ANS( num_cmp($PrUni, tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($PrBgA, tolType=>absolute, tolerance=>0.002) );
+
+    ANS( num_cmp($PrInt,  tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($PrAPrB, tolType=>absolute, tolerance=>0.002) );
+    ANS( $popup1->cmp() );
+    ANS( $popup2->cmp() );
 
 ENDDOCUMENT();

@@ -1,0 +1,35 @@
+
+DOCUMENT();
+
+    loadMacros(
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl"
+    );
+
+    $mc1=new_multiple_choice();
+
+        $mc1-> qa("According to a poll by a popular news agency, 19% of Americans believe the end of the world will occur in their lifetime.  Assume that this percentage holds true for the population of Americans.  Let's assume samples of 60 are to be taken.  What is the mean and standard deviation of the sampling distribution of the sample proportion?",
+        "mean = 0.19, std. dev. = 0.0506."
+        );
+
+        $mc1->extra(
+            "mean = 0.19, std. dev. = 0.004",
+            "mean = 60, std. dev. = 0.19"
+        );
+
+        $mc1->makeLast("None of the above.");
+
+        BEGIN_TEXT
+
+        \{ $mc1->print_q() \}
+        $BR
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+
+ENDDOCUMENT();

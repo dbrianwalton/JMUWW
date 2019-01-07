@@ -1,43 +1,62 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-Context("Numeric");
-Context()->flags->set(tolerance=>0.01, tolType=>"absolute");
+    $x1 = random(1, 3, 1);
+    $x2 = random(6, 8, 1);
+    $x3 = random(2, 5, 1);
+    $x4 = random(1, 2, 1);
+    $x5 = random(0, 0, 1);
+    $x6 = random(6, 9, 1);
 
-$mean  = Compute("3.833")->with(tolType=>'absolute', tolerance=>'0.005' );
-$var   = Compute("9.767")->with(tolType=>'absolute', tolerance=>'0.005' );
-$stdev = Compute("3.125")->with(tolType=>'absolute', tolerance=>'0.005' );
+    $size = 6;
 
-TEXT(beginproblem());
+    $sumx   = $x1 + $x2 + $x3 + $x4 + $x5 + $x6;
+    $sumxsq = $x1**2 + $x2**2 + $x3**2 + $x4**2 + $x5**2 + $x6**2;
 
-Context()->texStrings;
+    $mean  = $sumx / $size;
+    $var   = ($sumxsq - $sumx**2/$size) / ($size - 1);
+    $stdev = sqrt($var);
 
-BEGIN_TEXT
+    BEGIN_TEXT
 
-Featured below are numbers of soda drinks consumed last week by a sample of six high school students.
-$BR$BR
+        Featured below are numbers of soda drinks consumed by a sample of $size high school students last week.
+        $BR$BR
 
-\( X\!: \langle 2, 7, 4, 2, 0, 8 \rangle \)
-$BR$BR
+        \( \lbrace $x1, $x2, $x3, $x4, $x5, $x6 \rbrace \)
+        $BR$BR
 
-Note that \( \sum x = 23 \) and \( \sum x^2 = 137 \). Compute the following summary statistics. (Carry 3 decimal digits.)
-$BR$BR
+        (a) Compute the sample mean of the number of soda drinks consumed.
+        $BR$BR
 
-(a) Sample mean: \( \displaystyle \bar{x} = \frac{\sum x}{n} = \) \{ ans_rule(8) \}
-$BR$BR
+        \{ ans_rule(8) \} (Round to 3 decimal places.)
+        $BR$BR
 
-(b) Sample variance: \( \displaystyle s^2 = \frac{\sum(x - \bar{x})^2}{n - 1} = \frac{\sum x^2 - (\sum x)^2/n}{n - 1} = \) \{ ans_rule(8) \}
-$BR$BR
+        (b) Compute the sample variance of the number of soda drinks consumed.
+        $BR$BR
 
-(c) Sample standard deviation: \( \displaystyle s = +\sqrt{s^2} = \) \{ ans_rule(8) \}
+        \{ ans_rule(8) \} (Round to 3 decimal places.)
+        $BR$BR
 
-END_TEXT
+        (c) Compute the sample standard deviation of the number of soda drinks consumed.
+        $BR$BR
 
-Context()->normalStrings;
+        \{ ans_rule(8) \} (Round to 3 decimal places.)
 
-ANS( $mean->cmp() );
-ANS( $var->cmp() );
-ANS( $stdev->cmp() );
+    END_TEXT
+
+    ANS( num_cmp($mean,  tolType=>absolute, tolerance=>0.002 ) );
+    ANS( num_cmp($var,   tolType=>absolute, tolerance=>0.002 ) );
+    ANS( num_cmp($stdev, tolType=>absolute, tolerance=>0.002 ) );
 
 ENDDOCUMENT();

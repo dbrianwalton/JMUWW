@@ -1,0 +1,46 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$prop  = Compute("0.64")->with(tolType=>'absolute', tolerance=>'0.005' );
+$zcrit = Compute("1.96")->with(tolType=>'absolute', tolerance=>'0.0001');
+$size  = Compute("250"  )->with(tolType=>'absolute', tolerance=>'0.1'   );
+$llim  = Compute("0.581")->with(tolType=>'absolute', tolerance=>'0.005' );
+$ulim  = Compute("0.700")->with(tolType=>'absolute', tolerance=>'0.005' );
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+What proportion of JMU students prefer E-hall over D-hall?  To estimate this, a sample of 250 students was taken and found that 160 of them prefer E-hall. Estimate the true proportion of the population of students who prefer E-hall using a 95% confidence interval.
+$BR$BR
+
+(a) The limits of the confidence interval are calculated by
+\( \displaystyle \hat{p} \pm z \sqrt{\frac{\hat{p}(1 - \hat{p})}{n}} \),
+where
+$BR$BR
+
+\(\hat{p} =\) \{ ans_rule(8) \} (Round to 3 decimal places.) $BR$BR
+\(z =\)       \{ ans_rule(8) \} (Round to 3 decimal places.) $BR$BR
+\(n =\)       \{ ans_rule(8) \} $BR$BR
+
+(b) The 95% confidence interval for the true proportion is:
+$BR$BR
+
+(\{ ans_rule(8) \}, \{ ans_rule(8) \}) (Round to 3 decimal places.)
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $prop->cmp() );
+ANS( $zcrit->cmp() );
+ANS( $size->cmp() );
+ANS( $llim->cmp() );
+ANS( $ulim->cmp() );
+
+ENDDOCUMENT();

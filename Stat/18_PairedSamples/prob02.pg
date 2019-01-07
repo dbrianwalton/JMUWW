@@ -1,0 +1,43 @@
+
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mc1=new_multiple_choice();
+
+        $mc1->qa(
+            "What is the major methodological shortcoming of this experiment?",
+            "There is a potential carry-ever effect from 1 beer to 2 beers."
+        );
+
+        $mc1->extra(
+            "The sample size is too small to draw a firm conclusion.",
+            "A control group, which receives a placebo treatment, must be included.",
+            "The experiment must be conducted in a single-blind fashion."
+        );
+
+    BEGIN_TEXT
+
+        A graduate student in psychology wishes to examine the effect of alcohol dose on memory performance. He plans to conduct an experiment using a paired-samples design. Specifically, he plans to recruit approximately 30 volunteering participants, give them 1 beer (17.5 ml of alcohol), and administer a memory-performance test. One hour later, he will give the participants 2 beers (35.0 ml of alcohol) and administer an alternate form the memory-performance test. He will then compare the mean scores for the two treatments.
+        $BR$BR
+
+        \{ $mc1->print_q() \}
+        $BR
+
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+
+ENDDOCUMENT();

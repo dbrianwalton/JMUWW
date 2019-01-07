@@ -1,0 +1,43 @@
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mu    = random(103.2, 103.9, 0.1);
+    $sigma = random(1.2, 1.6, 0.1);
+    $size  = random(45, 55, 5);
+
+    $x = 104.0;
+
+    $sgna = -1; # +1 if greater than; -1 if less than.
+
+        $z1a = floor(($x - $mu) / ($sigma/sqrt($size)) * 100) / 100;
+        $z2a =  ceil(($x - $mu) / ($sigma/sqrt($size)) * 100) / 100;
+
+        $a1 = uprob($z1a * $sgna);
+        $a2 = uprob($z2a * $sgna);
+
+        $a  = ($a1 + $a2) / 2;
+        $ea = abs($a1 - $a2) / 2 + 0.0001;
+
+    BEGIN_TEXT
+
+        The number of paperclips contained in a box labeled "100 Office Paperclips" has mean \(\mu\) = $mu and standard deviation \(\sigma\) = $sigma. You will count the actual numbers of paperclips contained in randomly selected $size boxes and compute the sample mean. Find the probability that the sample mean will be less than $x.
+        $BR$BR
+
+        Answer: \{ ans_rule(8) \} (Round to 4 decimal places.)
+
+    END_TEXT
+
+    ANS( num_cmp($a, tolType=>absolute, tolerance=>$ea) );
+
+ENDDOCUMENT();

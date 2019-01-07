@@ -1,0 +1,27 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$a = random(10.6, 10.8, 0.1);
+$b = random(13.6, 13.8, 0.1);
+$c = ($b - $a)/2;
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+Data collected by child development scientists produced the following 95% confidence interval for the true average age (in months) at which children say their first word: ($a to $b).  Give the value of the margin of error.
+$BR$BR
+
+Margin of error: +/- \{ ans_rule(8) \} (Round to 2 decimal places.)
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS(num_cmp($c, tolType=>absolute, tolerance=>.02));
+
+ENDDOCUMENT();

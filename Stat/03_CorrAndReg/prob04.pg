@@ -1,48 +1,74 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-Context("Numeric");
+    $x1 = random(2, 3, 1);
+    $x2 = random(1, 2, 1);
+    $x3 = random(1, 2, 1);
+    $x4 = random(3, 4, 1);
+    $x5 = random(1, 3, 1);
+    $x6 = random(2, 4, 1);
 
-$a = Compute("3.879" )->with(tolType=>'absolute', tolerance=>'0.005' );
-$b = Compute("0.182" )->with(tolType=>'absolute', tolerance=>'0.005' );
-$r = Compute("0.234" )->with(tolType=>'absolute', tolerance=>'0.005' );
+    $y1 = random(5, 6, 1);
+    $y2 = random(4, 5, 1);
+    $y3 = random(2, 3, 1);
+    $y4 = random(4, 5, 1);
+    $y5 = random(4, 5, 1);
+    $y6 = random(5, 6, 1);
 
-TEXT(beginproblem());
+    $size = 6;
 
-Context()->texStrings;
+    $sumx = $x1 + $x2 + $x3 + $x4 + $x5 + $x6;
+    $sumy = $y1 + $y2 + $y3 + $y4 + $y5 + $y6;
 
-BEGIN_TEXT
+    $sumxsq = $x1**2 + $x2**2 + $x3**2 + $x4**2 + $x5**2 + $x6**2;
+    $sumysq = $y1**2 + $y2**2 + $y3**2 + $y4**2 + $y5**2 + $y6**2;
+    $sumxy  = $x1*$y1 + $x2*$y2 + $x3*$y3 + $x4*$y4 + $x5*$y5 + $x6*$y6;
 
-Presented below are stress levels on a 6-point scale (1 = 'not stressful at all'; 6 = 'very stressful') indicated by six students at the beginning and in the middle of a semester.
-$BR$BR
+    $ssx  = $sumxsq - $sumx**2/$size;
+    $ssy  = $sumysq - $sumy**2/$size;
+    $ssxy = $sumxy  - $sumx*$sumy/$size;
 
-\( \displaystyle
-    \begin{tabular}{l|ccccccc}
-    Beginning & \ 3 & 2 & 2 & 4 & 1 & 3 \\
-    \hline
-    Middle    & \ 5 & 5 & 3 & 4 & 4 & 5 \\
-    \end{tabular}
-\)
-$BR$BR
+    $corr  = $ssxy/(sqrt($ssx)*sqrt($ssy));
+    $slope = $ssxy/$ssx;
+    $int   = $sumy/$size - $slope*($sumx/$size);
 
-(a) Use your calculator's built-in function to obtain the least-squares regression equation for predicting the stress level in the middle of the semester \((y)\) from the stress level at the beginning of the semester \((x)\).
-$BR$BR
+    BEGIN_TEXT
 
-\( \hat{y} = \) \{ans_rule(8)\} \( + \) \{ans_rule(8)\} \( x \) (Carry 3 decimal digits.)
-$BR$BR
+        Presented below are stress levels on a 6-point scale (1 = 'not stressful at all'; 6 = 'very stressful') indicated by $size students at the beginning and in the middle of a semester.
+        $BR$BR
 
-(b) Use your calculator's built-in function to compute the Pearson correlation coefficient between the two sets of stress levels.
-$BR$BR
+            \{begintable(7)\}
+            \{row("Beginning", "$x1", "$x2", "$x3", "$x4", "$x5", "$x6")\}
+            \{row("Middle",      "$y1", "$y2", "$y3", "$y4", "$y5", "$y6")\}
+            \{endtable()\}
+            $BR
 
-\( r = \) \{ans_rule(8)\} (Carry 3 decimal digits.)
+        (a) Calculate the least-squares regression equation for predicting the stress level in the middle of the semester \((y)\) from the stress level at the beginning of the semester \((x)\).
+        $BR$BR
 
-END_TEXT
+            \( \hat{y} = \) \{ ans_rule(8) \} \( + \) \{ ans_rule(8) \} \( x \) (Round to 3 decimal places.)
+            $BR$BR
 
-Context()->normalStrings;
+        (b) Compute the Pearson correlation coefficient between the two sets of stress levels.
+        $BR$BR
 
-ANS( $a->cmp() );
-ANS( $b->cmp() );
-ANS( $r->cmp() );
+            \( r = \) \{ ans_rule(8) \} (Round to 3 decimal places.)
+
+    END_TEXT
+
+    ANS( num_cmp($int,   tolType=>absolute, tolerance=>0.003) );
+    ANS( num_cmp($slope, tolType=>absolute, tolerance=>0.003) );
+    ANS( num_cmp($corr,  tolType=>absolute, tolerance=>0.003) );
 
 ENDDOCUMENT();

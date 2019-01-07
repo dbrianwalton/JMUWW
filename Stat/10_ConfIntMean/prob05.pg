@@ -1,0 +1,64 @@
+
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mc1=new_multiple_choice();
+
+        $mc1->qa(
+            "(a) Suppose that the distribution of the amount of soda is non-normal. Which of the following can be a remedy?",
+            "The sample size is large (e.g., $BITALIC n $EITALIC at least 30)."
+        );
+
+        $mc1->extra(
+            "Amount of soda is measured on a continuous scale.",
+            "Amount of soda is measured on a discrete scale.",
+            "Use a nonparametric test."
+        );
+
+    $mc2=new_multiple_choice();
+
+        $mc2->qa(
+            "(b) The student computed a 95% confidence interval, which was (12.002, 12.081). Which of the following is (are) a reasonable interpretation(s) of this interval?",
+            "The mean amount of soda appears to be more than 12.0 ounces."
+        );
+
+        $mc2->extra(
+            "All individual cans appear to contain more than 12.0 ounces of soda.",
+            "The standard deviation of the amount of soda appears to be small."
+        );
+
+        $mc2->makeLast("All of the above.");
+
+    BEGIN_TEXT
+
+        A statistics student wishes to estimate the mean amount of soda in a 12-ounce can. He plans to collect data from a random sample of $BITALIC n $EITALIC cans and form a 95% confidence interval.
+        $BR$BR
+
+        \{ $mc1->print_q() \}
+        $BR
+
+        \{ $mc1->print_a() \}
+        $BR
+
+        \{ $mc2->print_q() \}
+        $BR
+
+        \{ $mc2->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+    ANS( radio_cmp($mc2->correct_ans()) );
+
+ENDDOCUMENT();

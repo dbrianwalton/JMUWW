@@ -1,0 +1,65 @@
+
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mc1=new_multiple_choice();
+
+        $mc1->qa(
+            "Which of the following is the most reasonable interpretation of the results of the test? Use the significance level of 0.05.",
+            "The mean heights of the wild flowers are not significantly different between the south and north sides of the hill."
+        );
+
+        $mc1->extra(
+            "The mean heights of the wild flowers are the same between the south and north sides of the hill.",
+            "The mean height of the wild flowers is significantly greater on the south side of the hill than it is on the north side.",
+            "There is sufficient evidence to conclude that the mean heights of the wild flowers are different between the south and north sides of the hill."
+        );
+
+    BEGIN_TEXT
+
+        A botanist randomly picked wild flowers and measured their heights (in cm). She did so on the sun-exposed south side of a hill and the sun-protected north side. Summary of the data gathered is as follows.
+        $BR$BR
+
+        South side:
+        $BR$BR
+
+        Mean: 29.5
+        $BR
+        Std dev: 6.4
+        $BR
+        Sample size: 46
+        $BR$BR
+
+        North side:
+        $BR$BR
+
+        Mean: 28.4
+        $BR
+        Std dev: 5.1
+        $BR
+        Sample size: 39
+        $BR$BR
+
+        The results of the independent-samples $BITALIC t $EITALIC test yielded a test statistic of 0.865 and a p-value of 0.3895.
+
+        \{ $mc1->print_q() \}
+        $BR
+
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+
+ENDDOCUMENT();

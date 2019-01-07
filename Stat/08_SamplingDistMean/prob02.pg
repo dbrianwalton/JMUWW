@@ -1,0 +1,46 @@
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mu    = random(87, 92, 0.5);
+    $sigma = random(1.5, 2.5, 0.1);
+    $size  = random(30, 35, 1);
+
+    $mean  = $mu;
+    $sterr = $sigma / sqrt($size);
+
+    BEGIN_TEXT
+
+        The retail price of a particular model of a graphing calculator (in dollars) has a skewed distribution with mean $mu and standard deviation $sigma. Suppose that you check the retail prices of this calculator at randomly selected $size stores and calculate the sample mean price.
+        $BR$BR
+
+        Note that, by the central limit theorem, the sampling distribution of the sample mean price will be approximately normal.
+        $BR$BR
+
+        (a) Find the mean of the sampling distribution of the sample mean price.
+        $BR$BR
+
+        Answer: \{ ans_rule(8) \} (Round to 2 decimal places.)
+        $BR$BR
+
+        (b) Find the standard error of the sampling distribution of the sample mean price.
+        $BR$BR
+
+        Answer: \{ ans_rule(8) \} (Round to 3 decimal places.)
+
+    END_TEXT
+
+    ANS( num_cmp($mean,  tolType=>absolute, tolerance=>0.02) );
+    ANS( num_cmp($sterr, tolType=>absolute, tolerance=>0.002) );
+
+ENDDOCUMENT();

@@ -1,71 +1,103 @@
+
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-$mc1=new_multiple_choice();
-$mc1->qa(
-"1. Gender of a newborn baby (male, female).",
-"Categorical."
-);
-$mc1->extra(
-"Numerical.",
-);
-$mc1->makeLast("Insufficient information to determine.");
+    $mc1=new_multiple_choice();
 
-$mc2=new_multiple_choice();
-$mc2->qa(
-"2. Relative humidity (low, medium, high).",
-"Categorical."
-);
-$mc2->extra(
-"Numerical.",
-);
-$mc2->makeLast("Insufficient information to determine.");
+        $mc1->qa(
+            "(a) Gender of a newborn baby (male, female).",
+            "Categorical."
+        );
 
-$mc3=new_multiple_choice();
-$mc3->qa(
-"3. Weight of potatoes in a 5-pound bag (in pounds).",
-"Numerical."
-);
-$mc3->extra(
-"Categorical.",
-);
-$mc3->makeLast("Insufficient information to determine.");
+        $mc1->extra(
+            "Numerical."
+        );
 
-$mc4=new_multiple_choice();
-$mc4->qa(
-"4. Time to complete a quiz (in minutes).",
-"Numerical."
-);
-$mc4->extra(
-"Categorical.",
-);
-$mc4->makeLast("Insufficient information to determine.");
+        $mc1->makeLast("Insufficient information to determine.");
 
-BEGIN_TEXT
+    $mc2=new_multiple_choice();
 
-For each of the following variables, determine whether it is categorical (qualitative) or numerical (quantitative).
-$BR$BR
+        $mc2->qa(
+            "(b) Relative humidity (low, medium, high).",
+            "Categorical."
+        );
 
-\{ $mc1->print_q() \} $BR
-\{ $mc1->print_a() \} $BR
+        $mc2->extra(
+            "Numerical."
+        );
 
-\{ $mc2->print_q() \} $BR
-\{ $mc2->print_a() \} $BR
+        $mc2->makeLast("Insufficient information to determine.");
 
-\{ $mc3->print_q() \} $BR
-\{ $mc3->print_a() \} $BR
+    $mc3=new_multiple_choice();
 
-\{ $mc4->print_q() \} $BR
-\{ $mc4->print_a() \}
+        $mc3->qa(
+            "(c) Weight of potatoes in a 5-pound bag (in pounds).",
+            "Numerical."
+        );
 
-END_TEXT
+        $mc3->extra(
+            "Categorical."
+        );
 
-$showPartialCorrectAnswers = 0;
+        $mc3->makeLast("Insufficient information to determine.");
 
-ANS( radio_cmp( $mc1->correct_ans() ) );
-ANS( radio_cmp( $mc2->correct_ans() ) );
-ANS( radio_cmp( $mc3->correct_ans() ) );
-ANS( radio_cmp( $mc4->correct_ans() ) );
+    $mc4=new_multiple_choice();
+
+        $mc4->qa(
+            "(d) Time to complete a quiz (in minutes).",
+            "Numerical."
+        );
+
+        $mc4->extra(
+            "Categorical."
+        );
+
+        $mc4->makeLast("Insufficient information to determine.");
+
+    BEGIN_TEXT
+
+        For each of the following variables, determine whether it is categorical (qualitative) or numerical (quantitative).
+        $BR$BR
+
+        \{ $mc1->print_q() \}
+        $BR
+
+        \{ $mc1->print_a() \}
+        $BR
+
+        \{ $mc2->print_q() \}
+        $BR
+
+        \{ $mc2->print_a() \}
+        $BR
+
+        \{ $mc3->print_q() \}
+        $BR
+
+        \{ $mc3->print_a() \}
+        $BR
+
+        \{ $mc4->print_q() \}
+        $BR
+
+        \{ $mc4->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+    ANS( radio_cmp($mc2->correct_ans()) );
+    ANS( radio_cmp($mc3->correct_ans()) );
+    ANS( radio_cmp($mc4->correct_ans()) );
 
 ENDDOCUMENT();

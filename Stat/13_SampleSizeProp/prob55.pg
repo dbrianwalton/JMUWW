@@ -1,0 +1,28 @@
+DOCUMENT();
+
+    loadMacros(
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl"
+    );
+
+    $phat  = random(28, 30, 1);
+    $level = list_random(90, 95, 99);
+    $n = (udistr((100-$level)/200)/0.03)**2*$phat/100*(1-$phat/100);
+    $nround = ceil($n);
+
+    BEGIN_TEXT
+
+    A computer specialist inspected 150 PCs on campus and found that $phat% of them needed upgraded.  Of interest is the population proportion of PCs that need upgraded. What size sample would produce a margin of error of 3% based on a $level% confidence interval?
+        $BR$BR
+
+        Answer: \{ ans_rule(8) \} (Round up to the next whole number.)
+
+    END_TEXT
+
+    ANS( num_cmp($nround, tolType=>absolute, tolerance=>.001) );
+
+ENDDOCUMENT();

@@ -1,0 +1,43 @@
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mu    = random(3.15, 3.25, 0.05);
+    $sigma = random(1.10, 1.20, 0.05);
+    $size  = random(35, 45, 1);
+
+    $x = 3.00;
+
+    $sgna = -1; # +1 if greater than; -1 if less than.
+
+        $z1a = floor(($x - $mu) / ($sigma/sqrt($size)) * 100) / 100;
+        $z2a =  ceil(($x - $mu) / ($sigma/sqrt($size)) * 100) / 100;
+
+        $a1 = uprob($z1a * $sgna);
+        $a2 = uprob($z2a * $sgna);
+
+        $a  = ($a1 + $a2) / 2;
+        $ea = abs($a1 - $a2) / 2 + 0.0001;
+
+    BEGIN_TEXT
+
+        The waiting time until you find a parking spot in a busy parking lot has a skewed distribution with mean \(\mu\) = $mu minutes and standard deviation \(\sigma\) = $sigma. If you visit this parking lot $size times, what is the probability that the mean waiting time will be shorter than $x minutes?
+        $BR$BR
+
+        Answer: \{ ans_rule(8) \} (Round to 4 decimal places.)
+
+    END_TEXT
+
+    ANS( num_cmp($a, tolType=>absolute, tolerance=>$ea) );
+
+ENDDOCUMENT();

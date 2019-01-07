@@ -1,0 +1,92 @@
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $muzero = random(7.5, 9.5, 0.5);
+    $mean   = $muzero + random(0.03, 0.06, 0.01);
+    $stdev  = 0.10;
+    $size   = random(31, 51, 10);
+    $level  = list_random(0.01, 0.05, 0.10);
+
+    $popup1 = PopUp(["select", "=", ">", "<", "/="], "=");
+    $popup2 = PopUp(["select", "=", ">", "<", "/="], "/=");
+
+    $popup2correct = 3;
+
+    $tstat  = ($mean - $muzero)/($stdev/sqrt($size));
+
+    if ($popup2correct == 1) { $pvalue =     tprob($size - 1, $tstat);      }
+    if ($popup2correct == 2) { $pvalue = 1 - tprob($size - 1, $tstat);      }
+    if ($popup2correct == 3) { $pvalue =   2*tprob($size - 1, abs($tstat)); }
+
+    if                     ($pvalue < 0.01) { $popup3correct =        "p-value < 0.01"; }
+    if ($pvalue >= 0.01 and $pvalue < 0.05) { $popup3correct = "0.01 < p-value < 0.05"; }
+    if ($pvalue >= 0.05 and $pvalue < 0.10) { $popup3correct = "0.05 < p-value < 0.10"; }
+    if ($pvalue >= 0.10)                    { $popup3correct =        "p-value > 0.10"; }
+
+    $popup3 = PopUp(["select",        "p-value < 0.01",
+                               "0.01 < p-value < 0.05",
+                               "0.05 < p-value < 0.10",
+                                      "p-value > 0.10"], $popup3correct);
+
+    if ($pvalue <= $level) { $popup4correct = "Reject";         }
+    if ($pvalue >  $level) { $popup4correct = "Fail to reject"; }
+
+    $popup4 = PopUp(["select", "Reject", "Fail to reject"], $popup4correct);
+
+    BEGIN_TEXT
+
+        A study was conducted to test whether the mean thickness of spearmint gum manufactured for vending machines was $muzero hundredths of an inch. The mean thickness based on a random sample of $size gums was $mean, and the standard deviation was $stdev. At the significance level of $level, conduct a test of hypotheses to determine whether the true mean thickness differs from $muzero hundredths of an inch.
+        $BR$BR
+
+        (a) State the null and alternative hypotheses.
+        $BR$BR
+
+            \(H_0\!: \mu\) \{ $popup1->menu() \} \{ ans_rule(8) \}
+            $BR$BR
+
+            \(H_a\!: \mu\) \{$ popup2->menu() \} \{ ans_rule(8) \}
+            $BR$BR
+
+        (b) Calculate the test statistic.
+        $BR$BR
+
+            \{ ans_rule(8) \} (Round to 3 decimal places.)
+            $BR$BR
+
+        (c) Approximate the p-value.
+        $BR$BR
+
+            \{ $popup3->menu() \}
+            $BR$BR
+
+        (d) State the decision.
+        $BR$BR
+
+            \{ $popup4->menu() \} the null hypothesis.
+
+    END_TEXT
+
+    ANS( $popup1->cmp() );
+    ANS( num_cmp($muzero, tolType=>absolute, tolerance=>0.001) );
+
+    ANS( $popup2->cmp() );
+    ANS( num_cmp($muzero, tolType=>absolute, tolerance=>0.001) );
+
+    ANS( num_cmp($tstat,  tolType=>absolute, tolerance=>0.002) );
+
+    ANS( $popup3->cmp() );
+
+    ANS( $popup4->cmp() );
+
+ENDDOCUMENT();

@@ -1,28 +1,43 @@
+
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-$mc=new_multiple_choice();
-$mc->qa(
-"A red six-sided die and a blue six-sided die are rolled. Let \(X\) be the value of the red die minus the value of the blue die.  What are the possible values of \(X\)?",
-"\(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5\)"
-);
-$mc->extra(
-"\(1, 2, 3, 4, 5, 6\)",
-"\(-3, -2, -1, 0, 1, 2, 3\)",
-"\(-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6\)",
-"\(-5, -3, -1, 1, 3, 5\)"
-);
+    $mc1=new_multiple_choice();
 
-BEGIN_TEXT
+        $mc1->qa(
+            "What are the possible values of $BITALIC X $EITALIC?",
+            "\(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5\)"
+        );
 
-\{ $mc->print_q() \} $BR
-\{ $mc->print_a() \}
+        $mc1->extra(
+            "\(1, 2, 3, 4, 5, 6\)",
+            "\(-3, -2, -1, 0, 1, 2, 3\)",
+            "\(-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6\)",
+            "\(-5, -3, -1, 1, 3, 5\)"
+        );
 
-END_TEXT
+    BEGIN_TEXT
 
-$showPartialCorrectAnswers = 0;
+        A red six-sided die and a blue six-sided die are rolled. Let $BITALIC X $EITALIC be the value of the red die minus the value of the blue die.
 
-ANS( radio_cmp( $mc->correct_ans() ) );
+        \{ $mc1->print_q() \}
+        $BR
+
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
 
 ENDDOCUMENT();

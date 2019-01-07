@@ -1,0 +1,43 @@
+
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mc1=new_multiple_choice();
+
+        $mc1->qa(
+            "Which of the following describes the shortcoming of the design of this experiment?",
+            "Brand of tire and type of vehicle are confounded in this experiment."
+        );
+
+        $mc1->extra(
+            "The three brands of tires may be constructed using different materials.",
+            "This study is observational and, therefore, a causal-and-effect relationship cannot be established.",
+            "This experiment must use a larger number of observations."
+        );
+
+    BEGIN_TEXT
+
+        The longevities of three brands of automobile tires (Goodyear, Michelin, and Continental) are compared in an experiment. Goodyear tires were mounted on a Ford Explorer, Michelin tires were mounted on a Jeep Grand Cherokee, and Continental tires were mounted on a Toyota 4 Runner. The three vehicles were run until their tires had 1/8 of an inch of tread remaining. It took the longest distance for the Toyota 4 Runner to reach this limit. Therefore, it was concluded that Continental tires would last the longest.
+        $BR$BR
+
+        \{ $mc1->print_q() \}
+        $BR
+
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+
+ENDDOCUMENT();

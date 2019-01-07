@@ -1,48 +1,63 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-Context("Numeric");
-Context()->flags->set(tolerance=>0.01, tolType=>"absolute");
+    $x1 = random(1, 1, 1);
+    $x2 = random(0, 0, 1);
+    $x3 = random(1, 4, 1);
+    $x4 = random(2, 2, 1);
+    $x5 = random(0, 2, 1);
+    $x6 = random(1, 2, 1);
+    $x7 = random(2, 5, 1);
 
-$median = Compute("1.000")->with(tolType=>'absolute', tolerance=>'0.005' );
-$mean   = Compute("1.571")->with(tolType=>'absolute', tolerance=>'0.005' );
-$var    = Compute("2.286")->with(tolType=>'absolute', tolerance=>'0.005' );
-$stdev  = Compute("1.512")->with(tolType=>'absolute', tolerance=>'0.005' );
+    $size = 7;
 
-TEXT(beginproblem());
+    $sumx   = $x1 + $x2 + $x3 + $x4 + $x5 + $x6 + $x7;
+    $sumxsq = $x1**2 + $x2**2 + $x3**2 + $x4**2 + $x5**2 + $x6**2 + $x7**2;
 
-Context()->texStrings;
+    $mean  = $sumx / $size;
+    $var   = ($sumxsq - $sumx**2/$size) / ($size - 1);
+    $stdev = sqrt($var);
 
-BEGIN_TEXT
+    BEGIN_TEXT
 
-Featured below are numbers of tooth fillings for a sample of seven children.
-$BR$BR
+        Shown below are numbers of tooth fillings for a sample of $size children.
+        $BR$BR
 
-\( X\!: \langle 1, 0, 3, 2, 0, 1, 4 \rangle \)
-$BR$BR
+        \( X\!: \lbrace $x1, $x2, $x3, $x4, $x5, $x6, $x7 \rbrace \)
+        $BR$BR
 
-Note that \( \sum x = 11 \) and \( \sum x^2 = 31 \). Compute the following summary statistics. (Carry 3 decimal digits.)
-$BR$BR
+        (a) Compute the sample mean.
+        $BR$BR
 
-(a) Sample median: \( \displaystyle m = \) \{ ans_rule(8) \}
-$BR$BR
+        \( \displaystyle \bar{x} = \frac{\sum x}{n} = \) \{ ans_rule(8) \} (Round to 3 decimal places.)
+        $BR$BR
 
-(b) Sample mean: \( \displaystyle \bar{x} = \frac{\sum x}{n} = \) \{ ans_rule(8) \}
-$BR$BR
+        (b) Compute the sample variance.
+        $BR$BR
 
-(c) Sample variance: \( \displaystyle s^2 = \frac{\sum(x - \bar{x})^2}{n - 1} = \frac{\sum x^2 - (\sum x)^2/n}{n - 1} = \) \{ ans_rule(8) \}
-$BR$BR
+        \( \displaystyle s^2 = \frac{\sum(x - \bar{x})^2}{n - 1} = \frac{\sum x^2 - (\sum x)^2/n}{n - 1} = \) \{ ans_rule(8) \} (Round to 3 decimal places.)
+        $BR$BR
 
-(d)Sample standard deviation: \( \displaystyle s = +\sqrt{s^2} = \) \{ ans_rule(8) \}
+        (c) Compute the sample standard deviation.
+        $BR$BR
 
-END_TEXT
+        \( \displaystyle s = +\sqrt{s^2} = \)\{ ans_rule(8) \} (Round to 3 decimal places.)
 
-Context()->normalStrings;
+    END_TEXT
 
-ANS( $median->cmp() );
-ANS( $mean->cmp() );
-ANS( $var->cmp() );
-ANS( $stdev->cmp() );
+    ANS( num_cmp($mean,  tolType=>absolute, tolerance=>0.002 ) );
+    ANS( num_cmp($var,   tolType=>absolute, tolerance=>0.002 ) );
+    ANS( num_cmp($stdev, tolType=>absolute, tolerance=>0.002 ) );
 
 ENDDOCUMENT();

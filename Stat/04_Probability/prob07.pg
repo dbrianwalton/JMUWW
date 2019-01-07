@@ -1,42 +1,55 @@
+
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-$mc1=new_multiple_choice();
-$mc1->qa(
-"Using these, find a special case in which two events are mutually exclusive and independent simultaneously.",
-"At least one of the two events has probability zero."
-);
-$mc1->extra(
-"Both of the two events have probabilities zero.",
-"One of the two events is wholly contained in the other.",
-"The two events do not overlap."
-);
+    $mc1=new_multiple_choice();
 
-BEGIN_TEXT
+        $mc1->qa(
+            "Using these, find a special case in which two events are mutually exclusive and independent simultaneously.",
+            "At least one of the two events has probability zero."
+        );
 
-On many occasions, people fail to differentiate mutually exclusive (disjoint) events and independent events. In fact, mutually exclusive events cannot be independent in most cases.
-$BR$BR
+        $mc1->extra(
+            "Both of the two events have probabilities zero.",
+            "One of the two events is wholly contained in the other.",
+            "The two events do not overlap."
+        );
 
-Two events \(A\) and \(B\) being mutually exclusive implies
-$BR$BR
+    BEGIN_TEXT
 
-\( P(A \cap B) = 0 \).
-$BR$BR
+        On many occasions, people fail to differentiate mutually exclusive (disjoint) events and independent events. In fact, mutually exclusive events cannot be independent in most cases.
+        $BR$BR
 
-Two events \(A\) and \(B\) being independent means
-$BR$BR
+        Two events $BITALIC A $EITALIC and $BITALIC B $EITALIC being mutually exclusive implies
+        $BR$BR
 
-\( P(A \cap B) = P(A) \times P(B) \).
-$BR$BR
+        \( P(A \cap B) = 0 \).
+        $BR$BR
 
-\{ $mc1->print_q() \} $BR
-\{ $mc1->print_a() \}
+        Two events $BITALIC A $EITALIC and $BITALIC B $EITALIC being independent means
+        $BR$BR
 
-END_TEXT
+        \( P(A \cap B) = P(A) \times P(B) \).
+        $BR$BR
 
-$showPartialCorrectAnswers = 0;
+        \{ $mc1->print_q() \}
+        $BR
 
-ANS( radio_cmp( $mc1->correct_ans() ) );
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
 
 ENDDOCUMENT();

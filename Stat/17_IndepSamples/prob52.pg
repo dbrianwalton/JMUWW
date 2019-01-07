@@ -1,0 +1,54 @@
+
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+
+$mc=new_multiple_choice();
+$mc->qa(
+"Which of the following is the most reasonable interpretation of the results of the test? Use the significance level of 0.05.",
+"The mean score of the day students is significantly less than the mean score of evening students."
+);
+$mc->extra(
+"The mean score of the day students significantly differs from the mean score of the evening students.",
+"The mean score of the day students does not differ significantly from the evening students.",
+"The mean score of the day students is not significantly less than the mean score of the evening students."
+);
+
+BEGIN_TEXT
+
+A hypothesis test is performed to see if it can be concluded that day students average less on an exam than evening students.  A sample of day students from an introductory sociology class as well as a sample of students from an evening section of the same class is taken.  The results are below.
+
+$BR$BR
+
+Day:
+$BR$BR
+
+Mean: 74
+$BR
+Std dev: 11
+$BR
+Sample size: 36
+$BR$BR
+
+Evening:
+$BR$BR
+
+Mean: 80
+$BR
+Std dev: 12
+$BR
+Sample size: 41
+$BR$BR
+
+The results of the independent-samples t test yielded a test statistic of -2.29 and a p-value of 0.0125.
+
+\{ $mc->print_q() \} $BR
+\{ $mc->print_a() \}
+
+END_TEXT
+
+$showPartialCorrectAnswers = 0;
+
+ANS( radio_cmp( $mc->correct_ans() ) );
+
+ENDDOCUMENT();

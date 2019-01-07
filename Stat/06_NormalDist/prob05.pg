@@ -1,28 +1,64 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-Context("Numeric");
+    $mu    = random(69.5, 70.0, 0.5);
+    $sigma = random(3.3, 3.7, 0.1);
 
-$zscore = Compute("1.25"  )->with(tolType=>'absolute', tolerance=>'0.002');
-$prob   = Compute("0.1056")->with(tolType=>'absolute', tolerance=>'0.0001');
+    $x = 68.0;
+    $p = list_random(20, 25);
 
-TEXT(beginproblem());
+    $sgna = +1; # +1 if greater than; -1 if less than.
 
-Context()->texStrings;
+        $z1a = floor(($x - $mu) / $sigma * 100) / 100;
+        $z2a =  ceil(($x - $mu) / $sigma * 100) / 100;
 
-BEGIN_TEXT
+        $a1 = uprob($z1a * $sgna);
+        $a2 = uprob($z2a * $sgna);
 
-The height of a tree will be measured using a clinometer. For this device, the measurement error has a normal distribution with mean \(\mu = 0.00\) meter and standard deviation \(\sigma = 0.04\). If the tree is exactly 35 meters tall, what is the probability that the clinometer will indicate a value less than 34.95 meters? (Carry 2 decimal digits for the z-score and 4 decimal digits for the probability.)
-$BR$BR
+        $a  = ($a1 + $a2) / 2;
+        $ea = abs($a1 - $a2) / 2 + 0.0001;
 
-\( P(X < 34.95) = P(Z < \) \{ ans_rule(8) \} \( ) = \) \{ ans_rule(8) \}
+    $sgnb = -1; # +1 if above; -1 if below.
 
-END_TEXT
+        $z1b = floor(udistr($p/100) * 100) / 100;
+        $z2b =  ceil(udistr($p/100) * 100) / 100;
 
-Context()->normalStrings;
+        $b1 = $mu + $sgnb * $z1b * $sigma;
+        $b2 = $mu + $sgnb * $z2b * $sigma;
 
-ANS( $zscore->cmp() );
-ANS( $prob->cmp() );
+        $b  = ($b1 + $b2) / 2;
+        $eb = abs($b1 - $b2) / 2 + 0.01;
+
+    BEGIN_TEXT
+
+        It is estimated that heights of adult men are normally distributed with a mean of $mu inches and a standard deviation of $sigma. In one state, the law requires a person to be $x inches or taller to become a fire fighter.
+        $BR$BR
+
+        (a) What proportion of adult men will meet this height requirement for becoming a fire fighter in this state?
+        $BR$BR
+
+        Answer: \{ ans_rule(8) \} (Round to 4 decimal places.)
+        $BR$BR
+
+        (b) A person who was denied to become a fire fighter learned that his height was at the $p th percentile. What was his actual height?
+        $BR$BR
+
+        Answer: \{ ans_rule(8) \} (Round to 2 decimal places.)
+
+    END_TEXT
+
+    ANS( num_cmp($a, tolType=>absolute, tolerance=>$ea) );
+    ANS( num_cmp($b, tolType=>absolute, tolerance=>$eb) );
 
 ENDDOCUMENT();

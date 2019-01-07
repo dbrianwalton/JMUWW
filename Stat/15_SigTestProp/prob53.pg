@@ -1,0 +1,96 @@
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $pzero = 0.22;
+    $phat  = $pzero + random(0.01, 0.03, 0.01);
+    $n     = random(600, 800, 100);
+    $level = list_random(0.01, 0.05, 0.10);
+
+        $x = $n * $phat;
+
+    $popup1 = PopUp(["select", "=", ">", "<", "/="], "=");
+    $popup2 = PopUp(["select", "=", ">", "<", "/="], ">");
+
+    $popup2correct = 1;
+
+        $tstat1 =  ceil( ($phat - $pzero) / sqrt($pzero * (1 - $pzero) / $n) * 100 ) / 100;
+        $tstat2 = floor( ($phat - $pzero) / sqrt($pzero * (1 - $pzero) / $n) * 100 ) / 100;
+
+        $tstat = ($tstat1 + $tstat2) / 2;
+        $errortstat = abs($tstat1 - $tstat2) / 2 + 0.001;
+
+        if ($popup2correct == 1) {  $pvalue1 = uprob($tstat1);
+                                    $pvalue2 = uprob($tstat2); }
+
+        if ($popup2correct == 2) {  $pvalue1 = 1 - uprob($tstat1);
+                                    $pvalue2 = 1 - uprob($tstat2); }
+
+        if ($popup2correct == 3) {  $pvalue1 = 2*uprob(abs($tstat1));
+                                    $pvalue2 = 2*uprob(abs($tstat2)); }
+
+        $pvalue = ($pvalue1 + $pvalue2) / 2;
+        $errorpvalue = abs($pvalue1 - $pvalue2) / 2 + 0.0001;
+
+        if ($pvalue <= $level) { $popup4correct = "Reject";         }
+        if ($pvalue >  $level) { $popup4correct = "Fail to reject"; }
+
+        $popup4 = PopUp(["select", "Reject", "Fail to reject"], $popup4correct);
+
+    BEGIN_TEXT
+
+    According to the Transportation Bureau, 22% of flights in the U.S. failed to arrive on time (more than 15 minutes late) in 2009.  A recent random sample of $n flights is taken and $x of them failed to arrive on time.  Test at the $level level of significance whether the current percentage of U.S. flights that arrive late exceeds 22%.
+
+                $BR$BR
+
+        (a) State the null and alternative hypotheses.
+        $BR$BR
+
+            \(H_0\!: p\) \{ $popup1->menu() \} \{ ans_rule(8) \}
+            $BR$BR
+
+            \(H_a\!: p\) \{$ popup2->menu() \} \{ ans_rule(8) \}
+            $BR$BR
+
+        (b) Calculate the test statistic.
+        $BR$BR
+
+            \{ ans_rule(8) \} (Round to 3 decimal places.)
+            $BR$BR
+
+        (c) Calculate the p-value.
+        $BR$BR
+
+            \{ ans_rule(8) \} (Round to 4 decimal places.)
+            $BR$BR
+
+        (d) State the decision.
+        $BR$BR
+
+            \{ $popup4->menu() \} the null hypothesis.
+
+    END_TEXT
+
+    ANS( $popup1->cmp() );
+    ANS( num_cmp($pzero,  tolType=>absolute, tolerance=>0.001 ) );
+
+    ANS( $popup2->cmp() );
+    ANS( num_cmp($pzero,  tolType=>absolute, tolerance=>0.001 ) );
+
+    ANS( num_cmp($tstat,  tolType=>absolute, tolerance=>$errortstat+.03)  );
+
+    ANS( num_cmp($pvalue, tolType=>absolute, tolerance=>$errorpvalue+.007) );
+
+    ANS( $popup4->cmp() );
+
+ENDDOCUMENT();

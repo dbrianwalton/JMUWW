@@ -1,45 +1,62 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-Context("Numeric");
+    $n = 15;
+    $p = list_random(0.40, 0.50, 0.60);
+    $pct = $p * 100;
+    $pctq = 100 - $pct;
 
-$a = Compute("6.00"  )->with(tolType=>'absolute', tolerance=>'0.001' );
-$b = Compute("0.0950")->with(tolType=>'absolute', tolerance=>'0.0005');
-$c = Compute("0.1859")->with(tolType=>'absolute', tolerance=>'0.0005');
+    $a = $n * $p;
 
-TEXT(beginproblem());
+    $b = 0;
+    for ($x = 9; $x <= $n; $x++)
+    {
+     	$b = $b + fact($n)/(fact($x)*fact($n - $x)) * $p**$x * (1 - $p)**($n - $x);
+    }
 
-Context()->texStrings;
+    $c = 0;
+    for ($x = 5; $x <= 5; $x++)
+    {
+     	$c = $c + fact($n)/(fact($x)*fact($n - $x)) * $p**$x * (1 - $p)**($n - $x);
+    }
 
-BEGIN_TEXT
+    BEGIN_TEXT
 
-For a particular species of a flower, 40% have smooth leaves and 60% have hairy leaves. Suppose that you randomly pick 15 flowers of this species.
-$BR$BR
+        For a particular species of a flower, $pct have smooth leaves and $pctq have hairy leaves. Suppose that you randomly pick 15 flowers of this species.
+        $BR$BR
 
-(a) Compute the expected number of flowers with smooth leaves.
-$BR$BR
+        (a) Compute the expected number of flowers with smooth leaves.
+        $BR$BR
 
-\( \mu = np = \) \{ ans_rule(8) \} (Carry 2 decimal digits.)
-$BR$BR
+        \( \mu = np = \) \{ ans_rule(8) \} (Round to 2 decimal places.)
+        $BR$BR
 
-(b) Compute the probability that more than 8 flowers will have smooth leaves.
-$BR$BR
+        (b) Compute the probability that more than 8 flowers will have smooth leaves.
+        $BR$BR
 
-\( P(X > 8) = 1 - P(X \leq 8) = \) \{ ans_rule(8) \} (Carry 4 decimal digits.)
-$BR$BR
+        \( P(X > 8) = 1 - P(X \leq 8) = \) \{ ans_rule(8) \} (Round to 4 decimal places.)
+        $BR$BR
 
-(c) Compute the probability that exactly 5 flowers will have smooth leaves.
-$BR$BR
+        (c) Compute the probability that exactly 5 flowers will have smooth leaves.
+        $BR$BR
 
-\( P(X = 5) = P(X \leq 5) - P(X \leq 4) = \) \{ ans_rule(8) \} (Carry 4 decimal digits.)
+        \( P(X = 5) = \) \{ ans_rule(8) \} (Round to 4 decimal places.)
 
-END_TEXT
+    END_TEXT
 
-Context()->normalStrings;
-
-ANS( $a->cmp() );
-ANS( $b->cmp() );
-ANS( $c->cmp() );
+    ANS( num_cmp($a, tolType=>absolute, tolerance=>0.02)   );
+    ANS( num_cmp($b, tolType=>absolute, tolerance=>0.0002) );
+    ANS( num_cmp($c, tolType=>absolute, tolerance=>0.0002) );
 
 ENDDOCUMENT();

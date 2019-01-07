@@ -1,0 +1,101 @@
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $pzero = 0.25;
+    $phat  = 0.28;
+    $n     = random(300, 500, 100);
+    $level = list_random(0.01, 0.05, 0.10);
+
+        $x = $n * $phat;
+
+    $popup1 = PopUp(["select", "=", ">", "<", "/="], "=");
+    $popup2 = PopUp(["select", "=", ">", "<", "/="], "/=");
+
+    $popup2correct = 3;
+
+        $tstat1 =  ceil( ($phat - $pzero) / sqrt($pzero * (1 - $pzero) / $n) * 100 ) / 100;
+        $tstat2 = floor( ($phat - $pzero) / sqrt($pzero * (1 - $pzero) / $n) * 100 ) / 100;
+
+        $tstat = ($tstat1 + $tstat2) / 2;
+        $errortstat = abs($tstat1 - $tstat2) / 2 + 0.001;
+
+        if ($popup2correct == 1) {  $pvalue1 = uprob($tstat1);
+                                    $pvalue2 = uprob($tstat2); }
+
+        if ($popup2correct == 2) {  $pvalue1 = 1 - uprob($tstat1);
+                                    $pvalue2 = 1 - uprob($tstat2); }
+
+        if ($popup2correct == 3) {  $pvalue1 = 2*uprob(abs($tstat1));
+                                    $pvalue2 = 2*uprob(abs($tstat2)); }
+
+        $pvalue = ($pvalue1 + $pvalue2) / 2;
+        $errorpvalue = abs($pvalue1 - $pvalue2) / 2 + 0.0001;
+
+        if ($pvalue <= $level) { $popup4correct = "Reject";         }
+        if ($pvalue >  $level) { $popup4correct = "Fail to reject"; }
+
+        $popup4 = PopUp(["select", "Reject", "Fail to reject"], $popup4correct);
+
+    BEGIN_TEXT
+
+        The injuries encountered by a sample of $n male rugby players were recorded for the duration of a playing season. The breakdown of injuries was as follows:
+        $BR$BR
+
+        ankle (15%); groin (12%); hamstrings (28%); knee (20%); quadriceps (15%); shoulder (10%)
+        $BR$BR
+
+        Test the truth of the claim that a quarter of all rugby injuries are hamstring injuries? Use a significance level of $level.
+        $BR$BR
+
+        (a) State the null and alternative hypotheses.
+        $BR$BR
+
+            \(H_0\!: p\) \{ $popup1->menu() \} \{ ans_rule(8) \}
+            $BR$BR
+
+            \(H_a\!: p\) \{$ popup2->menu() \} \{ ans_rule(8) \}
+            $BR$BR
+
+        (b) Calculate the test statistic.
+        $BR$BR
+
+            \( \displaystyle z = \frac{\hat{p} - p_0}{\sqrt{p_0 (1 - p_0) / n}} = \) \{ ans_rule(8) \} (Round to 2 decimal places.)
+            $BR$BR
+
+        (c) Calculate the p-value.
+        $BR$BR
+
+            \{ ans_rule(8) \} (Round to 4 decimal places.)
+            $BR$BR
+
+        (d) State the decision.
+        $BR$BR
+
+            \{ $popup4->menu() \} the null hypothesis.
+
+    END_TEXT
+
+    ANS( $popup1->cmp() );
+    ANS( num_cmp($pzero,  tolType=>absolute, tolerance=>0.001 ) );
+
+    ANS( $popup2->cmp() );
+    ANS( num_cmp($pzero,  tolType=>absolute, tolerance=>0.001 ) );
+
+    ANS( num_cmp($tstat,  tolType=>absolute, tolerance=>$errortstat)  );
+
+    ANS( num_cmp($pvalue, tolType=>absolute, tolerance=>$errorpvalue) );
+
+    ANS( $popup4->cmp() );
+
+ENDDOCUMENT();

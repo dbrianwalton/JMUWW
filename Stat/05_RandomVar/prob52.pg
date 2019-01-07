@@ -1,0 +1,28 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$a = random (43, 45, 0.1);
+$b = random (40, 41, 0.1);
+$c = random (10, 12, 0.1);
+$answer = 100 - $a - $b - $c;
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+Of the four different blood types, $a% of people have type O blood, $b% have type A blood, and $c% have type B. What percentage of people have type AB blood?
+
+$BR$BR
+
+Answer: \{ ans_rule(8) \} (Round to 1 decimal place.)
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS(num_cmp($answer, tolType=>absolute, tolerance=>.2));
+
+ENDDOCUMENT();

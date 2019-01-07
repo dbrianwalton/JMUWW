@@ -1,0 +1,29 @@
+DOCUMENT();
+
+    loadMacros(
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl"
+    );
+
+    $phat  = random(22, 24, 1);
+    $level = list_random(90, 95, 99);
+    $n = (udistr((100-$level)/200)/0.03)**2*$phat/100*(1-$phat/100);
+    $nround = ceil($n);
+
+    BEGIN_TEXT
+
+    A family physician wants to estimate the proportion of patients who suffer from sleep apnea.  From a study done 5 years earlier, $phat% of patients were found to have sleep apnea.  How many patients must be sampled with $level% confidence so that a current estimate is within 3% of the true population proportion?
+
+        $BR$BR
+
+        Answer: \{ ans_rule(8) \} (Round up to the next whole number.)
+
+    END_TEXT
+
+    ANS( num_cmp($nround, tolType=>absolute, tolerance=>.001) );
+
+ENDDOCUMENT(); 

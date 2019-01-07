@@ -1,55 +1,52 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-Context("Numeric");
-Context()->flags->set(tolerance=>0.01, tolType=>"absolute");
+    $width = list_random(1, 10, 100);
 
-$minval = Compute("32")->with(tolType=>'absolute', tolerance=>'0.1' );
-$maxval = Compute("83")->with(tolType=>'absolute', tolerance=>'0.1' );
-$median = Compute("62")->with(tolType=>'absolute', tolerance=>'0.1' );
-$range  = Compute("51")->with(tolType=>'absolute', tolerance=>'0.1' );
+    $min = 3.2 * $width;
+    $max = 8.3 * $width;
+    $median = (5.0 + 7.4) / 2 * $width;
+    $range = (8.3 - 3.2) * $width;
 
-TEXT(beginproblem());
+    BEGIN_TEXT
 
-Context()->texStrings;
+        Consider the data presented in the stem-and-leaf plot below. The stem width (multiplier for each stem digit) is $width.
+        $BR$BR
 
-BEGIN_TEXT
+3 | 2 $BR
+4 | 67 $BR
+5 | 0 $BR
+6 | $BR
+7 | 449 $BR
+8 | 3 $BR$BR
 
-A data set is presented in a stem-and-leaf plot below. The stem width (multiplier for the stem digits) is 10.
-$BR$BR
+        (a) The smallest value in the data is: \{ ans_rule(8) \}
+        $BR$BR
 
-\( \displaystyle
-    \begin{tabular}{r | l}
-    Stem & Leaf\\ \hline
-    3 & 2\\
-    4 & 67\\
-    5 & 0\\
-    6 & \\
-    7 & 449\\
-    8 & 3\\
-    \end{tabular}
-\)
-$BR$BR
+        (b) The largest value in the data is: \{ ans_rule(8) \}
+        $BR$BR
 
-(a) Report the smallest value in the data: \{ ans_rule(8) \}
-$BR$BR
+        (c) The median value of the data is: \{ ans_rule(8) \}
+        $BR$BR
 
-(b) Report the largest value in the data: \{ ans_rule(8) \}
-$BR$BR
+        (d) The range of the data values is: \{ ans_rule(8) \}
 
-(c) Calculate the median value for the data: \{ ans_rule(8) \}
-$BR$BR
+    END_TEXT
 
-(d) Calculate the range for the data: \{ ans_rule(8) \}
-
-END_TEXT
-
-Context()->normalStrings;
-
-ANS( $minval->cmp() );
-ANS( $maxval->cmp() );
-ANS( $median->cmp() );
-ANS( $range->cmp() );
+    ANS( num_cmp($min,    tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($max,    tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($median, tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($range,  tolType=>absolute, tolerance=>0.002) );
 
 ENDDOCUMENT();

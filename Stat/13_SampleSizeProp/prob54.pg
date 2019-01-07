@@ -1,0 +1,28 @@
+DOCUMENT();
+
+    loadMacros(
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl"
+    );
+
+    $phat  = random(35, 37, 1);
+    $level = list_random(90, 95, 99);
+    $n = (udistr((100-$level)/200)/0.03)**2*$phat/100*(1-$phat/100);
+    $nround = ceil($n);
+
+    BEGIN_TEXT
+
+    Biologists inspected 150 deer and found that $phat% of them carried ticks associated with Lyme disease.  Of interest is the population proportion of deer that carry ticks associated with Lyme disease. What size sample would produce a margin of error of 3% based on a $level% confidence interval?
+        $BR$BR
+
+        Answer: \{ ans_rule(8) \} (Round up to the next whole number.)
+
+    END_TEXT
+
+    ANS( num_cmp($nround, tolType=>absolute, tolerance=>.001) );
+
+ENDDOCUMENT();

@@ -1,0 +1,28 @@
+DOCUMENT();
+
+    loadMacros(
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl"
+    );
+    $phat = 0.5;
+    $level = list_random(90, 95, 99);
+    $n = (udistr((100-$level)/200)/0.035)**2*$phat*(1-$phat);
+    $nround = ceil($n);
+
+    BEGIN_TEXT
+
+    CNN wants to find the proportion of people who support issue 2A-IV.  How many people should they survey at a $level% confidence level so that the margin of error is within 3.5%?
+
+        $BR$BR
+
+        Answer: \{ ans_rule(8) \} (Round up to the next whole number.)
+
+    END_TEXT
+
+    ANS(num_cmp($nround, tolType=>absolute, tolerance=>.001) );
+
+ENDDOCUMENT();

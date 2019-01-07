@@ -1,49 +1,73 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+    
+    $x3 = random(0, 0, 1);
+    $x5 = random(1, 2, 1);
+    $x7 = random(2, 3, 1);
+    $x6 = random(4, 4, 1); ##### This is the median.    
+    $x2 = random(5, 6, 1);
+    $x1 = random(7, 8, 1);    
+    $x4 = random(8, 9, 1);
 
-Context("Numeric");
-Context()->flags->set(tolerance=>0.01, tolType=>"absolute");
+    $size = 7;
 
-$mean   = Compute("2.143" )->with(tolType=>'absolute', tolerance=>'0.005' );
-$stdev  = Compute("2.193" )->with(tolType=>'absolute', tolerance=>'0.005' );
-$zscore = Compute("-0.975")->with(tolType=>'absolute', tolerance=>'0.006' );
+    $median = $x6;
 
-TEXT(beginproblem());
+    $sumx   = $x1 + $x2 + $x3 + $x4 + $x5 + $x6 + $x7;
+    $sumxsq = $x1**2 + $x2**2 + $x3**2 + $x4**2 + $x5**2 + $x6**2 + $x7**2;
 
-Context()->texStrings;
+    $mean   = $sumx / $size;
+    $var    = ($sumxsq - $sumx**2/$size) / ($size - 1);
+    $stdev  = sqrt($var);
+    $zscore = ($x3 - $mean) / $stdev;
 
-BEGIN_TEXT
+    BEGIN_TEXT
 
-The following data show numbers of parking tickets received within the past six months for a sample of seven drivers.
-$BR$BR
+        The data set below features the number of parking tickets issued each day by the police department in a small town for a sample of $size days.
+        $BR$BR
 
-\( X\!: \langle 2, 6, 0, 1, 4, 0, 2 \rangle \)
-$BR$BR
+        \( \lbrace $x1, $x2, $x3, $x4, $x5, $x6, $x7 \rbrace \)
+        $BR$BR
 
-(a) Compute the sample mean.
-$BR$BR
+        (a) Compute the median number of parking tickets issued.
+        $BR$BR
 
-Answer: \{ ans_rule(8) \} (Carry 3 decimal digits.)
-$BR$BR
+        \{ ans_rule(8) \} (Round to 2 decimal places.)
+        $BR$BR
 
-(b) Compute the sample standard deviation.
-$BR$BR
+        (b) Compute the mean number of parking tickets issued.
+        $BR$BR
 
-Answer: \{ ans_rule(8) \} (Carry 3 decimal digits.)
-$BR$BR
+        \{ ans_rule(8) \} (Round to 3 decimal places.)
+        $BR$BR
 
-(b) Compute the z-score for a driver who has received no parking ticket.
-$BR$BR
+        (c) Compute the standard deviation of the number of parking tickets issued.
+        $BR$BR
 
-Answer: \{ ans_rule(8) \} (Carry 2 decimal digits.)
+        \{ ans_rule(8) \} (Round to 3 decimal places.)
+        $BR$BR
 
-END_TEXT
+        (d) Compute standardized score (z-score) for a day where no ticket is issued.
+        $BR$BR
 
-Context()->normalStrings;
+        \{ ans_rule(8) \} (Round to 2 decimal places.)
 
-ANS( $mean->cmp() );
-ANS( $stdev->cmp() );
-ANS( $zscore->cmp() );
+    END_TEXT
+
+    ANS( num_cmp($median, tolType=>absolute, tolerance=>0.02  ) );
+    ANS( num_cmp($mean,   tolType=>absolute, tolerance=>0.002 ) );
+    ANS( num_cmp($stdev,  tolType=>absolute, tolerance=>0.002 ) );
+    ANS( num_cmp($zscore, tolType=>absolute, tolerance=>0.02  ) );
 
 ENDDOCUMENT();

@@ -1,50 +1,65 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-#Context("Numeric");
+    $popup1 = PopUp(["select", "equal", "not equal"], "not equal");
+    $popup2 = PopUp(["select", "are", "are not"], "are not");
 
-$mc1=new_multiple_choice();
-$mc1->qa(
-"(c) Are the two events 'electrical problem causing the engine to not start' and 'mechanical problem causing the engine to not start' independent?",
-"No."
-);
-$mc1->extra(
-"Yes."
-);
+    $PctA  = random(55, 59, 1);
+    $PctB  = random(29, 33, 1);
+    $PctAB = random(7, 9, 1);
 
-$a = Compute("0.800")->with(tolType=>'absolute', tolerance=>'0.005');
-$b = Compute("0.258")->with(tolType=>'absolute', tolerance=>'0.005');
+    $PrInt = $PctAB / 100;
+    $PrUni = ($PctA + $PctB - $PctAB) / 100;
 
-#TEXT(beginproblem());
-#Context()->texStrings;
+    $PrAgB = $PctAB / $PctB;
+    $PrBgA = $PctAB / $PctA;
 
-BEGIN_TEXT
+    $PrAPrB = ($PctA*$PctB) / 10000;
 
-For a certain model vehicle, failure for the engine to start is due to (i) an electrical problem 57% of the time, (ii) a mechanical problem 31% of the time, and (iii) both electrical and mechanical problems 8% of the time.
-$BR$BR
+    BEGIN_TEXT
 
-(a) If the engine of this model vehicle fails to start, what is the probability that it is due to an electrical problem, a mechanical problem, or both?
-$BR$BR
+        For a certain model vehicle, failure for the engine to start is due to (i) an electrical problem $PctA% of the time, (ii) a mechanical problem $PctB% of the time, and (iii) both electrical and mechanical problems $PctAB% of the time.
+        $BR$BR
 
-Answer: \{ans_rule(8)\} (Carry 3 decimal digits.)
-$BR$BR
+        (a) If the engine of this model vehicle fails to start, what is the probability that it is due to an electrical problem, a mechanical problem, or both?
+        $BR$BR
 
-(b) If it has been determined that the failure for the engine to start was due, in part, to a mechanical problem, what is the probability that it is also due to an electrical problem?
-$BR$BR
+            Answer: \{ ans_rule(8) \} (Round to 3 decimal places.)
+            $BR$BR
 
-Answer: \{ans_rule(8)\} (Carry 3 decimal digits.)
-$BR$BR
+        (b) If it has been determined that the failure for the engine to start was due, in part, to a mechanical problem, what is the probability that it is also due to an electrical problem?
+        $BR$BR
 
-\{ $mc1->print_q() \} $BR
-\{ $mc1->print_a() \}
+            Answer: \{ ans_rule(8) \} (Round to 3 decimal places.)
+            $BR$BR
 
-END_TEXT
+        (c) Are the two events "electrical problem causing the engine to not start" and "mechanical problem causing the engine to not start" independent?
+        $BR$BR
 
-#Context()->normalStrings;
+            Answer: $BITALIC P $EITALIC(electrical and mechanical) = \{ ans_rule(8) \} and
+            $BITALIC P $EITALIC(electrical) $BITALIC P $EITALIC(mechanical) = \{ ans_rule(8) \}.
+            These probabilities are \{ $popup1->menu() \} to each other.
+            Therefore, the two events \{ $popup2->menu() \} independent.
 
-ANS( $a->cmp() );
-ANS( $b->cmp() );
-ANS( radio_cmp( $mc1->correct_ans() ) );
+    END_TEXT
+
+    ANS( num_cmp($PrUni, tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($PrAgB, tolType=>absolute, tolerance=>0.002) );
+
+    ANS( num_cmp($PrInt,  tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($PrAPrB, tolType=>absolute, tolerance=>0.002) );
+    ANS( $popup1->cmp() );
+    ANS( $popup2->cmp() );
 
 ENDDOCUMENT();

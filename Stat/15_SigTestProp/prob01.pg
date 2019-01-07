@@ -1,0 +1,95 @@
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $pzero = 0.70;
+    $phat  = $pzero + random(0.04, 0.06, 0.01);
+    $n     = random(400, 600, 100);
+    $level = list_random(0.01, 0.05, 0.10);
+
+        $x = $n * $phat;
+
+    $popup1 = PopUp(["select", "=", ">", "<", "/="], "=");
+    $popup2 = PopUp(["select", "=", ">", "<", "/="], ">");
+
+    $popup2correct = 1;
+
+        $tstat1 =  ceil( ($phat - $pzero) / sqrt($pzero * (1 - $pzero) / $n) * 100 ) / 100;
+        $tstat2 = floor( ($phat - $pzero) / sqrt($pzero * (1 - $pzero) / $n) * 100 ) / 100;
+
+        $tstat = ($tstat1 + $tstat2) / 2;
+        $errortstat = abs($tstat1 - $tstat2) / 2 + 0.001;
+
+        if ($popup2correct == 1) {  $pvalue1 = uprob($tstat1);
+                                    $pvalue2 = uprob($tstat2); }
+
+        if ($popup2correct == 2) {  $pvalue1 = 1 - uprob($tstat1);
+                                    $pvalue2 = 1 - uprob($tstat2); }
+
+        if ($popup2correct == 3) {  $pvalue1 = 2*uprob(abs($tstat1));
+                                    $pvalue2 = 2*uprob(abs($tstat2)); }
+
+        $pvalue = ($pvalue1 + $pvalue2) / 2;
+        $errorpvalue = abs($pvalue1 - $pvalue2) / 2 + 0.0001;
+
+        if ($pvalue <= $level) { $popup4correct = "Reject";         }
+        if ($pvalue >  $level) { $popup4correct = "Fail to reject"; }
+
+        $popup4 = PopUp(["select", "Reject", "Fail to reject"], $popup4correct);
+
+    BEGIN_TEXT
+
+        The U.S. and many other countries have recently tightened airport security. A sociologist is interested in estimating the proportion of the travelers who feel that airports are safe. The sociologist found that $x of the $n travelers randomly selected and interviewed indicated that the airports were safe. With an alpha level of $level, conduct a test to determine whether the true proportion of interest is higher than $pzero.
+        $BR$BR
+
+        (a) State the null and alternative hypotheses.
+        $BR$BR
+
+            \(H_0\!: p\) \{ $popup1->menu() \} \{ ans_rule(8) \}
+            $BR$BR
+
+            \(H_a\!: p\) \{$ popup2->menu() \} \{ ans_rule(8) \}
+            $BR$BR
+
+        (b) Calculate the test statistic.
+        $BR$BR
+
+            \( \displaystyle z = \frac{\hat{p} - p_0}{\sqrt{p_0 (1 - p_0) / n}} = \) \{ ans_rule(8) \} (Round to 2 decimal places.)
+            $BR$BR
+
+        (c) Calculate the p-value.
+        $BR$BR
+
+            \{ ans_rule(8) \} (Round to 4 decimal places.)
+            $BR$BR
+
+        (d) State the decision.
+        $BR$BR
+
+            \{ $popup4->menu() \} the null hypothesis.
+
+    END_TEXT
+
+    ANS( $popup1->cmp() );
+    ANS( num_cmp($pzero,  tolType=>absolute, tolerance=>0.001 ) );
+
+    ANS( $popup2->cmp() );
+    ANS( num_cmp($pzero,  tolType=>absolute, tolerance=>0.001 ) );
+
+    ANS( num_cmp($tstat,  tolType=>absolute, tolerance=>$errortstat)  );
+
+    ANS( num_cmp($pvalue, tolType=>absolute, tolerance=>$errorpvalue) );
+
+    ANS( $popup4->cmp() );
+
+ENDDOCUMENT();

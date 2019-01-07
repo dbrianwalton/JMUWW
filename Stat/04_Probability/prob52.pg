@@ -1,0 +1,30 @@
+DOCUMENT();
+
+    loadMacros(
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl"
+    );
+
+    $b=random(2,4,1);
+    $w=random(4,6,1);
+    $g=random(3,5,1);
+    $t=$b+$w+$g;
+    $Answer=$b/$t*($b-1)/($t-1);
+
+    BEGIN_TEXT
+
+    An urn contains $b blue, $w white and $g green marbles. If two marbles are to be selected without replacement, what is the probability that both marbles will be blue?
+
+        $BR$BR
+
+        Answer: \{ ans_rule(8) \} (Round to 3 decimal places.)
+
+    END_TEXT
+
+    ANS( num_cmp($Answer, tolType=>absolute, tolerance=>.002) );
+
+ENDDOCUMENT();

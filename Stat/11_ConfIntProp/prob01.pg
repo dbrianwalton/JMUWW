@@ -1,0 +1,56 @@
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $x = random(30, 40, 1);
+    $n = random(150, 250, 10);
+    $level = list_random(90, 95, 99);
+
+    $phat = $x / $n;
+    $zcrit = udistr((100-$level)/200);
+    $llim  = $phat - $zcrit * sqrt($phat*(1 - $phat)/$n);
+    $ulim  = $phat + $zcrit * sqrt($phat*(1 - $phat)/$n);
+
+    BEGIN_TEXT
+
+        Research suggests that nowadays people read newspapers only occasionally. In a small study, only $x of the $n respondents said that they read at least one newspaper everyday. Estimate the true proportion of the people who read at least one newspaper everyday using a $level% confidence interval.
+        $BR$BR
+
+        (a) The limits of the $level% confidence interval are calculated by
+        \( \displaystyle \hat{p} \pm z \sqrt{\frac{\hat{p}(1 - \hat{p})}{n}} \),
+        where
+        $BR$BR
+
+            \(\hat{p} =\) \{ ans_rule(8) \} (Round to 3 decimal places.)
+            $BR$BR
+
+            \(z =\)       \{ ans_rule(8) \} (Round to 3 decimal places.)
+            $BR$BR
+
+            \(n =\)       \{ ans_rule(8) \}
+            $BR$BR
+
+        (b) The $level% confidence interval for the true proportion is:
+        $BR$BR
+
+            ( \{ ans_rule(8) \} , \{ ans_rule(8) \} ) (Round to 3 decimal places.)
+
+    END_TEXT
+
+    ANS( num_cmp($phat,  tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($zcrit, tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($n,     tolType=>absolute, tolerance=>0.001) );
+    ANS( num_cmp($llim,  tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($ulim,  tolType=>absolute, tolerance=>0.002) );
+
+ENDDOCUMENT();

@@ -1,0 +1,42 @@
+
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mc1=new_multiple_choice();
+
+        $mc1->qa(
+            "In how many ways can the two positions be filled?",
+            "6"
+        );
+
+        $mc1->extra(
+            "2",
+            "3",
+            "4"
+        );
+
+    BEGIN_TEXT
+
+        A committee consists of three members, who are Adam, Becky, and Chris. A chair and a vice-chair must be selected from among the three members.
+
+        \{ $mc1->print_q() \}
+        $BR
+
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+
+ENDDOCUMENT();

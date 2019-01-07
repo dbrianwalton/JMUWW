@@ -1,30 +1,43 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-$mc=new_multiple_choice();
-$mc->qa(
-"Determine the slope of the fitted regression line.",
-"\(-0.6\)"
-);
-$mc->extra(
-"\(-0.9\)",
-"\(-0.1\)",
-"\(-0.15\)"
-);
+    $ratiomean = random(3, 4, 1);
+    $ratiostdev = random(3, 5, 1);
 
-BEGIN_TEXT
+    $corr = random(-0.39, -0.21, 0.01);
+    $slope = $corr*$ratiostdev;
+    $rsq = $corr**2*100;
 
-The sample mean of \(Y\) is three times as large as the sample mean of \(X\). The sample standard deviation of \(Y\) is twice as large as the sample standard deviation of \(X\). The correlation between \(X\) and \(Y\) is \(-0.3\).
-$BR$BR
+    BEGIN_TEXT
 
-\{ $mc->print_q() \} $BR
-\{ $mc->print_a() \}
+        The sample mean of $BITALIC Y $EITALIC is $ratiomean times as large as the sample mean of $BITALIC X $EITALIC. The sample standard deviation of $BITALIC Y $EITALIC is $ratiostdev times as large as the sample standard deviation of $BITALIC X $EITALIC. The correlation between $BITALIC X $EITALIC and $BITALIC Y $EITALIC is $corr.
+        $BR$BR
 
-END_TEXT
+        (a) Determine the slope of the fitted regression line.
+        $BR$BR
 
-$showPartialCorrectAnswers = 0;
+        Answer: \{ ans_rule(8) \} (Round to 2 decimal places.)
+        $BR$BR
 
-ANS( radio_cmp( $mc->correct_ans() ) );
+        (b) What percent of the variability in $BITALIC Y $EITALIC does this regression model account for?
+        $BR$BR
+
+        Answer: \{ ans_rule(8) \} (Round to 2 decimal places.)
+
+    END_TEXT
+
+    ANS( num_cmp($slope, tolType=>absolute, tolerance=>0.02) );
+    ANS( num_cmp($rsq,   tolType=>absolute, tolerance=>0.02) );
 
 ENDDOCUMENT();

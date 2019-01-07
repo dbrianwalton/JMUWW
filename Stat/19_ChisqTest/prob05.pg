@@ -1,0 +1,135 @@
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $o11 = random(79, 83, 1);
+    $o12 = random(22, 26, 1);
+
+    $o21 = random(41, 45, 1);
+    $o22 = random(21, 25, 1);
+
+        $o1t = $o11 + $o12;
+        $o2t = $o21 + $o22;
+
+        $ot1 = $o11 + $o21;
+        $ot2 = $o12 + $o22;
+
+        $ott = $o11 + $o12 + $o21 + $o22;
+
+        $e11 = $o1t * $ot1 / $ott;
+        $e12 = $o1t * $ot2 / $ott;
+
+        $e21 = $o2t * $ot1 / $ott;
+        $e22 = $o2t * $ot2 / $ott;
+
+        $tstat = ($o11 - $e11)**2 / $e11
+               + ($o12 - $e12)**2 / $e12
+               + ($o21 - $e21)**2 / $e21
+               + ($o22 - $e22)**2 / $e22;
+
+        $level  = list_random(0.01, 0.05, 0.10);
+
+    $popup1 = PopUp(["select", "are", "are not"], "are");
+    $popup2 = PopUp(["select", "are", "are not"], "are not");
+
+    $pvalue = chisqrprob(1, $tstat); ##### Make sure to change the degrees of freedom.
+
+    if                     ($pvalue < 0.01) { $popup3correct =        "p-value < 0.01"; }
+    if ($pvalue >= 0.01 and $pvalue < 0.05) { $popup3correct = "0.01 < p-value < 0.05"; }
+    if ($pvalue >= 0.05 and $pvalue < 0.10) { $popup3correct = "0.05 < p-value < 0.10"; }
+    if ($pvalue >= 0.10)                    { $popup3correct =        "p-value > 0.10"; }
+
+    $popup3 = PopUp(["select",        "p-value < 0.01",
+                               "0.01 < p-value < 0.05",
+                               "0.05 < p-value < 0.10",
+                                      "p-value > 0.10"], $popup3correct);
+
+    if ($pvalue <= $level) { $popup4correct = "Reject";         }
+    if ($pvalue >  $level) { $popup4correct = "Fail to reject"; }
+
+    $popup4 = PopUp(["select", "Reject", "Fail to reject"], $popup4correct);
+
+    BEGIN_TEXT
+
+        The table below shows cross-classification of $ott people according to whether they are blue-collar workers or white-collar workers and whether they plan to stay with their current jobs or plan to change their jobs in near future.
+        $BR$BR
+
+            \{begintable(4)\}
+            \{row("            ", "Stay"      , "Change"    , "R total  ")\}
+            \{row("Blue collar ", $o11        , $o12        , ans_rule(8))\}
+            \{row("White collar", $o21        , $o22        , ans_rule(8))\}
+            \{row("C total"     , ans_rule(8) , ans_rule(8) , $ott       )\}
+            \{endtable()\}
+            $BR
+
+        Calculate the marginal counts (row and column totals) in the table. Then, conduct a test to determine whether job type and future plan are independent at the significance level of $level.
+        $BR$BR
+
+        (a) State the null and alternative hypotheses.
+        $BR$BR
+
+            \(H_0\!:\) Job type and future plan \{ $popup1->menu() \} independent.
+            $BR$BR
+
+            \(H_a\!:\) Job type and future plan \{ $popup2->menu() \} independent.
+            $BR$BR
+
+        (b) Calculate the expected counts. (Round to 3 decimal places.)
+        $BR$BR
+
+            \{begintable(3)\}
+            \{row("            ", "Stay"      , "Change")   \}
+            \{row("Blue collar ", ans_rule(8) , ans_rule(8))\}
+            \{row("White collar", ans_rule(8) , ans_rule(8))\}
+            \{endtable()\}
+            $BR
+
+        (c) Calculate the test statistic.
+        $BR$BR
+
+            \{ ans_rule(8) \} (Round to 3 decimal places.)
+            $BR$BR
+
+        (d) Approximate the p-value.
+        $BR$BR
+
+            \{ $popup3->menu() \}
+            $BR$BR
+
+        (e) State the decision.
+        $BR$BR
+
+            \{ $popup4->menu() \} the null hypothesis.
+
+    END_TEXT
+
+    ANS( num_cmp($o1t, tolType=>absolute, tolerance=>0.001) );
+    ANS( num_cmp($o2t, tolType=>absolute, tolerance=>0.001) );
+    ANS( num_cmp($ot1, tolType=>absolute, tolerance=>0.001) );
+    ANS( num_cmp($ot2, tolType=>absolute, tolerance=>0.001) );
+
+    ANS( $popup1->cmp() );
+    ANS( $popup2->cmp() );
+
+    ANS( num_cmp($e11, tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($e12, tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($e21, tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($e22, tolType=>absolute, tolerance=>0.002) );
+
+    ANS( num_cmp($tstat, tolType=>absolute, tolerance=>0.005) );
+
+    ANS( $popup3->cmp() );
+
+    ANS( $popup4->cmp() );
+
+ENDDOCUMENT();

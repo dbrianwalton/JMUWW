@@ -1,60 +1,74 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-Context("Numeric");
+    $o11 = random(300, 350, 1);
+    $o12 = random(400, 450, 1);
+    $o13 = random(1200, 1250, 1);
 
-$a = Compute("0.501")->with(tolType=>'absolute', tolerance=>'0.002');
-$b = Compute("0.582")->with(tolType=>'absolute', tolerance=>'0.002');
-$c = Compute("0.020")->with(tolType=>'absolute', tolerance=>'0.002');
+    $o21 = random(250, 300, 1);
+    $o22 = random(280, 330, 1);
+    $o23 = random(1200,1250, 1);
 
-TEXT(beginproblem());
+    $o1t = $o11 + $o12 + $o13;
+    $o2t = $o21 + $o22 + $o23;
 
-Context()->texStrings;
+    $ot1 = $o11 + $o21;
+    $ot2 = $o12 + $o22;
+    $ot3 = $o13 + $o23;
 
-BEGIN_TEXT
+    $ott = $o11 + $o12 + $o13 + $o21 + $o22 + $o23;
 
-The following table cross-classifies a total of 1943 students at a college according to their gender and financial-support status.
-$BR$BR
+    $a = $o13 / ($o13 + $o23);
+    $b = ($o12 + $o21 + $o22 + $o23) / $ott;
+    $c = (($o11 + $o21) / $ott)**2;
 
-\( \displaystyle
-\begin{tabular}{lccc}
-\hline
-       & \multicolumn{3}{c}{Financial-support status}\\
-\cline{2-4}
-Gender & Self-supported & Parent-supported & Via financial aid \\
-\hline
-Female & 155 & 221 & 657 \\
-Male   & 118 & 138 & 654 \\
-\hline
-\hspace*{0.75in} & \hspace*{1.20in} & \hspace*{1.20in} & \hspace*{1.20in}
-\end{tabular}
-\)
-$BR$BR
+    BEGIN_TEXT
 
-(a) If a student is selected at random from this college, what is the probability that the student will be female, given that the student receives financial aid?
-$BR$BR
+        The following table cross-classifies a total of $ott students at a college according to their gender and financial-support status.
+        $BR$BR
 
-Solution: \( \displaystyle \frac{657}{657 + 654} = \) \{ans_rule(8)\} (Carry 3 decimal digits.)
-$BR$BR
+            \{begintable(4)\}
+            \{row(Gender, "Self-supported", "Parent-supported", "Via financial aid")\}
+            \{row(Female, $o11, $o12, $o13)\}
+            \{row(Male,   $o21, $o22, $o23)\}
+            \{endtable()\}
+            $BR
 
-(b) If a student is selected at random, what is the probability that the student will be male, parent-supported, or both?
-$BR$BR
 
-Solution: \( \displaystyle \frac{221 + 118 + 138 + 654}{1943} = \) \{ans_rule(8)\} (Carry 3 decimal digits.)
-$BR$BR
 
-(c) If two students are selected independently, what is the probability that both of them will be self-supported?
-$BR$BR
 
-Solution: \( \displaystyle P(\mbox{self-supported}) = \frac{155 + 118}{1943} = 0.1405 \). Therefore, \( (0.1405)^2 = \) \{ans_rule(8)\} (Carry 3 decimal digits.)
+        (a) If a student is selected at random from this college, what is the probability that the student will be female, given that the student receives a financial aid?
+        $BR$BR
 
-END_TEXT
+            Answer: \{ ans_rule(8) \} (Round to 3 decimal places.)
+            $BR$BR
 
-Context()->normalStrings;
+        (b) If a student is selected at random, what is the probability that the student will be male, parent-supported, or both?
+        $BR$BR
 
-ANS( $a->cmp() );
-ANS( $b->cmp() );
-ANS( $c->cmp() );
+            Answer: \{ ans_rule(8) \} (Round to 3 decimal places.)
+            $BR$BR
+
+        (c) If two students are selected independently, what is the probability that both of them will be self-supported?
+        $BR$BR
+
+            Answer: \{ ans_rule(8) \} (Round to 3 decimal places.)
+
+    END_TEXT
+
+    ANS( num_cmp($a, tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($b, tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($c, tolType=>absolute, tolerance=>0.002) );
 
 ENDDOCUMENT();

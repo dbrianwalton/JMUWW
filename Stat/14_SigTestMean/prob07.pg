@@ -1,0 +1,108 @@
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $muzero = random(70, 80, 5);
+    $mean   = $muzero + random(5, 7, 1);
+    $stdev  = random(10, 13, 1);
+    $size   = list_random(31, 41);
+    $level  = list_random(0.01, 0.05, 0.10);
+
+    $popup1 = PopUp(["select", "=", ">", "<", "/="], "=");
+    $popup2 = PopUp(["select", "=", ">", "<", "/="], ">");
+
+    $popup2correct = 1;
+
+    $tstat  = ($mean - $muzero)/($stdev/sqrt($size));
+
+    if ($popup2correct == 1) { $pvalue =     tprob($size - 1, $tstat);      }
+    if ($popup2correct == 2) { $pvalue = 1 - tprob($size - 1, $tstat);      }
+    if ($popup2correct == 3) { $pvalue =   2*tprob($size - 1, abs($tstat)); }
+
+    if                     ($pvalue < 0.01) { $popup3correct =        "p-value < 0.01"; }
+    if ($pvalue >= 0.01 and $pvalue < 0.05) { $popup3correct = "0.01 < p-value < 0.05"; }
+    if ($pvalue >= 0.05 and $pvalue < 0.10) { $popup3correct = "0.05 < p-value < 0.10"; }
+    if ($pvalue >= 0.10)                    { $popup3correct =        "p-value > 0.10"; }
+
+    $popup3 = PopUp(["select",        "p-value < 0.01",
+                               "0.01 < p-value < 0.05",
+                               "0.05 < p-value < 0.10",
+                                      "p-value > 0.10"], $popup3correct);
+
+    if ($pvalue <= $level) { $popup4correct = "Reject";         }
+    if ($pvalue >  $level) { $popup4correct = "Fail to reject"; }
+
+    $popup4 = PopUp(["select", "Reject", "Fail to reject"], $popup4correct);
+
+    $pvalueround = round($pvalue * 10000) / 10000;
+
+    $mc1=new_multiple_choice();
+
+        $mc1->qa(
+            "(d) Which of the following is the most reasonable interpretation of the decision that you have made?",
+            "The average cost of men's athletic shoes is significantly higher than $muzero dollars."
+        );
+
+        $mc1->extra(
+            "The average cost of men's athletic shoes is significantly lower than $muzero dollars.",
+            "There is insufficient evidence to conclude that the average cost of men's athletic shoes is significantly higher than $muzero dollars."
+        );
+
+        $mc1->makeLast("None of the above.");
+
+    BEGIN_TEXT
+
+        A researcher believes that the average cost of men's athletic shoes is higher than $muzero dollars. He selects a random sample of $size pairs of shoes from a catalog and calculates an average of $mean dollars with a standard deviation of $stdev. Is there enough evidence from the data to support the researcher's belief? Test the relevant hypotheses allowing a Type I error rate of $level.
+        $BR$BR
+
+        (a) State the null and alternative hypotheses.
+        $BR$BR
+
+            \(H_0\!: \mu\) \{ $popup1->menu() \} \{ ans_rule(8) \}
+            $BR$BR
+
+            \(H_a\!: \mu\) \{$ popup2->menu() \} \{ ans_rule(8) \}
+            $BR$BR
+
+        (b) Calculate the test statistic.
+        $BR$BR
+
+            \{ ans_rule(8) \} (Round to 3 decimal places.)
+            $BR$BR
+
+        (c) A computer gave a p-value of $pvalueround. What decision should you make?
+        $BR$BR
+
+            \{ $popup4->menu() \} the null hypothesis.
+            $BR$BR
+
+        \{ $mc1->print_q() \}
+        $BR
+
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( $popup1->cmp() );
+    ANS( num_cmp($muzero, tolType=>absolute, tolerance=>0.001) );
+
+    ANS( $popup2->cmp() );
+    ANS( num_cmp($muzero, tolType=>absolute, tolerance=>0.001) );
+
+    ANS( num_cmp($tstat,  tolType=>absolute, tolerance=>0.002) );
+
+    ANS( $popup4->cmp() );
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+
+ENDDOCUMENT();

@@ -1,0 +1,54 @@
+
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+
+$mc=new_multiple_choice();
+$mc->qa(
+"Which of the following is the most reasonable interpretation of the results of the test? Use the significance level of 0.05.",
+"The mean time of females is not significantly less than the mean time of Males."
+);
+$mc->extra(
+"The mean time of females is significantly different from males.",
+"The mean time of females is not significantly greater than the mean time of males.",
+"The mean time of the females is not significantly different from the males."
+);
+
+BEGIN_TEXT
+
+Between 1954 and 2003, swimmers have crossed Lake Ontario 43 times.  Both women and men have made the crossing.  Consider the data below on the time it takes swimmers to cross the lake.  Can you conclude that women are faster at swimming across the lake than men? Assume normality assumptions are met.
+$BR$BR
+
+Females:
+$BR$BR
+
+Mean: 1175
+$BR
+Std dev: 178
+$BR
+Sample size: 16
+$BR$BR
+
+Males:
+$BR$BR
+
+Mean: 1196
+$BR
+Std dev: 304
+$BR
+Sample size: 20
+$BR$BR
+
+The results of the independent-samples t test yielded a test statistic of -0.26 with a p-value of 0.399
+$BR
+
+\{ $mc->print_q() \} $BR
+\{ $mc->print_a() \}
+
+END_TEXT
+
+$showPartialCorrectAnswers = 0;
+
+ANS( radio_cmp( $mc->correct_ans() ) );
+
+ENDDOCUMENT();

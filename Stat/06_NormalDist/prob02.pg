@@ -1,25 +1,42 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-Context("Numeric");
+    $mu    = random(270, 275, 1);
+    $sigma = random(10, 12, 1);
 
-$price = Compute("2.86875")->with(tolType=>'absolute', tolerance=>'0.0025');
+    $x = random(285, 287, 1);
 
-TEXT(beginproblem());
-Context()->texStrings;
+    $sgna = +1; # +1 if greater than; -1 if less than.
 
-BEGIN_TEXT
+        $z1a = floor(($x - $mu) / $sigma * 100) / 100;
+        $z2a =  ceil(($x - $mu) / $sigma * 100) / 100;
 
-The retail price of 12-pack soda can be characterized as having a normal distribution with a mean of 3.00 dollars and a standard deviation of 0.25. Below what price do you find 30 percent of all 12-packs? (Carry 2 decimal digits.)
-$BR$BR
+        $a1 = uprob($z1a * $sgna);
+        $a2 = uprob($z2a * $sgna);
 
-Answer: \{ ans_rule(8) \} dollars.
+        $a  = ($a1 + $a2) / 2;
+        $ea = abs($a1 - $a2) / 2 + 0.0001;
 
-END_TEXT
+    BEGIN_TEXT
 
-Context()->normalStrings;
+        The price of mid-grade gasoline is best characterized as having a normal distribution with mean a mean of $mu cents per gallon and a standard deviation of $sigma. Find the probability that the mid-grade gasoline at a randomly selected gas station is priced higher than $x cents per gallon.
+        $BR$BR
 
-ANS($price->cmp());
+        Answer: \{ ans_rule(8) \} (Round to 4 decimal places.)
+
+    END_TEXT
+
+    ANS( num_cmp($a, tolType=>absolute, tolerance=>$ea) );
 
 ENDDOCUMENT();

@@ -1,0 +1,43 @@
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mu    = random(730, 770, 10);
+    $sigma = $mu;
+    $size  = random(40, 60, 10);
+
+    $x = $mu + 250;
+
+    $sgna = +1; # +1 if greater than; -1 if less than.
+
+        $z1a = floor(($x - $mu) / ($sigma/sqrt($size)) * 100) / 100;
+        $z2a =  ceil(($x - $mu) / ($sigma/sqrt($size)) * 100) / 100;
+
+        $a1 = uprob($z1a * $sgna);
+        $a2 = uprob($z2a * $sgna);
+
+        $a  = ($a1 + $a2) / 2;
+        $ea = abs($a1 - $a2) / 2 + 0.0001;
+
+    BEGIN_TEXT
+
+        The lifetime of a 100-watt light bulb is modeled by a certain distribution with a mean of $mu hours and a standard deviation of $sigma. According to this model, many light bulbs last relatively short and a small number of bulbs last long. Thus, the distribution is positively skewed. You have just purchased $size of those bulbs for your office building. Assume that these bulbs constitute a random sample and that they burn out independently. Compute the probability that the mean lifetime of the fifty bulbs will exceed $x hours.
+        $BR$BR
+
+        Answer: \{ ans_rule(8) \} (Round to 4 decimal places.)
+
+    END_TEXT
+
+    ANS( num_cmp($a, tolType=>absolute, tolerance=>$ea) );
+
+ENDDOCUMENT();

@@ -1,0 +1,77 @@
+
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+
+#Context("Numeric");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"Step 1: Formulate the null and alternative hypotheses.(before - after)",
+"\( H_0\!: \mu = 0 \) vs. \( H_a\!: \mu < 0 \)"
+);
+$mc1->extra(
+"\( H_0\!: \mu = 0 \) vs. \( H_a\!: \mu \neq 0 \)",
+"\( H_0\!: \mu = 0 \) vs. \( H_a\!: \mu > 0 \)"
+);
+
+$teststat = Compute("-4.710")->with(tolType=>'absolute', tolerance=>'0.066');
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"Step 3: A computer gave a p-value of 0.0012 for this test. What decision should you make?",
+"Reject the null hypothesis."
+);
+$mc2->extra(
+"Fail to reject the null hypothesis."
+);
+
+$mc3=new_multiple_choice();
+$mc3->qa(
+"Step 4: Which of the following is the most reasonable interpretation of the decision that you have made?",
+"There is sufficient evidence to conclude that average blood lactate levels increase after raquetball."
+);
+$mc3->extra(
+"There is insufficient evidence to conclude that average blood lactate levels increase after raquetball.",
+"The average blood lactate level is 0.",
+"The average blood lactate level is greater than 0."
+);
+
+#TEXT(beginproblem());
+#Context()->texStrings;
+
+BEGIN_TEXT
+
+The effect of exercise on the amount of lactic acid in the blood was examined.  Eight males were selected at random from those attending a week-long training camp.  Blood lactate levels were measured before and after playing three games of raquetball, as shown below.
+$BR$BR
+Before 13  20  17  13  13  16  15  16
+$BR
+ After  18  37  40  35  30  20  33  19
+
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+Step 2: Calculate the test statistic.
+$BR$BR
+
+\( \displaystyle t = \frac{\bar{x} - \mu_0}{8.28/\sqrt{n}} = \) \{ ans_rule(8) \} (find the ave. difference by taking Before - After. Carry 3 decimal digits.)
+$BR$BR
+
+\{ $mc2->print_q() \} $BR
+\{ $mc2->print_a() \} $BR
+
+\{ $mc3->print_q() \} $BR
+\{ $mc3->print_a() \}
+
+END_TEXT
+
+#Context()->normalStrings;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( $teststat->cmp() );
+ANS( radio_cmp( $mc2->correct_ans() ) );
+ANS( radio_cmp( $mc3->correct_ans() ) );
+
+ENDDOCUMENT();

@@ -1,0 +1,31 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$a = random(15, 20, 1);
+$b = random(20, 25, 1);
+$c = random(40, 45, 1);
+$d = 100 - $a - $b - $c;
+
+$mean = 12*$a/100 + 14*$b/100 + 16*$c/100 + 18*$d/100;
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+A pizza shop offers four different sizes of round pizza, $a% of the pizzas sold are 12", $b% are 14", $c% are 16", and $d% are 18", What is the average size of the pizza sold at this shop?
+
+$BR$BR
+
+Expected size: \{ ans_rule(8) \} (Round to 2 decimal places.)
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS(num_cmp($mean, tolType=>absolute, tolerance=>.02));
+
+ENDDOCUMENT();

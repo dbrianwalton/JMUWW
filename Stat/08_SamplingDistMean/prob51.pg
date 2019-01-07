@@ -1,0 +1,35 @@
+
+DOCUMENT();
+
+    loadMacros(
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl"
+    );
+
+    $mc1=new_multiple_choice();
+
+        $mc1-> qa( "The correct interpretation of what the standard error measures is:",
+            "The variation of all sample means from repeated random sampling."
+        );
+
+        $mc1->extra(
+            "The variation of the data from one sample of size n.",
+            "The error caused by taking a small sample."
+        );
+
+        $mc1->makeLast("None of the above.");
+
+        BEGIN_TEXT
+
+        \{ $mc1->print_q() \}
+        $BR
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+
+ENDDOCUMENT();

@@ -1,0 +1,60 @@
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mean  = random(3.81, 3.85, 0.01);
+    $stdev = random(0.71, 0.81, 0.05);
+    $size  = random(40, 45, 1);
+    $level = list_random(90, 95, 99);
+
+    $tcrit = tdistr($size - 1, (100 - $level)/200);
+    $llim  = $mean - $tcrit * $stdev / sqrt($size);
+    $ulim  = $mean + $tcrit * $stdev / sqrt($size);
+
+    BEGIN_TEXT
+
+        The time it takes for students to move from one class to the next is to be estimated. Observation of a random sample of $size students revealed that the mean time required to move between classes was $mean minutes with a standard deviation of $stdev. Construct a $level% confidence interval for the true mean time.
+        $BR$BR
+
+        (a) The limits of the confidence interval are calculated by
+        \( \displaystyle \bar{x} \pm t \frac{s}{\sqrt{n}} \) ,
+        where
+        $BR
+
+            \( \bar{x} = \) \{ ans_rule(8) \}
+            $BR$BR
+
+            \( t =       \) \{ ans_rule(8) \} (Round to 3 decimal places.)
+            $BR$BR
+
+            \( s =       \) \{ ans_rule(8) \}
+            $BR$BR
+
+            \( n =       \) \{ ans_rule(8) \}
+            $BR$BR
+
+        (b) The $level% confidence interval for the true mean length is:
+        $BR$BR
+
+            ( \{ ans_rule(8) \} , \{ ans_rule(8) \} ) (Round to 3 decimal places.)
+
+    END_TEXT
+
+    ANS( num_cmp($mean,  tolType=>absolute, tolerance=>0.001) );
+    ANS( num_cmp($tcrit, tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($stdev, tolType=>absolute, tolerance=>0.001) );
+    ANS( num_cmp($size,  tolType=>absolute, tolerance=>0.001) );
+    ANS( num_cmp($llim,  tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($ulim,  tolType=>absolute, tolerance=>0.002) );
+
+ENDDOCUMENT();

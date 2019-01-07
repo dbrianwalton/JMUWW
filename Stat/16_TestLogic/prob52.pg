@@ -1,0 +1,35 @@
+
+DOCUMENT();
+
+    loadMacros(
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl"
+    );
+
+    $mc1=new_multiple_choice();
+
+        $mc1-> qa( "In a test of hypothesis, the probability of committing a type I error is called the:",
+            "Significance Level."
+        );
+
+        $mc1->extra(
+            "Confidence Interval.",
+            "Confidence Level."
+        );
+
+        $mc1->makeLast("None of the above.");
+
+        BEGIN_TEXT
+
+        \{ $mc1->print_q() \}
+        $BR
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+
+ENDDOCUMENT();

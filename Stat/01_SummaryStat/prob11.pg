@@ -1,63 +1,64 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-#Context("Numeric");
+    $mean   = random(63.5, 65.4, 0.1);
+    $stdev  = random(11.5, 13.4, 0.1);
+    $median = random(67.2, 68.9, 0.1);
 
-$mc1=new_multiple_choice();
-$mc1->qa(
-"(a) What do the relative locations of the mean and median tell you about the skewness of the distribution of the exam scores?",
-"The distribution is skewed to the left."
-);
-$mc1->extra(
-"The distribution is skewed to the right.",
-"The distribution is symmetric.",
-);
+    $score   = random(66, 69, 1);
+    $zscore  = ($score - $mean) / $stdev;
+    $meanrev = $mean + 10;
 
-$zscore = Compute("-0.390")->with(tolType=>'absolute', tolerance=>'0.005');
-$mean   = Compute("74.8")->with(tolType=>'absolute', tolerance=>'0.01');
-$stdev  = Compute("12.3")->with(tolType=>'absolute', tolerance=>'0.01');
+    $popup1 = PopUp(["select", "skewed to the left", , "symmetric", "skewed to the right"], "skewed to the left");
 
-#TEXT(beginproblem());
-#Context()->texStrings;
+    BEGIN_TEXT
 
-BEGIN_TEXT
+        Problem 1: For an intermediate calculus course, the scores on the final exam had a mean of $mean and a standard deviation of $stdev. The median score was $median.
+        $BR$BR
 
-1. For an intermediate calculus course, the scores on the final exam had a mean of 64.8 and a standard deviation of 12.3. The median score was 68.0.
-$BR$BR
+        (a) What do the relative locations of the mean and median tell you about the skewness of the distribution of the data?
+        $BR$BR
 
-\{ $mc1->print_q() \} $BR
-\{ $mc1->print_a() \} $BR
+        The distribution is \{ $popup1->menu() \}.
+        $BR$BR
 
-(b) Compute the z-score for a student whose exam score was 60.
-$BR$BR
+        (b) Compute the standardized score (z-score) for a student whose exam score was $score.
+        $BR$BR
 
-Answer: \{ans_rule(8)\} (Carry 3 decimal digits.)
-$BR$BR
+        \{ ans_rule(8) \} (Round to 2 decimal places.)
+        $BR$BR
 
-2. Refer to Problem 1 above. The instructor of the course felt that the scores were lower than anticipated. Thus, the instructor decided to apply a "curve" by adding 10 points to every student.
-$BR$BR
+        Problem 2: Refer to Problem 1 above. The instructor of the course felt that the scores were lower than anticipated. Thus, the instructor decided to apply a "curve" by adding 10 points to every student.
+        $BR$BR
 
-(c) What would the value of the mean score be after applying the curve?
-$BR$BR
+        (a) What would the value of the mean score be after applying the curve?
+        $BR$BR
 
-Answer: \{ans_rule(8)\} (Carry 1 decimal digit.)
-$BR$BR
+        \{ ans_rule(8) \} (Round to 1 decimal place.)
+        $BR$BR
 
-(d) What would the value of the standard deviation be after applying the curve?
-$BR$BR
+        (b) What would the value of the standard deviation be after applying the curve?
+        $BR$BR
 
-Answer: \{ans_rule(8)\} (Carry 1 decimal digit.)
+        \{ ans_rule(8) \} (Round to 1 decimal place.)
 
+    END_TEXT
 
+    ANS( $popup1->cmp() );
 
-END_TEXT
-
-#Context()->normalStrings;
-
-ANS( radio_cmp( $mc1->correct_ans() ) );
-ANS( $zscore->cmp() );
-ANS( $mean->cmp() );
-ANS( $stdev->cmp() );
+    ANS( num_cmp($zscore,  tolType=>absolute, tolerance=>0.02  ) );
+    ANS( num_cmp($meanrev, tolType=>absolute, tolerance=>0.002 ) );
+    ANS( num_cmp($stdev,   tolType=>absolute, tolerance=>0.002 ) );
 
 ENDDOCUMENT();

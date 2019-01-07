@@ -1,0 +1,42 @@
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mc1=new_multiple_choice();
+
+        $mc1->qa(
+            "Which of the following is the most reasonable interpretation of this finding?",
+            "Although reading many books may have improved reading comprehension, it is also possible that students with good reading comprehension may have chosen to read many books."
+        );
+
+        $mc1->extra(
+            "The teacher's argument is correct.",
+            "There must have been a lurking variable that influenced both the number of books read and reading comprehension.",
+            "Students tend to read fewer books when the school is not in session. Therefore, the teacher's argument is unreliable."
+        );
+
+    BEGIN_TEXT
+
+        When school started in fall, an elementary school teacher discovered that there was a strong positive correlation between the number of books read over summer and reading comprehension. Based on this observation, the teacher argued that the best way to improve students' reading comprehension would be to encourage them to read many books.
+        $BR$BR
+
+        \{ $mc1->print_q() \}
+        $BR
+
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+
+ENDDOCUMENT();

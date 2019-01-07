@@ -1,0 +1,48 @@
+
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $muzero = random(60, 69, 1);
+    $level = list_random(0.01, 0.05, 0.10);
+    $clevel = (1 - $level) * 100;
+
+    $mc1=new_multiple_choice();
+
+        $mc1->qa(
+            "If the researcher constructs a $clevel% confidence interval for the true mean using the same data, which of the following will be observed?",
+            "The obtained confidence interval will contain $muzero."
+        );
+
+    $mc1->extra(
+            "The obtained confidence interval will exclude $muzero.",
+            "The confidence interval cannot be constructed without knowing the sample mean, sample standard deviation, and sample size."
+        );
+
+    $mc1->makeLast("None of the above.");
+
+    BEGIN_TEXT
+
+        A researcher conducted a test of \( H_0\!: \mu = $muzero \) vs. \( H_a\!:  \mu \neq $muzero \) at \( \alpha = $level \). The researcher failed to reject \( H_0 \).
+        $BR$BR
+
+        \{ $mc1->print_q() \}
+        $BR
+
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+
+ENDDOCUMENT();

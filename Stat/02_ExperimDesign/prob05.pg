@@ -1,31 +1,43 @@
+
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-$mc=new_multiple_choice();
-$mc->qa(
-"What principle of experimental design is violated?",
-"Randomize"
-);
-$mc->extra(
-"Control",
-"Using enough participants",
-"Sampling bias"
-);
-$mc->makeLast("No principle is violated.");
+    $mc1=new_multiple_choice();
 
-BEGIN_TEXT
+        $mc1->qa(
+            "What principle of experimental design is violated?",
+            "Randomization."
+        );
 
-In a study to determine whether a new drug is better than the old drug for solving issues with constipation, the researchers assign the new drug to the female volunteers and the old drug to the male volunteers.
-$BR$BR
+        $mc1->extra(
+            "Providing a control condition.",
+            "Using enough participants.",
+            "Prevention of attrition."
+        );
 
-\{ $mc->print_q() \} $BR
-\{ $mc->print_a() \}
+    BEGIN_TEXT
 
-END_TEXT
+        In a study to determine whether a new drug is better than the old drug for solving issues with constipation, the researchers assign the new drug to the female volunteers and the old drug to the male volunteers.
+        $BR$BR
 
-$showPartialCorrectAnswers = 0;
+        \{ $mc1->print_q() \}
+        $BR
 
-ANS( radio_cmp( $mc->correct_ans() ) );
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
 
 ENDDOCUMENT();

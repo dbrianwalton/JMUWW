@@ -1,37 +1,44 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-Context("Numeric");
+    $int   = random(-86, -84, 1);
+    $slope = random(0.92, 0.96, 0.01);
 
-$pred  = Compute("32.5" )->with(tolType=>'absolute', tolerance=>'0.001' );
-$resid = Compute( "1.8" )->with(tolType=>'absolute', tolerance=>'0.001' );
+    $height = random(122, 128, 1);
+    $weight = random(33.0, 35.0, 0.1);
+    $pred   = $int + $slope*$height;
+    $resid  = $weight - $pred;
 
-TEXT(beginproblem());
+    BEGIN_TEXT
 
-Context()->texStrings;
+        A third-grade school teacher collected data on height (in centimeters) and weight (in kilograms) from her 30 students. She conducted a regression analysis using her data. The obtained regression equation was \( \hat{y} = $int + $slope x \), where \(x\) was the height and \(y\) was the weight.
+        $BR$BR
 
-BEGIN_TEXT
+        (a) One student in her class is $height centimeters tall. Predict the weight of this student using the regression equation.
+        $BR$BR
 
-A 3rd-grade school teacher collected data on height (in centimeters) and weight (in kilograms) from her 30 students. She conducted a regression analysis using her data. The obtained regression equation was \( \hat{y} = -85 + 0.94x \), where \(x\) was the height and \(y\) was the weight.
-$BR$BR
+        Answer: \{ ans_rule(8) \} (Round to 2 decimal places.)
+        $BR$BR
 
-(a) One student in her class is 125 centimeters tall. Predict the weight of this student using the regression equation.
-$BR$BR
+        (b) The aforementioned student's actual weight is $weight kilograms. Calculate the residual for this student.
+        $BR$BR
 
-Answer: \{ans_rule(8)\} (Carry 1 decimal digit.)
-$BR$BR
+        Answer: \{ ans_rule(8) \} (Round to 2 decimal places.)
 
-(b) The aforementioned student's actual weight is 34.3 kilograms. Calculate the residual (prediction error) for this student.
-$BR$BR
+    END_TEXT
 
-Answer: \{ans_rule(8)\} (Carry 1 decimal digit.)
-
-END_TEXT
-
-Context()->normalStrings;
-
-ANS( $pred->cmp() );
-ANS( $resid->cmp() );
+    ANS( num_cmp($pred,  tolType=>absolute, tolerance=>0.02) );
+    ANS( num_cmp($resid, tolType=>absolute, tolerance=>0.02) );
 
 ENDDOCUMENT();

@@ -1,0 +1,62 @@
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $n = list_random(13, 14);
+    $p = list_random(0.60, 0.70, 0.80);
+    $pct = $p * 100;
+    $pctq = 100 - $pct;
+
+    $a = $n * $p;
+
+    $b = 0;
+    for ($x = 10; $x <= 10; $x++)
+    {
+     	$b = $b + fact($n)/(fact($x)*fact($n - $x)) * $p**$x * (1 - $p)**($n - $x);
+    }
+
+    $c = 0;
+    for ($x = $n; $x <= $n; $x++)
+    {
+     	$c = $c + fact($n)/(fact($x)*fact($n - $x)) * $p**$x * (1 - $p)**($n - $x);
+    }
+
+    BEGIN_TEXT
+
+        Rats are trained to turn right at a T-intersection of a maze with probability $p. A total of $n rats will be run through a maze. Assume that rats behave independently.
+        $BR$BR
+
+        (a) How many of the $n rates are expected to turn right at the first T-intersection?
+        $BR$BR
+
+        Answer: \{ ans_rule(8) \} (Round to 2 decimal places.)
+        $BR$BR
+
+        (b) What is the probability that exactly 10 rats will turn right at the first T-intersection?
+        $BR$BR
+
+        Answer: \{ ans_rule(8) \} (Round to 4 decimal places.)
+        $BR$BR
+
+        (c) What is the probability that all $n rats will turn right at the first T-intersection?
+        $BR$BR
+
+        Answer: \{ ans_rule(8) \} (Round to 4 decimal places.)
+
+    END_TEXT
+
+    ANS( num_cmp($a, tolType=>absolute, tolerance=>0.02)   );
+    ANS( num_cmp($b, tolType=>absolute, tolerance=>0.0002) );
+    ANS( num_cmp($c, tolType=>absolute, tolerance=>0.0002) );
+
+ENDDOCUMENT();

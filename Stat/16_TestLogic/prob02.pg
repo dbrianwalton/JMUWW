@@ -1,0 +1,61 @@
+
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mc1=new_multiple_choice();
+
+        $mc1->qa(
+            "(a) If the same test, using the same data, were conducted at \(\alpha = 0.01\), what decision would the researcher make?",
+            "Insufficient information to determine."
+        );
+
+        $mc1->extra(
+            "The researcher would reject \(H_0\).",
+            "The researcher would fail to reject \(H_0\)."
+        );
+
+    $mc2=new_multiple_choice();
+
+        $mc2->qa(
+            "(b) If the same test, using the same data, were conducted at \(\alpha = 0.10\), what decision would the researcher make?",
+            "The researcher would reject \(H_0\)."
+        );
+
+        $mc2->extra(
+            "The researcher would fail to reject \(H_0\).",
+            "Insufficient information to determine."
+        );
+
+    BEGIN_TEXT
+
+        A researcher conducted a test of \( H_0\!: \mu = 220 \) vs. \( H_a\!: \mu \neq 220 \) at \( \alpha = 0.05 \). The researcher rejected \(H_0\).
+        $BR$BR
+
+        \{ $mc1->print_q() \}
+        $BR
+
+        \{ $mc1->print_a() \}
+        $BR
+
+        \{ $mc2->print_q() \}
+        $BR
+
+        \{ $mc2->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+    ANS( radio_cmp($mc2->correct_ans()) );
+
+ENDDOCUMENT();

@@ -1,45 +1,41 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-Context("Numeric");
+    $f = random(50, 60, 5);
+    $m = 100 - $f;
+    $size = list_random(100, 200, 300);
 
-$a = Compute( "11.20")->with(tolType=>'absolute', tolerance=>'0.01'  );
-$b = Compute("0.1720")->with(tolType=>'absolute', tolerance=>'0.0005');
-$c = Compute("0.0440")->with(tolType=>'absolute', tolerance=>'0.0005');
+    $a = $size * $f / 100;
+    $sigma = sqrt($size * $f/100 * $m/100);
 
-TEXT(beginproblem());
+    $b = $a - 2*$sigma;
+    $c = $a + 2*$sigma;
 
-Context()->texStrings;
+    BEGIN_TEXT
 
-BEGIN_TEXT
+        At a college in Virginia, $f percent of all students are women and $m percent are men. Suppose that you repeatedly take random samples of $size students from this college and count the numbers of women in the samples. Fill in the blanks below. Round your answers to 2 decimal places.
+        $BR$BR
 
-Rats are trained to turn right at a T-intersection of a maze with probability 0.80. Fourteen rats will be run through a maze. Assume that rats behave independently.
-$BR$BR
+        (a) You would expect \{ ans_rule(8) \} students in each sample to be women.
+        $BR$BR
 
-(a) How many of the 14 rates are expected to turn right at the first T-intersection?
-$BR$BR
+        (b) According to the Empirical Rule (also called the 68-95-99.7 Rule), approximately 95 percent of the time the number of women in the sample will be between \{ ans_rule(8) \} and \{ ans_rule(8) \}.
 
-\( \mu = np = \) \{ ans_rule(8) \} (Carry 2 decimal digits.)
-$BR$BR
+    END_TEXT
 
-(b) What is the probability that exactly 10 rats will turn right at the first T-intersection?
-$BR$BR
-
-\( P(X = 10) = P(X \leq 10) - P(X \leq 9) = \) \{ ans_rule(8) \} (Carry 4 decimal digits.)
-$BR$BR
-
-(c) What is the probability that all 14 rats will turn right at the first T-intersection?
-$BR$BR
-
-\( P(X = 14) = 1 - P(X \leq 13) = \) \{ ans_rule(8) \} (Carry 4 decimal digits.)
-
-END_TEXT
-
-Context()->normalStrings;
-
-ANS( $a->cmp() );
-ANS( $b->cmp() );
-ANS( $c->cmp() );
+    ANS( num_cmp($a, tolType=>absolute, tolerance=>0.02) );
+    ANS( num_cmp($b, tolType=>absolute, tolerance=>0.02) );
+    ANS( num_cmp($c, tolType=>absolute, tolerance=>0.02) );
 
 ENDDOCUMENT();

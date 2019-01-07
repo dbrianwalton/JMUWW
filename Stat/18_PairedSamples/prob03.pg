@@ -1,0 +1,62 @@
+
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mc1=new_multiple_choice();
+
+        $mc1->qa(
+            "Which of the following is the most reasonable interpretation of the results of the test? Use the significance level of 0.10.",
+            "The mean scores for the two forms appear to be significantly different."
+        );
+
+        $mc1->extra(
+            "The mean score for Form A appears to be significantly higher than that for Form B.",
+            "The mean scores for the two forms do not appear to be significantly different."
+        );
+
+        $mc1->makeLast("None of the above.");
+
+    BEGIN_TEXT
+
+        A college instructor wrote two alternate forms of a chemistry exam (Form A & Form B). The instructor gave both forms of the exam to a group of 30 students (assume that these students constitute a random sample). The order in which the two forms of the exam were given was counter-balanced. The instructor expected the mean scores for the two forms to not differ significantly. The following summary statistics were obtained.
+        $BR$BR
+
+        Form A:
+        $BR$BR
+
+        Mean: 74.98
+        $BR
+        Std dev: 60.2
+        $BR$BR
+
+        Form B:
+        $BR$BR
+
+        Mean: 78.24
+        $BR
+        Std dev: 5.06
+        $BR$BR
+
+        A paired-samples $BITALIC t $EITALIC test produced a test statistic of 2.393 and a p-value of 0.023.
+
+        \{ $mc1->print_q() \}
+        $BR
+
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+
+ENDDOCUMENT();

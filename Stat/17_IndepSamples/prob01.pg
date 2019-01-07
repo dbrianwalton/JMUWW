@@ -1,0 +1,43 @@
+
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mc1=new_multiple_choice();
+
+        $mc1->qa(
+            "To determine whether the mean taste-quality ratings differ, which statistical test may be used?",
+            "Independent-samples $BITALIC t $EITALIC test."
+        );
+
+        $mc1->extra(
+            "Paired-samples $BITALIC t $EITALIC test.",
+            "One-sample $BITALIC t $EITALIC test.",
+            "Chi-square test of independence."
+        );
+
+    BEGIN_TEXT
+
+        A study was conducted to compare the taste qualities of Coke and Pepsi. Seventy-five volunteering participants were randomly divided into two groups. Coke was given to one group of participants, and Pepsi was given to the other. After consuming the soda, each participant rated the taste quality using a scale from 1 (not tasty at all) to 7 (very tasty).
+        $BR$BR
+
+        \{ $mc1->print_q() \}
+        $BR
+
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+
+ENDDOCUMENT();

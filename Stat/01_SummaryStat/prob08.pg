@@ -1,60 +1,100 @@
+
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-$mc1=new_multiple_choice();
-$mc1->qa(
-"1. Would the median income be higher or lower than ${DOLLAR}42,000?",
-"Median income is lower"
-);
-$mc1->extra(
-"Median income is higher.",
-"Mean and median incomes are the same."
-);
-$mc1->makeLast("Insufficient information to determine.");
+    $size  = random(490, 510, 10);
+    $mean  = random(41000, 43000, 300);
+    $stdev = random(6000, 8000, 400);
+    $ic    = random(34000, 36000, 500);
 
-$mc2=new_multiple_choice();
-$mc2->qa(
-"2. What is the z-score for an income value of ${DOLLAR}35,000?",
-"\(-1.00\)."
-);
-$mc2->extra(
-"\(1.00\)",
-"\(2.00\)"
-);
-$mc2->makeLast("z-score cannot be computed because the distribution is skewed.");
+    $zs  = ($ic - $mean) / $stdev;
+    $zs1 = ($ic - $mean) / $stdev * -1;
+    $zs2 = ($ic - $mean) / $size;
 
-$mc3=new_multiple_choice();
-$mc3->qa(
-"3. Suppose that you express all values in the data in thousand dollars. What would the resulting mean income be?",
-"\(42.0\)"
-);
-$mc3->extra(
-"\(4.20\)",
-"\(420.0\)"
-);
-$mc3->makeLast("None of the above.");
+    $mean1 = $mean / 1000;
+    $mean2 = $mean / 100;
+    $mean3 = $mean / 10000;
 
-BEGIN_TEXT
+    $mc1=new_multiple_choice();
 
-Data were collected on income (in dollars) for a random sample of 500 residents in a city. The mean income was ${DOLLAR}42,000 with a standard deviation of ${DOLLAR}7,000. The data were positively skewed.
-$BR$BR
+        $mc1->qa(
+            "(a) Would the median income be higher or lower than $mean dollars?",
+            "The median income is lower"
+        );
 
-\{ $mc1->print_q() \} $BR
-\{ $mc1->print_a() \} $BR
+        $mc1->extra(
+            "The median income is higher.",
+            "The mean and median incomes are the same."
+        );
 
-\{ $mc2->print_q() \} $BR
-\{ $mc2->print_a() \} $BR
+        $mc1->makeLast("Insufficient information to determine.");
 
-\{ $mc3->print_q() \} $BR
-\{ $mc3->print_a() \}
+    $mc2=new_multiple_choice();
 
-END_TEXT
+        $mc2->qa(
+            "(b) What is the standardized score (z-score) for an income value of $ic?",
+            "$zs"
+        );
 
-$showPartialCorrectAnswers = 0;
+        $mc2->extra(
+            "$zs1",
+            "$zs2"
+        );
 
-ANS( radio_cmp( $mc1->correct_ans() ) );
-ANS( radio_cmp( $mc2->correct_ans() ) );
-ANS( radio_cmp( $mc3->correct_ans() ) );
+        $mc2->makeLast("Standardized score cannot be computed because the distribution is skewed.");
+
+    $mc3=new_multiple_choice();
+
+        $mc3->qa(
+            "(c) Suppose that you express all values in the data in thousand dollars. What would the resulting mean income be?",
+            "$mean1"
+        );
+
+        $mc3->extra(
+            "$mean2",
+            "$mean3"
+        );
+
+        $mc3->makeLast("None of the above.");
+
+    BEGIN_TEXT
+
+        Data were collected on income (in dollars) for a random sample of $size residents in a city. The mean income was $mean with a standard deviation of $stdev. The data were positively skewed.
+
+        $BR$BR
+
+        \{ $mc1->print_q() \}
+        $BR
+
+        \{ $mc1->print_a() \}
+        $BR
+
+        \{ $mc2->print_q() \}
+        $BR
+
+        \{ $mc2->print_a() \}
+        $BR
+
+        \{ $mc3->print_q() \}
+        $BR
+
+        \{ $mc3->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+    ANS( radio_cmp($mc2->correct_ans()) );
+    ANS( radio_cmp($mc3->correct_ans()) );
 
 ENDDOCUMENT();

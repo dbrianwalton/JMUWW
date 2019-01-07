@@ -1,0 +1,36 @@
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mean  = random(14.21, 14.27, 0.01);
+    $stdev = random(0.44, 0.46, 0.01);
+    $size  = random(30, 35, 1);
+    $level = list_random(90, 95, 99);
+
+    $tcrit = tdistr($size - 1, (100 - $level)/200);
+    $llim  = $mean - $tcrit * $stdev / sqrt($size);
+    $ulim  = $mean + $tcrit * $stdev / sqrt($size);
+
+    BEGIN_TEXT
+
+        Okura is packed by a local farmer and shipped to a nearby grocer. The label on the package says "Fresh Okura 14 oz". Of course, this "14 oz" is an approximate value, and no package contains exactly 14 ounces of okura. You have collected data to estimate the true mean amount of okura in the package. The data, based on $size observations, revealed a mean of $mean ounces with a standard deviation of $stdev. Construct a $level% confidence interval.
+        $BR$BR
+
+        Answer: ( \{ ans_rule(8) \} , \{ ans_rule(8) \} ) (Round to 3 decimal places.)
+
+    END_TEXT
+
+    ANS( num_cmp($llim,  tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($ulim,  tolType=>absolute, tolerance=>0.002) );
+
+ENDDOCUMENT();

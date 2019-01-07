@@ -1,53 +1,96 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-#Context("Numeric");
+    $x1 = random(7, 9, 1);
+    $x2 = random(5, 7, 1);
+    $x3 = random(6, 7, 1);
+    $x4 = random(3, 5, 1);
+    $x5 = random(9, 9, 1);
+    $x6 = random(6, 8, 1);
+    $x7 = random(8, 9, 1);
 
-$mc1=new_multiple_choice();
-$mc1->qa(
-"(b) Which of the following is a reasonable interpretation of the correlation coefficient calculated in (a) above?",
-"The correlation between the two sets of quiz scores is positive and moderately strong."
-);
-$mc1->extra(
-"Students who had done well on the first quiz have always done well on the second quiz.",
-"About 80% of the variability in the data is explained by the correlation between the two sets of quiz scores.",
-);
-$mc1->makeLast("All of the above.");
+    $y1 = random(6, 8, 1);
+    $y2 = random(5, 7, 1);
+    $y3 = random(7, 8, 1);
+    $y4 = random(4, 6, 1);
+    $y5 = random(8, 9, 1);
+    $y6 = random(7, 8, 1);
+    $y7 = random(8, 8, 1);
 
-$corr = Compute("0.799")->with(tolType=>'absolute', tolerance=>'0.005');
+    $size = 7;
 
-#TEXT(beginproblem());
-#Context()->texStrings;
+    $sumx = $x1 + $x2 + $x3 + $x4 + $x5 + $x6 + $x7;
+    $sumy = $y1 + $y2 + $y3 + $y4 + $y5 + $y6 + $y7;
 
-BEGIN_TEXT
+    $sumxsq = $x1**2 + $x2**2 + $x3**2 + $x4**2 + $x5**2 + $x6**2 + $x7**2;
+    $sumysq = $y1**2 + $y2**2 + $y3**2 + $y4**2 + $y5**2 + $y6**2 + $y7**2;
+    $sumxy  = $x1*$y1 + $x2*$y2 + $x3*$y3 + $x4*$y4 + $x5*$y5 + $x6*$y6 + $x7*$y7;
 
-Presented below are data on two quiz scores for a sample of seven students.
-$BR$BR
+    $ssx  = $sumxsq - $sumx**2/$size;
+    $ssy  = $sumysq - $sumy**2/$size;
+    $ssxy = $sumxy  - $sumx*$sumy/$size;
 
-\( \displaystyle
-\begin{tabular}{l|ccccccc}
-Quiz 1 & \ 8 & 6 & 6 & 4 & 10 & 7 & 9\\
-\hline
-Quiz 2 & \ 7 & 6 & 7 & 5 &  7 & 7 & 8\\
-\end{tabular}
-\)
-$BR$BR
+    $corr  = $ssxy/(sqrt($ssx)*sqrt($ssy));
+    $slope = $ssxy/$ssx;
+    $int   = $sumy/$size - $slope*($sumx/$size);
 
-(a) Use your calculator's built-in function to compute the Pearson correlation coefficient between the two sets of quiz scores.
-$BR$BR
+    $score = random(80, 85, 1);
+    $pred  = $int + $slope*$score;
 
-The correlation coefficient is: \{ans_rule(8)\} (Carry 3 decimal digits.)
-$BR$BR
+    $corrfake = round($corr*100);
 
-\{ $mc1->print_q() \} $BR
-\{ $mc1->print_a() \}
+    $mc1=new_multiple_choice();
 
-END_TEXT
+        $mc1->qa(
+            "(b) Which of the following is a reasonable interpretation of the correlation coefficient calculated in (a) above?",
+            "The correlation between the two sets of quiz scores is positive."
+        );
 
-#Context()->normalStrings;
+        $mc1->extra(
+            "Students who had done well on the first quiz have always done well on the second quiz.",
+            "About $corrfake% of the variability in the data is explained by the linear association between the two sets of quiz scores.",
+        );
 
-ANS( $corr->cmp() );
-ANS( radio_cmp( $mc1->correct_ans() ) );
+        $mc1->makeLast("All of the above.");
+
+    BEGIN_TEXT
+
+        Presented below are scores on two quizzes for a sample of $size students.
+        $BR$BR
+
+            \{begintable(8)\}
+            \{row("Student", "#1" , "#2" , "#3" , "#4" , "#5" , "#6" , "#7 ")\}
+            \{row("Quiz 1" , "$x1", "$x2", "$x3", "$x4", "$x5", "$x6", "$x7")\}
+            \{row("Quiz 2" , "$y1", "$y2", "$y3", "$y4", "$y5", "$y6", "$y7")\}
+            \{endtable()\}
+            $BR
+
+        (a) Calculate the Pearson correlation coefficient between the two sets of quiz scores.
+        $BR$BR
+
+            Pearson correlation coefficient is: \{ ans_rule(8) \} (Round to 3 decimal places.)
+            $BR$BR
+
+        \{ $mc1->print_q() \}
+        $BR
+
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( num_cmp($corr,  tolType=>absolute, tolerance=>0.003) );
+
+    ANS( radio_cmp($mc1->correct_ans()) );
 
 ENDDOCUMENT();

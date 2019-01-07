@@ -1,0 +1,76 @@
+
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+
+#Context("Numeric");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"Step 1: Formulate the null and alternative hypotheses. (Before - After)",
+"\( H_0\!: \mu = 0 \) vs. \( H_a\!: \mu < 0 \)"
+);
+$mc1->extra(
+"\( H_0\!: \mu = 0 \) vs. \( H_a\!: \mu \neq 0 \)",
+"\( H_0\!: \mu = 0 \) vs. \( H_a\!: \mu > 0 \)"
+);
+
+$teststat = Compute("-2.90315")->with(tolType=>'absolute', tolerance=>'0.00085');
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"Step 3: A computer gave a p-value of 0.0114 for this test. What decision should you make at a 1% significance level?",
+"Fail to Reject the null hypothesis."
+);
+$mc2->extra(
+"Reject the null hypothesis."
+);
+
+$mc3=new_multiple_choice();
+$mc3->qa(
+"Step 4: Which of the following is the most reasonable interpretation of the decision that you have made?",
+"There is insufficient evidence to conclude that the course increases the average writing speed of secretaries."
+);
+$mc3->extra(
+"There is sufficient evidence to conclude that the course increases the average writing speed of secretaries.",
+"The average writing speed is 0.",
+"The average writing speed is greater than 0."
+);
+
+#TEXT(beginproblem());
+#Context()->texStrings;
+
+BEGIN_TEXT
+A private agency claims that the crash course it offers significantly increases the writing speed of secretaries.  The following gives the scores of eight secretaries before and after they attended this course.
+$BR
+Before 81  75  89  91  65  70  90  64
+$BR
+ After   97  72  93  110  78  69  115  72
+
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+Step 2: Calculate the test statistic.
+$BR$BR
+
+\( \displaystyle t = \frac{\bar{x} - \mu_0}{9.86/\sqrt{n}} = \) \{ ans_rule(8) \} (Find the ave. difference by taking Before - After. Carry 3 decimal digits.)
+$BR$BR
+
+\{ $mc2->print_q() \} $BR
+\{ $mc2->print_a() \} $BR
+
+\{ $mc3->print_q() \} $BR
+\{ $mc3->print_a() \}
+
+END_TEXT
+
+#Context()->normalStrings;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( $teststat->cmp() );
+ANS( radio_cmp( $mc2->correct_ans() ) );
+ANS( radio_cmp( $mc3->correct_ans() ) );
+
+ENDDOCUMENT();

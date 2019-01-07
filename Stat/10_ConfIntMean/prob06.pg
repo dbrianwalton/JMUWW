@@ -1,0 +1,42 @@
+
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mc1=new_multiple_choice();
+
+        $mc1->qa(
+            "The width of a confidence interval for the population mean is a function of all of the following except:",
+            "the value of the sample mean."
+        );
+
+        $mc1->extra(
+            "the value of the sample standard deviation.",
+            "the confidence level.",
+            "the sample size."
+        );
+
+        $mc1->makeLast("All of the above affect the width of a confidence interval.");
+
+    BEGIN_TEXT
+
+        \{ $mc1->print_q() \}
+        $BR
+
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+
+ENDDOCUMENT();

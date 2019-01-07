@@ -1,0 +1,35 @@
+
+DOCUMENT();
+
+    loadMacros(
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl"
+    );
+
+    $mc1=new_multiple_choice();
+
+        $mc1-> qa( "According to a recent survey of JMU students, 34% said that they were going to attend at least one event at TDU.  Assume that this percentage holds true for the population of all JMU students.  Let's assume samples of 50 are to be taken.  What is the mean and standard deviation of the sampling distribution of the sample proportion?",
+        "mean = 0.34, std. dev. = 0.067."
+        );
+
+        $mc1->extra(
+            "mean = 0.34, std. dev. = 0.0045",
+            "mean = 50, std. dev. = 0.0045"
+        );
+
+        $mc1->makeLast("None of the above.");
+
+        BEGIN_TEXT
+
+        \{ $mc1->print_q() \}
+        $BR
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+
+ENDDOCUMENT();

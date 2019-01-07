@@ -1,0 +1,46 @@
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mu    = random(3.06, 3.09, 0.01);
+    $sigma = random(0.29, 0.31, 0.01);
+    $size  = 40;
+
+    $x = 120 / $size;
+
+    $sgna = +1; # +1 if greater than; -1 if less than.
+
+        $z1a = floor(($x - $mu) / ($sigma/sqrt($size)) * 100) / 100;
+        $z2a =  ceil(($x - $mu) / ($sigma/sqrt($size)) * 100) / 100;
+
+        $a1 = uprob($z1a * $sgna);
+        $a2 = uprob($z2a * $sgna);
+
+        $a  = ($a1 + $a2) / 2;
+        $ea = abs($a1 - $a2) / 2 + 0.0001;
+
+    BEGIN_TEXT
+
+        You have a large collection of songs on your iPod. The mean playtime for all songs is $mu minutes with a standard deviation of $sigma. You will randomly select $size songs and play them. What is the probability that the total playtime will exceed 2 hours?
+        $BR$BR
+
+        Hint: The total playtime exceeds 2 hours (120 minutes) if and only if the mean playtime exceeds 120/$size = $x minutes.
+        $BR$BR
+
+        Answer: \{ ans_rule(8) \} (Round to 4 decimal places.)
+
+    END_TEXT
+
+    ANS( num_cmp($a, tolType=>absolute, tolerance=>$ea) );
+
+ENDDOCUMENT();

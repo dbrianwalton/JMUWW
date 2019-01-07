@@ -1,38 +1,90 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-Context("Numeric");
+    $x1 = random(80, 84, 1);
+    $x2 = random(88, 92, 1);
+    $x3 = random(74, 77, 1);
+    $x4 = random(91, 94, 1);
+    $x5 = random(92, 95, 1);
+    $x6 = random(80, 83, 1);
+    $x7 = random(80, 84, 1);
+    $x8 = random(94, 96, 1);
+    $x9 = random(79, 84, 1);
 
-$corr = Compute("0.905" )->with(tolType=>'absolute', tolerance=>'0.005' );
+    $y1 = random(122, 126, 1);
+    $y2 = random(135, 140, 1);
+    $y3 = random(116, 121, 1);
+    $y4 = random(129, 132, 1);
+    $y5 = random(145, 149, 1);
+    $y6 = random(122, 128, 1);
+    $y7 = random(117, 120, 1);
+    $y8 = random(144, 151, 1);
+    $y9 = random(121, 130, 1);
 
-TEXT(beginproblem());
+    $size = 9;
 
-Context()->texStrings;
+    $sumx = $x1 + $x2 + $x3 + $x4 + $x5 + $x6 + $x7 + $x8 + $x9;
+    $sumy = $y1 + $y2 + $y3 + $y4 + $y5 + $y6 + $y7 + $y8 + $y9;
 
-BEGIN_TEXT
+    $sumxsq = $x1**2 + $x2**2 + $x3**2 + $x4**2 + $x5**2 + $x6**2 + $x7**2 + $x8**2 + $x9**2;
+    $sumysq = $y1**2 + $y2**2 + $y3**2 + $y4**2 + $y5**2 + $y6**2 + $y7**2 + $y8**2 + $y9**2;
+    $sumxy  = $x1*$y1 + $x2*$y2 + $x3*$y3 + $x4*$y4 + $x5*$y5 + $x6*$y6 + $x7*$y7 + $x8*$y8 + $x9*$y9;
 
-A nurse measured systolic and diastolic blood pressures (in mmHg) for a sample of six adults.
-$BR$BR
+    $ssx  = $sumxsq - $sumx**2/$size;
+    $ssy  = $sumysq - $sumy**2/$size;
+    $ssxy = $sumxy  - $sumx*$sumy/$size;
 
-\( \displaystyle
-\begin{tabular}{l|r|r|r|r|r|r}
-Systolic  & 124 & 138 & 119 & 130 & 146 & 125\\
-\hline
-Diastolic &  82 &  90 &  76 &  92 &  95 &  82\\
-\end{tabular}
-\)
-$BR$BR
+    $corr  = $ssxy/(sqrt($ssx)*sqrt($ssy));
+    $slope = $ssxy/$ssx;
+    $int   = $sumy/$size - $slope*($sumx/$size);
 
-Use your calculator's built-in function to compute the Pearson correlation coefficient between systolic and diastolic pressures.
-$BR$BR
+    $score = random(80, 85, 1);
+    $pred  = $int + $slope*$score;
 
-The correlation coefficient is: \{ans_rule(8)\} (Carry 3 decimal digits.)
+    BEGIN_TEXT
 
-END_TEXT
+        A nurse measured the systolic and diastolic blood pressures (in mmHg) for $size adult patients.
+        $BR$BR
 
-Context()->normalStrings;
+            \{begintable(10)\}
+            \{row("Systolic" , "$y1", "$y2", "$y3", "$y4", "$y5", "$y6", "$y7", "$y8", "$y9")\}
+            \{row("Diastolic", "$x1", "$x2", "$x3", "$x4", "$x5", "$x6", "$x7", "$x8", "$x9")\}
+            \{endtable()\}
+            $BR
 
-ANS( $corr->cmp() );
+        (a) Calculate the least-squares regression equation for predicting the systolic pressure of an adult patient from his or her diastolic pressure.
+        $BR$BR
+
+            \( \hat{y} = \) \{ ans_rule(8) \} \( + \) \{ ans_rule(8) \} \( x \) (Round to 3 decimal places.)
+            $BR$BR
+
+        (b) Predict the systolic pressure of an adult patient whose diastolic pressure is $score mmHg.
+        $BR$BR
+
+            \( \hat{y} = \) \{ ans_rule(8) \} (Round to 2 decimal places.)
+            $BR$BR
+
+        (c) Calculate the Pearson correlation coefficient between the systolic and diastolic pressures.
+        $BR$BR
+
+            \( r = \) \{ ans_rule(8) \} (Round to 3 decimal places.)
+
+    END_TEXT
+
+    ANS( num_cmp($int,   tolType=>absolute, tolerance=>0.003) );
+    ANS( num_cmp($slope, tolType=>absolute, tolerance=>0.003) );
+    ANS( num_cmp($pred,  tolType=>absolute, tolerance=>0.03 ) );
+    ANS( num_cmp($corr,  tolType=>absolute, tolerance=>0.003) );
 
 ENDDOCUMENT();

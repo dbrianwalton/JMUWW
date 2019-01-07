@@ -1,48 +1,64 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-Context("Numeric");
+    $mu    = random(68.0, 69.5, 0.5);
+    $sigma = random(3.2, 3.8, 0.1);
 
-$prob   = Compute("0.0436")->with(tolType=>'absolute', tolerance=>'0.0001');
-$octane = Compute("89.12" )->with(tolType=>'absolute', tolerance=>'0.001' );
+    $x = random(72.0, 74.0, 0.1);
+    $p = random(55, 65, 5);
 
-TEXT(beginproblem());
-Context()->texStrings;
+    $sgna = -1; # +1 if greater than; -1 if less than.
 
-BEGIN_TEXT
+        $z1a = floor(($x - $mu) / $sigma * 100) / 100;
+        $z2a =  ceil(($x - $mu) / $sigma * 100) / 100;
 
-The octane level of a mid-grade gasoline has a normal distribution with a mean of 89.21 and a standard deviation of 0.17. Suppose that many samples of this gasoline will be taken and their octane levels measured.
-$BR$BR$BR
+        $a1 = uprob($z1a * $sgna);
+        $a2 = uprob($z2a * $sgna);
 
-Question #1: What proportion of the the samples will have octane levels higher than 89.50?
-$BR$BR
+        $a  = ($a1 + $a2) / 2;
+        $ea = abs($a1 - $a2) / 2 + 0.0001;
 
-Solution: Let \(X\) denote the octane level, which is normal with \(\mu = 89.21\) and \(\sigma = 0.17\). We need to find the probability that \(X\) is greater than 89.50.
-$BR$BR
+    $sgnb = +1; # +1 if above; -1 if below.
 
-\( \displaystyle P(X > 89.50) = P\Big( \frac{X - \mu}{\sigma} > \frac{89.50 - 89.21}{0.17} \Big) \)
-$BR$BR
+        $z1b = floor(udistr($p/100) * 100) / 100;
+        $z2b =  ceil(udistr($p/100) * 100) / 100;
 
-\( \approx P(Z > 1.71) = 1 - P(Z \leq 1.71) = 1 - 0.9564 = \) \{ans_rule(8)\} (Carry 4 decimal digits.)
-$BR$BR$BR
+        $b1 = $mu + $sgnb * $z1b * $sigma;
+        $b2 = $mu + $sgnb * $z2b * $sigma;
 
-Question #2: Above what value of octane level will you find 69.5% of the samples?
-$BR$BR
+        $b  = ($b1 + $b2) / 2;
+        $eb = abs($b1 - $b2) / 2 + 0.01;
 
-Solution: First, we need to find a \(z\)-score such that 30.5% of the area under the normal curve is found below that value. In other words, we are looking at a \(z\)-score that gives cumulative probability 0.3050. This number is \(z = -0.51\).
-$BR$BR
+    BEGIN_TEXT
 
-Next, we need to convert this \(z\)-score into \(x\). Recall \( \displaystyle z = \frac{x - \mu}{\sigma} \). Solving this for \(x\) gives \( x = \mu + z \sigma \).
-$BR$BR
+        The height of a person can be characterized as having a normal distribution with a mean of $mu inches and a standard deviation of $sigma.
+        $BR$BR
 
-Therefore, the final answer is \( x = 89.21 + (-0.51)(0.17) = \) \{ans_rule(8)\} (Carry 2 decimal digits.)
+        (a) What proportion of the people are shorter than $x inches?
+        $BR$BR
 
-END_TEXT
+        Answer: \{ ans_rule(8) \} (Round to 4 decimal places.)
+        $BR$BR
 
-Context()->normalStrings;
+        (b) Above what height value do you find $p percent of the people?
+        $BR$BR
 
-ANS( $prob->cmp() );
-ANS( $octane->cmp() );
+        Answer: \{ ans_rule(8) \} (Round to 2 decimal places.)
+
+    END_TEXT
+
+    ANS( num_cmp($a, tolType=>absolute, tolerance=>$ea) );
+    ANS( num_cmp($b, tolType=>absolute, tolerance=>$eb) );
 
 ENDDOCUMENT();

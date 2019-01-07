@@ -1,0 +1,76 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+
+#Context("Numeric");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"Step 1: Formulate the null and alternative hypotheses. (Before - After)",
+"\( H_0\!: \mu = 0 \) vs. \( H_a\!: \mu < 0 \)"
+);
+$mc1->extra(
+"\( H_0\!: \mu = 0 \) vs. \( H_a\!: \mu \neq 0 \)",
+"\( H_0\!: \mu = 0 \) vs. \( H_a\!: \mu > 0 \)"
+);
+
+$teststat = Compute("-3.4625")->with(tolType=>'absolute', tolerance=>'0.005');
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"Step 3: A computer gave a p-value of 0.009 for this test. What decision should you make if the type I error rate is 5%?",
+"Reject the null hypothesis."
+);
+$mc2->extra(
+"Fail to reject the null hypothesis."
+);
+
+$mc3=new_multiple_choice();
+$mc3->qa(
+"Step 4: Which of the following is the most reasonable interpretation of the decision that you have made?",
+"There is sufficient evidence to conclude that the treatment increases average weight of anorexic women."
+);
+$mc3->extra(
+"There is insufficient evidence to conclude that the treatment increases average weight of anorexic women.",
+"The average weight is more than 0.",
+"The average weight is equal to 0."
+);
+
+#TEXT(beginproblem());
+#Context()->texStrings;
+
+BEGIN_TEXT
+The effect of a treatment for anorexia nervosa is analyzed.  To do this, the weights of anorexic young women are given before and after treatment.
+$BR$BR
+
+            \{begintable(6)\}
+            \{row("Before", 83, 86, 82,   86, 79, 87)\}
+            \{row("After",    94, 91, 92, 100, 77, 98)\}
+            \{endtable()\}
+            $BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+Step 2: Calculate the test statistic.
+$BR$BR
+
+\( \displaystyle t = \frac{\bar{x} - \mu_0}{5.78/\sqrt{n}} = \) \{ ans_rule(8) \} (Calculate the average difference by taking Before - After. Carry 3 decimal digits.)
+$BR$BR
+
+\{ $mc2->print_q() \} $BR
+\{ $mc2->print_a() \} $BR
+
+\{ $mc3->print_q() \} $BR
+\{ $mc3->print_a() \}
+
+END_TEXT
+
+#Context()->normalStrings;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( $teststat->cmp() );
+ANS( radio_cmp( $mc2->correct_ans() ) );
+ANS( radio_cmp( $mc3->correct_ans() ) );
+
+ENDDOCUMENT();

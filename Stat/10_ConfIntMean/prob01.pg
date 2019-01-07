@@ -1,0 +1,60 @@
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mean  = random(26, 27, 0.1);
+    $stdev = random(1.8, 2.0, 0.1);
+    $size  = random(30, 35, 1);
+    $level = list_random(90, 95, 99);
+
+    $tcrit = tdistr($size - 1, (100 - $level)/200);
+    $llim  = $mean - $tcrit * $stdev / sqrt($size);
+    $ulim  = $mean + $tcrit * $stdev / sqrt($size);
+
+    BEGIN_TEXT
+
+        The owner of a trout farm routinely measures the lengths of his trouts. He randomly took $size trouts last Friday from his pond and measured their lengths. The mean length was $mean centimeters with a standard deviation of $stdev. Estimate the true mean length of all trouts in his farm using a $level% confidence interval.
+        $BR$BR
+
+        (a) The limits of the confidence interval are calculated by
+        \( \displaystyle \bar{x} \pm t \frac{s}{\sqrt{n}} \) ,
+        where
+        $BR
+
+            \( \bar{x} = \) \{ ans_rule(8) \}
+            $BR$BR
+
+            \( t =       \) \{ ans_rule(8) \} (Round to 3 decimal places.)
+            $BR$BR
+
+            \( s =       \) \{ ans_rule(8) \}
+            $BR$BR
+
+            \( n =       \) \{ ans_rule(8) \}
+            $BR$BR
+
+        (b) The $level% confidence interval for the true mean length is:
+        $BR$BR
+
+            ( \{ ans_rule(8) \} , \{ ans_rule(8) \} ) (Round to 3 decimal places.)
+
+    END_TEXT
+
+    ANS( num_cmp($mean,  tolType=>absolute, tolerance=>0.001) );
+    ANS( num_cmp($tcrit, tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($stdev, tolType=>absolute, tolerance=>0.001) );
+    ANS( num_cmp($size,  tolType=>absolute, tolerance=>0.001) );
+    ANS( num_cmp($llim,  tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($ulim,  tolType=>absolute, tolerance=>0.002) );
+
+ENDDOCUMENT();

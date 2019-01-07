@@ -1,50 +1,64 @@
+
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-$mc1=new_multiple_choice();
-$mc1->qa(
-"1. Identify the most serious bias in this study.",
-"Non-response bias."
-);
-$mc1->extra(
-"Sampling/selection bias.",
-"Response bias."
-);
-$mc1->makeLast("None of the above.");
+    $mc1=new_multiple_choice();
 
-$mc2=new_multiple_choice();
-$mc2->qa(
-"2. Looking at the observation that treatment B and treatment C groups did not feel significantly differently, Abby argued, 'One regular coke is not enough to make people alert,' while Bobby argued, 'It reflects a placebo effect.' What does Bobby mean?",
-"People in treatment C group felt alert, thinking that they had consumed regular coke."
-);
-$mc2->extra(
-"Placebo/control group needs to be included in the study.",
-"People in treatment B group actually consumed two caffeine-free cokes.",
-"People in treatment C group actually consumed one regular coke and one caffeine-free coke."
-);
+        $mc1->qa(
+            "(a) Identify the most serious bias in this study.",
+            "Non-response bias."
+        );
 
+        $mc1->extra(
+            "Sampling/selection bias.",
+            "Response bias."
+        );
 
+        $mc1->makeLast("None of the above.");
 
+    $mc2=new_multiple_choice();
 
+        $mc2->qa(
+            "(b) Looking at the observation that the treatment B and treatment C groups did not feel significantly differently, Abby argued, 'One regular coke is not enough to make people alert,' while Bobby argued, 'It reflects a placebo effect.' What does Bobby mean?",
+            "People with treatment C felt alert, thinking that they had consumed a regular coke."
+        );
 
+        $mc2->extra(
+            "A placebo/control group needs to be included in the study.",
+            "People with treatment B actually consumed two caffeine-free cokes.",
+            "People with treatment C actually consumed one regular coke and one caffeine-free coke."
+        );
 
-BEGIN_TEXT
+    BEGIN_TEXT
 
-An experiment was conducted to determine whether caffeine would make sick people more alert and, hence, feel "better." In the experiment, 60 volunteer participants with flu symptoms were randomly divided into three groups of equal sizes. The experimenter gave one group of participants two regular cokes (treatment A), another group one regular coke and one caffeine-free coke (treatment B), and the last group two caffeine-free cokes (treatment C). Twenty percent of the participants in treatment A group withdrew from the study. The remaining participants were asked to indicate how well they felt using a scale of 1 to 7. The experimenter concluded that the participants in treatment A group felt significantly better and that the participants in the other two groups did not feel significantly differently.
-$BR$BR
+        An experiment was conducted to determine whether caffeine would make sick people more alert and, hence, feel "better." In the experiment, 60 volunteer participants with flu symptoms were randomly divided into three groups of equal sizes. The experimenter gave one group of participants two regular cokes (treatment A), another group one regular coke and one caffeine-free coke (treatment B), and the last group two caffeine-free cokes (treatment C). Twenty percent of the participants in the treatment A group withdrew from the study. The remaining participants were asked to indicate how well they felt using a scale of 1 to 7. The experimenter concluded that the participants with treatment A felt significantly better and that the participants with the other two treatments did not feel significantly differently.
+        $BR$BR
 
-\{ $mc1->print_q() \} $BR
-\{ $mc1->print_a() \} $BR
+        \{ $mc1->print_q() \}
+        $BR
 
-\{ $mc2->print_q() \} $BR
-\{ $mc2->print_a() \}
+        \{ $mc1->print_a() \}
+        $BR
 
-END_TEXT
+        \{ $mc2->print_q() \}
+        $BR
 
-$showPartialCorrectAnswers = 0;
+        \{ $mc2->print_a() \}
 
-ANS( radio_cmp( $mc1->correct_ans() ) );
-ANS( radio_cmp( $mc2->correct_ans() ) );
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+    ANS( radio_cmp($mc2->correct_ans()) );
 
 ENDDOCUMENT();

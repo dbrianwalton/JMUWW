@@ -1,0 +1,35 @@
+
+DOCUMENT();
+
+    loadMacros(
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl"
+    );
+
+    $mc1=new_multiple_choice();
+
+        $mc1-> qa( "An FBI report stated that the mean value lost to purse snactching was 332 dollars in 2011.  To check to see if this amount has decreased in 2012, a criminal justice student tests the null hypothesis that the population mean is 332 against the alternative hypothesis that the mean is less than 332. Which of the following would constitute a type I error?",
+        "Concluding that the amount in 2012 is less than 332, when in truth, it is equal to 332."
+        );
+
+        $mc1->extra(
+            "Concluding that the amount in 2012 is 332, when in truth, it is less than 332.",
+            "Concluding that the amount in 2012 is 332, when in truth, it is equal to 332."
+        );
+
+        $mc1->makeLast("None of the above.");
+
+        BEGIN_TEXT
+
+        \{ $mc1->print_q() \}
+        $BR
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+
+ENDDOCUMENT();

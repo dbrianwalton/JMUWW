@@ -1,0 +1,27 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$a = random(24, 26, 1);
+$b = random(27, 29, 1);
+$c = ($b - $a)/2;
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+Data collected by a JMU student yielded the following confidence interval for the proportion of students that attend JMU athletics events regularly: ($a% to $b%).  Give the value of the margin of error.
+$BR$BR
+
+Margin of error: +/- \{ ans_rule(8) \} (Round to 2 decimal places.)
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS(num_cmp($c, tolType=>absolute, tolerance=>.02));
+
+ENDDOCUMENT();

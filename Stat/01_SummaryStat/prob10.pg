@@ -1,61 +1,66 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-#Context("Numeric");
+    $x1 = random(6, 8, 1);
+    $x2 = random(0, 2, 1);
+    $x3 = random(3, 5, 1);
+    $x4 = random(6, 7, 1);
+    $x5 = random(9, 9, 1);
+    $x6 = random(1, 4, 1);
+    $x7 = random(7, 9, 1);
+    $x8 = random(0, 8, 1);
 
-$mc1=new_multiple_choice();
-$mc1->qa(
-"(a) How would you describe the skewness of the distribution of the data?",
-"The distribution is skewed to the right."
-);
-$mc1->extra(
-"The distribution is skewed to the left.",
-"The distribution is symmetric.",
-);
+    $size = 8;
 
-$median1 = Compute("77.5")->with(tolType=>'absolute', tolerance=>'0.01');
-$median2 = Compute("77.5")->with(tolType=>'absolute', tolerance=>'0.01');
+    $median  = (70 + $x4 + 70 + $x5) / 2;
+    $x1print = 60 + $x1;
+    $x1rev   = $x1print + 1;
 
-#TEXT(beginproblem());
-#Context()->texStrings;
+    $popup1 = PopUp(["select", "skewed to the left", , "symmetric", "skewed to the right"], "skewed to the right");
 
-BEGIN_TEXT
+    BEGIN_TEXT
 
-The stem-and-leaf plot below shows scores on a doctoral comprehensive examination for a total of eight graduate students. The stem width (multiplier for the stem digits) is 10.
-$BR$BR
+        The stem-and-leaf plot below shows the scores on a doctoral comprehensive examination for a total of $size graduate students. The stem width (multiplier for each stem digit) is 10.
+        $BR$BR
 
-\( \displaystyle
-    \begin{tabular}{r | l}
-    Stem & Leaf\\ \hline
-    6 & 7\\
-    7 & 1569\\
-    8 & 38\\
-    9 & 4
-    \end{tabular}
-\)
-$BR$BR
+            6 | $x1 $BR
+            7 | $x2$x3$x4$x5 $BR
+            8 | $x6$x7 $BR
+            9 | $x8$BR$BR
 
-\{ $mc1->print_q() \} $BR
-\{ $mc1->print_a() \} $BR
+        (a) How would you describe the skewness of the distribution of the data?
+        $BR$BR
 
-(b) Calculate the median score.
-$BR$BR
+        The distribution is \{ $popup1->menu() \}.
+        $BR$BR
 
-Answer: \{ans_rule(8)\} (Carry 1 decimal digit.)
-$BR$BR
+        (b) Calculate the median score.
+        $BR$BR
 
-(c) The doctoral committee, who graded the exams, discovered that there was a grading error. The lowest score was in fact 66 (rather than 67). Find the median score for the correct data.
-$BR$BR
+        \{ ans_rule(8) \} (Round to 1 decimal place.)
+        $BR$BR
 
-Answer: \{ans_rule(8)\} (Carry 1 decimal digit.)
+        (c) The doctoral committee, who graded the exams, discovered that there was a grading error. The lowest score was in fact $x1rev (rather than $x1print). Find the median score for the correct data.
+        $BR$BR
 
-END_TEXT
+        \{ ans_rule(8) \} (Round to 1 decimal place.)
 
-#Context()->normalStrings;
+    END_TEXT
 
-ANS( radio_cmp( $mc1->correct_ans() ) );
-ANS( $median1->cmp() );
-ANS( $median2->cmp() );
+    ANS( $popup1->cmp() );
+
+    ANS( num_cmp($median, tolType=>absolute, tolerance=>0.002 ) );
+    ANS( num_cmp($median, tolType=>absolute, tolerance=>0.002 ) );
 
 ENDDOCUMENT();

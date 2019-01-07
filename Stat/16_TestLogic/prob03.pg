@@ -1,0 +1,49 @@
+
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $pzero = random(0.41, 0.49, 0.01);
+
+    $tstat = random(1.42, 1.55, 0.01);
+    $pvalue = round(uprob($tstat) * 10000) / 10000;
+
+    $mc1=new_multiple_choice();
+
+        $mc1->qa(
+            "Which of the following is the correct interpretation of the calculated p-value?",
+            "Assuming that the null hypothesis is true, observing a test statistic of $tstat or larger can occur with probability $pvalue."
+        );
+
+    $mc1->extra(
+            "The probability that the null hypothesis is true is $pvalue.",
+            "The p-value of $pvalue is so small that, at any reasonable level of significance, the null hypothesis will be rejected."
+        );
+
+    $mc1->makeLast("All of the above.");
+
+    BEGIN_TEXT
+
+        For a test involving \( H_0\!: p = $pzero \) vs. \( H_a\!:  p > $pzero \), the researcher calculated a test statistics of $tstat and a p-value of $pvalue.
+        $BR$BR
+
+        \{ $mc1->print_q() \}
+        $BR
+
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+
+ENDDOCUMENT();

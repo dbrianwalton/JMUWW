@@ -1,0 +1,43 @@
+
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mc1=new_multiple_choice();
+
+        $mc1->qa(
+            "Which of the following can this result imply?",
+            "There may be a relationship between the age of driver and the frequency of traffic accidents involved, but the relationship may not be linear."
+        );
+
+        $mc1->extra(
+            "There does not appear to be any relationship between the age of driver and the frequency of traffic accidents involved.",
+            "The age of driver does not appear to influence the frequency of traffic accidents involved."
+        );
+
+        $mc1->makeLast("All of the above.");
+
+    BEGIN_TEXT
+
+        The Pearson correlation coefficient between "age of driver" and "number of traffic accidents involved within the last five years" was shown to be nearly zero.
+
+        \{ $mc1->print_q() \}
+        $BR
+
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+
+ENDDOCUMENT();

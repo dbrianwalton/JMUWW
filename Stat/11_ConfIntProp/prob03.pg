@@ -1,0 +1,35 @@
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $n = random(195, 205, 5);
+    $level = list_random(90, 95, 99);
+
+    $phat = 0.205;
+    $zcrit = udistr((100-$level)/200);
+    $llim  = $phat - $zcrit * sqrt($phat*(1 - $phat)/$n);
+    $ulim  = $phat + $zcrit * sqrt($phat*(1 - $phat)/$n);
+
+    BEGIN_TEXT
+
+        The administrators of a four-year college wanted to estimate the proportion of the senior students who intended to pursue a graduate degree. In a random sample of $n senior students, 20.5 indicated that they intended to pursue a graduate degree. Construct a $level% confidence interval for the corresponding true proportion.
+        $BR$BR
+
+        Answer: ( \{ ans_rule(8) \} , \{ ans_rule(8) \} ) (Round to 3 decimal places.)
+
+    END_TEXT
+
+    ANS( num_cmp($llim,  tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($ulim,  tolType=>absolute, tolerance=>0.002) );
+
+ENDDOCUMENT();

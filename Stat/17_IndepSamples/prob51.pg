@@ -1,0 +1,53 @@
+
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+
+$mc=new_multiple_choice();
+$mc->qa(
+"Which of the following is the most reasonable interpretation of the results of the test? Use the significance level of 0.05.",
+"The mean relief time of Brand A is significantly less than the mean relief time of Brand B."
+);
+$mc->extra(
+"The mean relief time of the medicines are significantly different between Brand A and Brand B.",
+"The mean relief time of Brand A is significantly greater than the mean relief time of Brand B.",
+"The mean relief time of the medicines are not significantly different between Brand A and Brand B."
+);
+
+BEGIN_TEXT
+
+Two Brands of medicine (Brand A and Brand B) are being compared.  Of interest is the mean amount of time (in minutes) it takes a person to be cured of their ailment.  We wish to test to see if the mean relief time of Brand A is significantly faster than Brand B. The following data was collected.
+$BR$BR
+
+Brand A:
+$BR$BR
+
+Mean: 35
+$BR
+Std dev: 6
+$BR
+Sample size: 46
+$BR$BR
+
+Brand B:
+$BR$BR
+
+Mean: 45
+$BR
+Std dev: 5.1
+$BR
+Sample size: 39
+$BR$BR
+
+The results of the independent-samples t test yielded a test statistic of -8.3 and a p-value of 0.000.
+
+\{ $mc->print_q() \} $BR
+\{ $mc->print_a() \}
+
+END_TEXT
+
+$showPartialCorrectAnswers = 0;
+
+ANS( radio_cmp( $mc->correct_ans() ) );
+
+ENDDOCUMENT();

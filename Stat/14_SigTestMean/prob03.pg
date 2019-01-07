@@ -1,0 +1,92 @@
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $muzero = random(13.0, 14.0, 1.0);
+    $mean   = $muzero + random(0.06, 0.14, 0.01);
+    $stdev  = random(0.85, 0.95, 0.01);
+    $size   = 100;
+    $level  = list_random(0.01, 0.05, 0.10);
+
+    $popup1 = PopUp(["select", "=", ">", "<", "/="], "=");
+    $popup2 = PopUp(["select", "=", ">", "<", "/="], ">");
+
+    $popup2correct = 1;
+
+    $tstat  = ($mean - $muzero)/($stdev/sqrt($size));
+
+    if ($popup2correct == 1) { $pvalue =     tprob($size - 1, $tstat);      }
+    if ($popup2correct == 2) { $pvalue = 1 - tprob($size - 1, $tstat);      }
+    if ($popup2correct == 3) { $pvalue =   2*tprob($size - 1, abs($tstat)); }
+
+    if                     ($pvalue < 0.01) { $popup3correct =        "p-value < 0.01"; }
+    if ($pvalue >= 0.01 and $pvalue < 0.05) { $popup3correct = "0.01 < p-value < 0.05"; }
+    if ($pvalue >= 0.05 and $pvalue < 0.10) { $popup3correct = "0.05 < p-value < 0.10"; }
+    if ($pvalue >= 0.10)                    { $popup3correct =        "p-value > 0.10"; }
+
+    $popup3 = PopUp(["select",        "p-value < 0.01",
+                               "0.01 < p-value < 0.05",
+                               "0.05 < p-value < 0.10",
+                                      "p-value > 0.10"], $popup3correct);
+
+    if ($pvalue <= $level) { $popup4correct = "Reject";         }
+    if ($pvalue >  $level) { $popup4correct = "Fail to reject"; }
+
+    $popup4 = PopUp(["select", "Reject", "Fail to reject"], $popup4correct);
+
+    BEGIN_TEXT
+
+        It is of interest to determine whether the mean height of a particular species of a flower is taller than $muzero inches. A random sample of $size flowers showed a mean of $mean inches with a standard deviation of $stdev. Conduct a test of interest, allowing a Type I error rate of $level.
+        $BR$BR
+
+        (a) State the null and alternative hypotheses.
+        $BR$BR
+
+            \(H_0\!: \mu\) \{ $popup1->menu() \} \{ ans_rule(8) \}
+            $BR$BR
+
+            \(H_a\!: \mu\) \{$ popup2->menu() \} \{ ans_rule(8) \}
+            $BR$BR
+
+        (b) Calculate the test statistic.
+        $BR$BR
+
+            \( \displaystyle t = \frac{\bar{x} - \mu_0}{s/\sqrt{n}} = \) \{ ans_rule(8) \} (Round to 3 decimal places.)
+            $BR$BR
+
+        (c) Approximate the p-value.
+        $BR$BR
+
+            \{ $popup3->menu() \}
+            $BR$BR
+
+        (d) State the decision.
+        $BR$BR
+
+            \{ $popup4->menu() \} the null hypothesis.
+
+    END_TEXT
+
+    ANS( $popup1->cmp() );
+    ANS( num_cmp($muzero, tolType=>absolute, tolerance=>0.001) );
+
+    ANS( $popup2->cmp() );
+    ANS( num_cmp($muzero, tolType=>absolute, tolerance=>0.001) );
+
+    ANS( num_cmp($tstat,  tolType=>absolute, tolerance=>0.002) );
+
+    ANS( $popup3->cmp() );
+
+    ANS( $popup4->cmp() );
+
+ENDDOCUMENT();

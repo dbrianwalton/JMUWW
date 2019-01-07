@@ -1,38 +1,44 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-Context("Numeric");
+    $height = random(30, 35, 1);
 
-$zscore = Compute("-0.575" )->with(tolType=>'absolute', tolerance=>'0.006');
-$prob   = Compute("0.71735")->with(tolType=>'absolute', tolerance=>'0.003');
-$height = Compute("67.6375")->with(tolType=>'absolute', tolerance=>'0.003');
+    $mu    = $height;
+    $sigma = random(0.04, 0.06, 0.01);
 
-TEXT(beginproblem());
-Context()->texStrings;
+    $x = $height - 0.05;
 
-BEGIN_TEXT
+    $sgna = -1; # +1 if greater than; -1 if less than.
 
-It is estimated that heights of adult men are normally distributed with a mean of 70.0 inches and a standard deviation of 3.5. In one state, the law requires a person to be 68.0 inches or taller to become a fire fighter.
-$BR$BR
+        $z1a = floor(($x - $mu) / $sigma * 100) / 100;
+        $z2a =  ceil(($x - $mu) / $sigma * 100) / 100;
 
-(a) What proportion of adult men will meet this height requirement for becoming a fire fighter in this state? (Carry 2 decimal digits for the z-score and 4 decimal digits for the probability.)
-$BR$BR
+        $a1 = uprob($z1a * $sgna);
+        $a2 = uprob($z2a * $sgna);
 
-\( P(X \geq 68.0) = P(Z \geq \) \{ans_rule(8)\} \( ) = \) \{ans_rule(8)\}
-$BR$BR
+        $a  = ($a1 + $a2) / 2;
+        $ea = abs($a1 - $a2) / 2 + 0.0001;
 
-(b) A person who was denied to become a fire fighter learned that his height was at the 25th percentile. What was his actual height? (Carry 2 decimal digits.)
-$BR$BR
+    BEGIN_TEXT
 
-Answer: \{ans_rule(8)\} inches.
+        The height of a tree will be measured using a clinometer. For this device, the measurement error has a normal distribution with mean \(\mu = 0.00\) meter and standard deviation \(\sigma = $sigma\). If the tree is exactly $height meters tall, what is the probability that the clinometer will indicate a value smaller than $x meters?
+        $BR$BR
 
-END_TEXT
+        Answer: \{ ans_rule(8) \} (Round to 4 decimal places.)
 
-Context()->normalStrings;
+    END_TEXT
 
-ANS( $zscore->cmp() );
-ANS( $prob->cmp() );
-ANS( $height->cmp() );
+    ANS( num_cmp($a, tolType=>absolute, tolerance=>$ea) );
 
 ENDDOCUMENT();

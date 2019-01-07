@@ -1,0 +1,36 @@
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mean  = random(31.0, 33.0, 0.1);
+    $stdev = random(3.6, 3.9, 0.1);
+    $size  = random(30, 40, 1);
+    $level = list_random(90, 95, 99);
+
+    $tcrit = tdistr($size - 1, (100 - $level)/200);
+    $llim  = $mean - $tcrit * $stdev / sqrt($size);
+    $ulim  = $mean + $tcrit * $stdev / sqrt($size);
+
+    BEGIN_TEXT
+
+        It is of interest to estimate the mean daily number of calls coming in to an office. On randomly chosen $size days, the numbers of calls were recorded between 8:00 a.m. and 5:00 p.m. The data yielded a mean of $mean with a standard deviation of $stdev. Estimate the true mean using a $level% confidence interval.
+        $BR$BR
+
+        Answer: ( \{ ans_rule(8) \} , \{ ans_rule(8) \} ) (Round to 3 decimal places.)
+
+    END_TEXT
+
+    ANS( num_cmp($llim,  tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($ulim,  tolType=>absolute, tolerance=>0.002) );
+
+ENDDOCUMENT();

@@ -1,0 +1,31 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$a = random(35, 40, 1);
+$b = random(25, 30, 1);
+$c = random(15, 20, 1);
+$d = 100 - $a - $b - $c;
+
+$mean = 0*$a/100 + 10*$b/100 + 25*$c/100 + 50*$d/100;
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+A small college calls recent graduates and request that they donate money for future campus programs, $a% of those who received calls did not donate anything, $b% donated $10, $c% donated $25, $d% donated $50. Calculate the average amount of donation per donor.
+
+$BR$BR
+
+Mean: \{ ans_rule(8) \} (Round to 2 decimal places.)
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS(num_cmp($mean, tolType=>absolute, tolerance=>.02));
+
+ENDDOCUMENT();

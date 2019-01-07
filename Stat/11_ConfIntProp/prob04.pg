@@ -1,0 +1,58 @@
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mc1=new_multiple_choice();
+
+    $mc1->qa(
+        "(b) A coach claims that only 1 player in 5 is at risk of arm injury from pitching. Is this claim consistent with your confidence interval?",
+        "No, because the confidence interval excludes 0.20."
+        );
+
+        $mc1->extra(
+        "No, because the confidence interval contains 0.20.",
+        "Yes, because the confidence interval excludes 0.20.",
+        "Yes, because the confidence interval contains 0.20."
+        );
+
+    $pct   = random(29, 31, 1);
+    $size  = random(295, 301, 1);
+    $level = list_random(90, 95, 99);
+
+    $llim  = $pct/100 - udistr((100-$level)/200) * sqrt($pct/100*(1-$pct/100)/$size);
+    $ulim  = $pct/100 + udistr((100-$level)/200) * sqrt($pct/100*(1-$pct/100)/$size);
+
+    BEGIN_TEXT
+
+        In a 1999-2000 longitudinal study of youth baseball, researchers found that $pct% of $size young pitchers complained of elbow pain after pitching.
+        $BR$BR
+
+        (a) Construct a $level% confidence interval for the proportion of young pitchers who may develop elbow pain after pitching.
+        $BR$BR
+
+        ( \{ ans_rule(8) \} , \{ ans_rule(8) \} ) (Round to 3 decimal places.)
+        $BR$BR
+
+        \{ $mc1->print_q() \}
+        $BR
+
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( num_cmp($llim,  tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($ulim,  tolType=>absolute, tolerance=>0.002) );
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+
+ENDDOCUMENT();

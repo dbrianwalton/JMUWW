@@ -1,0 +1,44 @@
+
+DOCUMENT();
+
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
+
+    $mc1=new_multiple_choice();
+
+        $mc1->qa(
+            "To determine whether the mean numbers of cars parked differ between the two lots, the use of which statistical test is most appropriate?",
+            "Paired-samples $BITALIC t $EITALIC test."
+        );
+
+        $mc1->extra(
+            "Independent-samples $BITALIC t $EITALIC test.",
+            "Chi-square test of independence."
+        );
+
+        $mc1->makeLast("None of the above.");
+
+    BEGIN_TEXT
+
+        A shopping center has two parking lots, one on the east-side of the building and the other on the west-side. The general manager of the shopping center wishes to know which of the two lots tends to be more crowded. On randomly chosen 30 days, assistants of the manager will count the number of cars parked in each lot at 3:00 p.m.
+        $BR$BR
+
+        \{ $mc1->print_q() \}
+        $BR
+
+        \{ $mc1->print_a() \}
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+
+ENDDOCUMENT();

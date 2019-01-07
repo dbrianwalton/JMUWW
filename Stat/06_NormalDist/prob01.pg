@@ -1,28 +1,59 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-Context("Numeric");
+    $mu    = random(89.15, 89.27, 0.01);
+    $sigma = random(0.15, 0.19, 0.01);
+    $zscore = round((89.50 - $mu) / $sigma * 100) / 100;
+    $upprob = round((1 - uprob($zscore)) * 10000) / 10000;
 
-$zscore = Compute("1.275"  )->with(tolType=>'absolute', tolerance=>'0.006');
-$prob   = Compute("0.10115")->with(tolType=>'absolute', tolerance=>'0.0015');
+    $a = 1 - $upprob;
+    $b = $mu + (-0.51) * $sigma;
 
-TEXT(beginproblem());
+    BEGIN_TEXT
 
-Context()->texStrings;
+        Assume that the octane level of mid-grade gasoline has a normal distribution with a mean of $mu and a standard deviation of $sigma. We take many samples of this gasoline and measure their octane levels.
+        $BR$BR$BR
 
-BEGIN_TEXT
+        Problem 1: What proportion of the samples will have octane levels higher than 89.50?
+        $BR$BR
 
-The price of mid-grade gasoline (in cents per gallon) is best characterized as having a normal distribution with mean \(\mu = 272\) and standard deviation \(\sigma = 11\). Find the probability that the mid-grade gasoline at a randomly selected gas station is priced higher than 286 cents? (Carry 2 decimal digits for the z-score and 4 decimal digits for the probability.)
-$BR$BR
+        Solution: Let \(X\) denote the octane level, which is normal with \(\mu = $mu\) and \(\sigma = $sigma\). We need to find the probability that \(X\) is greater than \(89.50\).
+        $BR$BR
 
-\( P(X > 286) = P(Z > \) \{ ans_rule(8) \} \( ) = \) \{ ans_rule(8) \}
+        \( \displaystyle P(X > 89.50) = P\Big( \frac{X - \mu}{\sigma} > \frac{89.50 - $mu}{$sigma} \Big) = P(Z > $zscore) \)
+        $BR$BR
 
-END_TEXT
+        Many normal probability tables give "cumulative probabilities." Therefore, we must take the complement.
+        $BR$BR
 
-Context()->normalStrings;
+        \( P(Z > $zscore) = 1 - P(Z \leq $zscore) = 1 - $upprob = \) \{ ans_rule(8) \} (Round to 4 decimal places.)
+        $BR$BR$BR
 
-ANS( $zscore->cmp() );
-ANS( $prob->cmp() );
+        Problem 2: Above what value of octane level will you find 69.5% of the samples?
+        $BR$BR
+
+        Solution: First, we need to find a \(z\)-score such that 30.5% of the area under the normal curve is found below that value. In other words, we are looking at a \(z\)-score that gives cumulative probability 0.3050. According to the table, this number is \(z = -0.51\).
+        $BR$BR
+
+        Next, we need to convert this \(z\)-score into \(x\). Recall \( \displaystyle z = \frac{x - \mu}{\sigma} \). Solving this equation for \(x\) gives \( x = \mu + z \sigma \). Therefore, the final answer is
+        $BR$BR
+
+        \( x = $mu + (-0.51)($sigma) = \) \{ ans_rule(8) \} (Round to 2 decimal places.)
+
+    END_TEXT
+
+    ANS( num_cmp($a, tolType=>absolute, tolerance=>0.0002) );
+    ANS( num_cmp($b, tolType=>absolute, tolerance=>0.02)   );
 
 ENDDOCUMENT();

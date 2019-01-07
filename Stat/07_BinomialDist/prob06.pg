@@ -1,37 +1,65 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-Context("Numeric");
+    $n = list_random(15, 20, 25);
+    $p = 0.30;
+    $pct = $p * 100;
 
-$a = Compute("8.930")->with(tolType=>'absolute', tolerance=>'0.001');
-$b = Compute("2.685")->with(tolType=>'absolute', tolerance=>'0.006');
+    $a = 0;
+    for ($x = 0; $x <= 5; $x++)
+    {
+     	$a = $a + fact($n)/(fact($x)*fact($n - $x)) * $p**$x * (1 - $p)**($n - $x);
+    }
 
-TEXT(beginproblem());
+    $b = 0;
+    for ($x = 7; $x <= 7; $x++)
+    {
+     	$b = $b + fact($n)/(fact($x)*fact($n - $x)) * $p**$x * (1 - $p)**($n - $x);
+    }
 
-Context()->texStrings;
+    $c = 0;
+    for ($x = 5; $x <= $n; $x++)
+    {
+     	$c = $c + fact($n)/(fact($x)*fact($n - $x)) * $p**$x * (1 - $p)**($n - $x);
+    }
 
-BEGIN_TEXT
+    BEGIN_TEXT
 
-According to a survey, about 19% of all Americans are without health insurance. Assume that this estimate is reasonably accurate. Suppose that you select a random sample of 47 Americans.
-$BR$BR
+        It is estimated that 30% of all school children in America are obese. Let us assume that this estimate is reasonably accurate, and suppose that you take a random sample of $n school children.
+        $BR$BR
 
-(a) Calculate the expected number of Americans without health insurance in the sample.
-$BR$BR
+        (a) Compute the probability that fewer than or equal to 5 children in the sample will be obese.
+        $BR$BR
 
-Answer: \{ ans_rule(8) \} (Carry 2 decimal digits.)
-$BR$BR
+        Answer: \{ ans_rule(8) \} (Round to 4 decimal places.)
+        $BR$BR
 
-(b) Calculate the standard deviation of the number of Americans without health insurance in the sample.
-$BR$BR
+        (b) Compute the probability that exactly 7 children in the sample will be obese.
+        $BR$BR
 
-Answer: \{ ans_rule(8) \} (Carry 2 decimal digits.)
+        Answer: \{ ans_rule(8) \} (Round to 4 decimal places.)
+        $BR$BR
 
-END_TEXT
+        (c) Compute the probability that more than 4 children in the sample will be obese.
+        $BR$BR
 
-Context()->normalStrings;
+        Answer: \{ ans_rule(8) \} (Round to 4 decimal places.)
 
-ANS( $a->cmp() );
-ANS( $b->cmp() );
+    END_TEXT
+
+    ANS( num_cmp($a, tolType=>absolute, tolerance=>0.0002) );
+    ANS( num_cmp($b, tolType=>absolute, tolerance=>0.0002) );
+    ANS( num_cmp($c, tolType=>absolute, tolerance=>0.0002) );
 
 ENDDOCUMENT();

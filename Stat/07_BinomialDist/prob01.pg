@@ -1,45 +1,42 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-Context("Numeric");
+    $p = random(18, 21, 1);
+    $size = random(46, 49, 1);
 
-$a = Compute("0.7216")->with(tolType=>'absolute', tolerance=>'0.0005');
-$b = Compute("0.0811")->with(tolType=>'absolute', tolerance=>'0.0005');
-$c = Compute("0.4845")->with(tolType=>'absolute', tolerance=>'0.0005');
+    $a = $size * $p / 100;
+    $b = sqrt($size * $p / 100 * (1 - $p / 100));
 
-TEXT(beginproblem());
+    BEGIN_TEXT
 
-Context()->texStrings;
+        According to a survey, about $p% of all Americans are without health insurance. Assume that this estimate is reasonably accurate. Suppose that you select a random sample of $size Americans.
+        $BR$BR
 
-BEGIN_TEXT
+        (a) Calculate the expected number of Americans without health insurance in the sample.
+        $BR$BR
 
-It is estimated that 30% of all school children in America are obese. Let us assume that this estimate is reasonably accurate, and suppose that you take a random sample of 15 school children.
-$BR$BR
+        Answer: \{ ans_rule(8) \} (Round to 2 decimal places.)
+        $BR$BR
 
-(a) Compute the probability that less than or equal to 5 children in the sample will be obese.
-$BR$BR
+        (b) Calculate the standard deviation of the number of Americans without health insurance in the sample.
+        $BR$BR
 
-\( P(X \leq 5) = \) \{ ans_rule(8) \} (Carry 4 decimal digits.)
-$BR$BR
+        Answer: \{ ans_rule(8) \} (Round to 3 decimal places.)
 
-(b) Compute the probability that exactly 7 children in the sample will be obese.
-$BR$BR
+    END_TEXT
 
-\( P(X = 7) = P(X \leq 7) - P(X \leq 6) = \) \{ ans_rule(8) \} (Carry 4 decimal digits.)
-$BR$BR
-
-(c) Compute the probability that more than 4 children in the sample will be obese.
-$BR$BR
-
-\( P(X > 4) = 1 - P(X \leq 4) = \) \{ ans_rule(8) \} (Carry 4 decimal digits.)
-
-END_TEXT
-
-Context()->normalStrings;
-
-ANS( $a->cmp() );
-ANS( $b->cmp() );
-ANS( $c->cmp() );
+    ANS( num_cmp($a, tolType=>absolute, tolerance=>0.02) );
+    ANS( num_cmp($b, tolType=>absolute, tolerance=>0.02) );
 
 ENDDOCUMENT();

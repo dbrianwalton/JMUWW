@@ -1,50 +1,65 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-#Context("Numeric");
+    $popup1 = PopUp(["select", "equal", "not equal"], "not equal");
+    $popup2 = PopUp(["select", "are", "are not"], "are not");
 
-$mc1=new_multiple_choice();
-$mc1->qa(
-"(c) Are the events 'selected person is male' and 'selected person holds a managerial duty' independent?",
-"No."
-);
-$mc1->extra(
-"Yes."
-);
+    $PctA  = random(67, 69, 1);
+    $PctB  = random(36, 39, 1);
+    $PctAB = random(28, 30, 1);
 
-$a = Compute("0.784")->with(tolType=>'absolute', tolerance=>'0.005');
-$b = Compute("0.760")->with(tolType=>'absolute', tolerance=>'0.005');
+    $PrInt = $PctAB / 100;
+    $PrUni = ($PctA + $PctB - $PctAB) / 100;
 
-#TEXT(beginproblem());
-#Context()->texStrings;
+    $PrAgB = $PctAB / $PctB;
+    $PrBgA = $PctAB / $PctA;
 
-BEGIN_TEXT
+    $PrAPrB = ($PctA*$PctB) / 10000;
 
-Of all the employees in a company, 68% are male, 37% hold managerial duties, and 29% are male and hold managerial duties. Suppose that you select one employee at random from this company.
-$BR$BR
+    BEGIN_TEXT
 
-(a) What is the probability that the selected person will be male, given that the person holds a managerial duty?
-$BR$BR
+        Of all the employees in a company, $PctA% are male, $PctB% hold managerial duties, and $PctAB% are male and hold managerial duties. Suppose that you select one employee at random from this company.
+        $BR$BR
 
-Answer: \{ans_rule(8)\} (Carry 3 decimal digits.)
-$BR$BR
+        (a) What is the probability that the selected person will be male, given that the person holds a managerial duty?
+        $BR$BR
 
-(b) What is the probability that the selected person will be male, hold a managerial duty, or both?
-$BR$BR
+            Answer: \{ ans_rule(8) \} (Round to 3 decimal places.)
+            $BR$BR
 
-Answer: \{ans_rule(8)\} (Carry 3 decimal digits.)
-$BR$BR
+        (b) What is the probability that the selected person will be male, hold a managerial duty, or both?
+        $BR$BR
 
-\{ $mc1->print_q() \} $BR
-\{ $mc1->print_a() \}
+            Answer: \{ ans_rule(8) \} (Round to 3 decimal places.)
+            $BR$BR
 
-END_TEXT
+        (c) Are the events "selected person is male" and "selected person holds a managerial duty" independent?
+        $BR$BR
 
-#Context()->normalStrings;
+            Answer: $BITALIC P $EITALIC(male and managerial) = \{ ans_rule(8) \} and
+            $BITALIC P $EITALIC(male) $BITALIC P $EITALIC(managerial) = \{ ans_rule(8) \}.
+            These probabilities are \{ $popup1->menu() \} to each other.
+            Therefore, the two events \{ $popup2->menu() \} independent.
 
-ANS( $a->cmp() );
-ANS( $b->cmp() );
-ANS( radio_cmp( $mc1->correct_ans() ) );
+    END_TEXT
+
+    ANS( num_cmp($PrAgB, tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($PrUni, tolType=>absolute, tolerance=>0.002) );
+
+    ANS( num_cmp($PrInt,  tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($PrAPrB, tolType=>absolute, tolerance=>0.002) );
+    ANS( $popup1->cmp() );
+    ANS( $popup2->cmp() );
 
 ENDDOCUMENT();

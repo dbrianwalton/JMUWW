@@ -1,38 +1,42 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-Context("Numeric");
+    $a = 1/52;
+    $b = 16/52;
 
-$a = Compute( "1/52")->with(tolType=>'absolute', tolerance=>'0.0005');
-$b = Compute("16/52")->with(tolType=>'absolute', tolerance=>'0.0005');
+    BEGIN_TEXT
 
-TEXT(beginproblem());
+        Suppose that you draw one card at random from a standard deck of cards. The following events are defined.
+        $BR$BR
 
-Context()->texStrings;
+        $BITALIC A $EITALIC: Selected card is a Spade.
+        $BR
 
-BEGIN_TEXT
+        $BITALIC B $EITALIC: Selected card is an Ace.
+        $BR$BR
 
-Suppose that you draw one card at random from a standard deck of cards. The following events are defined.
-$BR$BR
+        Compute the following probabilities. Note that \(\cap\) means intersection and that \(\cup\) means union.
+        $BR$BR
 
-\(A\!:\) Selected card is a Spade. $BR
-\(B\!:\) Selected card is an Ace.
-$BR$BR
+        (a) \( P(A \cap B) = \) \{ ans_rule(8) \} (Round to 3 decimal places.)
+        $BR$BR
 
-Compute the following probabilities. Note that \(\cap\) means intersection and that \(\cup\) means union. You may enter your answers in fraction (e.g., '2/3' and '0.6667' are equivalent).
-$BR$BR
+        (b) \( P(A \cup B) = \) \{ ans_rule(8) \} (Round to 3 decimal places.)
 
-(a) \( P(A \cap B) = \) \{ans_rule(8)\}
-$BR$BR
+    END_TEXT
 
-(b) \( P(A \cup B) = \) \{ans_rule(8)\}
-
-END_TEXT
-
-Context()->normalStrings;
-
-ANS( $a->cmp() );
-ANS( $b->cmp() );
+    ANS( num_cmp($a, tolType=>absolute, tolerance=>0.002) );
+    ANS( num_cmp($b, tolType=>absolute, tolerance=>0.002) );
 
 ENDDOCUMENT();

@@ -1,0 +1,32 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$a = random(15, 20, 1);
+$b = random(20, 25, 1);
+$c = random(35, 40, 1);
+$d = random( 5, 10, 1);
+$f = 100 - $a - $b - $c - $d;
+
+$mean = 4*$a/100 + 3*$b/100 + 2*$c/100 + 1*$d/100;
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+In a section of Math 101 last semester, $a% of the class earned an A, $b% earned a B, $c% earned a C, $d% earned a D, and the remaining $f% failed. What was the mean grade in Math 101 last semester? (Note: Use A = 4.0, B = 3.0, C = 2.0, D = 1.0, and F = 0.0 for conversion.)
+
+$BR$BR
+
+Numeric Mean Grade: \{ ans_rule(8) \} (Round to 2 decimal places.)
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS(num_cmp($mean, tolType=>absolute, tolerance=>.02));
+
+ENDDOCUMENT();

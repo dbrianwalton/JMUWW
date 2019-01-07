@@ -1,26 +1,33 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-Context("Numeric");
+    $size = random(4, 9, 1);
+    $prob = 1 - (0.51)**$size;
 
-$prob = Compute("0.9375")->with(tolType=>'absolute', tolerance=>'0.0005');
+    BEGIN_TEXT
 
-TEXT(beginproblem());
+        A family in Africa has $size children. You have not met the children yet, and you do not know their genders. What is the probability that at least one of the children is a girl?
+        Assume that $BITALIC P $EITALIC(boy) = 0.51, $BITALIC P $EITALIC(girl) = 0.49, and that the genders of the children are independent.
+        $BR$BR
 
-Context()->texStrings;
+        Hint: Use complement. That is, $BITALIC P $EITALIC(at least one girl) = 1 - $BITALIC P $EITALIC(all boys).
+        $BR$BR
 
-BEGIN_TEXT
+        Answer: \{ ans_rule(8) \} (Round to 4 decimal places.)
 
-A family has four children. You have not met the children yet, and you do not know their genders. What is the probability that at least one of the children is a girl? Assume \( P(\mbox{boy}) = P(\mbox{girl}) = 0.5 \). Hint: Use complement.
-$BR$BR
+    END_TEXT
 
-\( P(\mbox{at least one girl}) = 1 - P(\mbox{all boys}) = \) \{ ans_rule(8) \} (Carry 4 decimal digits.)
-
-END_TEXT
-
-Context()->normalStrings;
-
-ANS( $prob->cmp() );
+    ANS( num_cmp($prob, tolType=>absolute, tolerance=>0.0002) );
 
 ENDDOCUMENT();

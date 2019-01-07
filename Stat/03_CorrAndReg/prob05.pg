@@ -1,71 +1,95 @@
 DOCUMENT();
 
-loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+    loadMacros(
+        "PG.pl",
+        "PGstandard.pl",
+        "PGanswermacros.pl",
+        "PGbasicmacros.pl",
+        "PGchoicemacros.pl",
+        "PGnumericalmacros.pl",
+        "PGstatisticsmacros.pl",
+        "MathObjects.pl",
+        "parserPopUp.pl"
+    );
 
-#Context("Numeric");
+    $x1 = random(7, 9, 1);
 
-$mc1=new_multiple_choice();
-$mc1->qa(
-"(a) The correlation coefficient between smoking status and number of caffeinated drinks consumed was \(r = 0.626\). Which of the following is an incorrect interpretation of the this value?",
-"Smoking appears to encourage people to consume caffeinatetd drinks."
-);
-$mc1->extra(
-"The relationship between smoking status and number of caffeinated drinks consumed is positive.",
-"There is a suggestion that the more caffeinated drinks a person consumes, the more likely that s/he is a regular smoker.",
-);
-$mc1->makeLast("None of the above.");
 
-$yint    = Compute("2.999" )->with(tolType=>'absolute', tolerance=>'0.002');
-$slope   = Compute("2.999" )->with(tolType=>'absolute', tolerance=>'0.002');
-$coefdet = Compute("0.3915")->with(tolType=>'absolute', tolerance=>'0.0006');
+    $size = 7;
 
-#TEXT(beginproblem());
-#Context()->texStrings;
+    $meanx = 0.429;
+    $meany = random(4.250, 4.300, 0.001);
 
-BEGIN_TEXT
+    $stdevx = 0.535;
+    $stdevy = random(2.500, 2.600, 0.001);
 
-A sample of seven students were interviewed. The questions included (i) whether or not they regularly smoke and (ii) how many caffeinated drinks they would consume in typical week. The smoking-status variable was coded so that 0 = nonsmoker and 1 = regular smoker.
-$BR$BR
+    $corr = random(0.621, 0.629, 0.001);
+    $rsq  = $corr**2;
 
-\{ $mc1->print_q() \} $BR
-\{ $mc1->print_a() \} $BR
+    $slope = $corr * $stdevy/$stdevx;
+    $int   = $meany - $slope*$meanx;
 
-(b) The table below shows the summary statistics for the data.
-$BR$BR
+    $mc1=new_multiple_choice();
 
-\( \displaystyle
-\begin{tabular}{lcc}
-\hline
-        & Mean & St dev \\
-\hline
-Smoking & 0.429 & 0.535 \\
-\hline
-Drinks  & 4.286 & 2.563 \\
-\hline
-\hspace*{0.70in}&\hspace*{0.60in}&\hspace*{0.60in}
-\end{tabular}
-\)
-$BR$BR
+        $mc1->qa(
+            "(a) The correlation coefficient between smoking status and number of caffeinated drinks consumed was $corr. Which of the following is an incorrect interpretation of the this value?",
+            "Smoking appears to encourage people to consume caffeinated drinks."
+        );
 
-Compute the least-squares regression equation for predicting the number of caffeinated drinks consumed from smoking status.
-$BR$BR
+        $mc1->extra(
+            "The relationship between smoking status and number of caffeinated drinks consumed appears to be positive.",
+            "There is a suggestion that the more caffeinated drinks a person consumes, the more likely that he or she is a regular smoker.",
+        );
 
-Answer: \( \hat{y} = \) \{ans_rule(8)\} \( + \) \{ans_rule(8)\} \( x \) (Carry 3 decimal digits.)
-$BR$BR
+        $mc1->makeLast("All interpretations are correct.");
 
-(c) What proportion of the variability in the response variable (number of caffeinated drinks consumed) is accounted for the regression model in (b)?
-$BR$BR
+    BEGIN_TEXT
 
-Answer: \( r^2 = \) \{ans_rule(8)\} (Carry 3 decimal digits.)
+        A sample of seven students were interviewed. The questions included:
+        $BR
 
-END_TEXT
+        $BITALIC "Do you smoke regularly?" $EITALIC
+        $BR
 
-#Context()->normalStrings;
+        $BITALIC "How many caffeinated drinks do you consume in a typical week?" $EITALIC
+        $BR
 
-ANS( radio_cmp( $mc1->correct_ans() ) );
+        The smoking-status variable was coded so that 0 = nonsmoker and 1 = regular smoker.
+        $BR$BR
 
-ANS( $yint->cmp() );
-ANS( $slope->cmp() );
-ANS( $coefdet->cmp() );
+        \{ $mc1->print_q() \}
+        $BR
+
+        \{ $mc1->print_a() \}
+        $BR
+
+        (b) The table below shows the summary statistics for the data.
+        $BR$BR
+
+            \{begintable(3)\}
+            \{row(" "                , "Sample mean", "Sample std dev")\}
+            \{row("Smoking status"   , "$meanx",      "$stdevx")\}
+            \{row("Number of drinks" , "$meany",      "$stdevy")\}
+            \{endtable()\}
+            $BR
+
+        Compute the least-squares regression equation for predicting the number of caffeinated drinks consumed from smoking status.
+        $BR$BR
+
+            Answer: \( \hat{y} = \) \{ ans_rule(8) \} \( + \) \{ ans_rule(8) \} \( x \) (Round to 3 decimal places.)
+            $BR$BR
+
+        (c) What proportion of the variability in the response variable (number of caffeinated drinks consumed) is accounted for by the regression model in (b)?
+        $BR$BR
+
+            Answer: \{ ans_rule(8) \} (Round to 3 decimal places.)
+
+    END_TEXT
+
+    ANS( radio_cmp($mc1->correct_ans()) );
+
+    ANS( num_cmp($int,   tolType=>absolute, tolerance=>0.003) );
+    ANS( num_cmp($slope, tolType=>absolute, tolerance=>0.003) );
+    ANS( num_cmp($rsq,   tolType=>absolute, tolerance=>0.003) );
 
 ENDDOCUMENT();
