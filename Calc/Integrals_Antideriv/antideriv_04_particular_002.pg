@@ -1,0 +1,67 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','antiderivative', 'indefinite integral')
+## Tagged by dbw 8/5/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('8/5/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+## f'(x) = mx+b
+$m = non_zero_random(-3,8);
+$b = non_zero_random(-10,10);
+$fprime = Formula("$m*x+$b")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+## f(a) = c
+$a = non_zero_random(-4,4);
+$c = random(-5,5,1);
+$fAntiD = Formula("$m*x^2/2+$b*x");
+$fConst = Real($c) - $fAntiD->eval(x=>$a);
+$f = Formula("$fAntiD + $fConst")->reduce();
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Find a function \(f(x)\) such that \(f'(x) = $fprime\) and \(f($a)=$c\).
+
+$PAR
+\(f(x) = \) \{ ans_rule(40) \}
+$BR
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $f->cmp );
+
+COMMENT("The point of evaluation will NOT be at zero.");
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

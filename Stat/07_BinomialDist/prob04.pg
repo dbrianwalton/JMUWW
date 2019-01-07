@@ -1,0 +1,45 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$a = Compute("6.00"  )->with(tolType=>'absolute', tolerance=>'0.001' );
+$b = Compute("0.0950")->with(tolType=>'absolute', tolerance=>'0.0005');
+$c = Compute("0.1859")->with(tolType=>'absolute', tolerance=>'0.0005');
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+For a particular species of a flower, 40% have smooth leaves and 60% have hairy leaves. Suppose that you randomly pick 15 flowers of this species.
+$BR$BR
+
+(a) Compute the expected number of flowers with smooth leaves.
+$BR$BR
+
+\( \mu = np = \) \{ ans_rule(8) \} (Carry 2 decimal digits.)
+$BR$BR
+
+(b) Compute the probability that more than 8 flowers will have smooth leaves.
+$BR$BR
+
+\( P(X > 8) = 1 - P(X \leq 8) = \) \{ ans_rule(8) \} (Carry 4 decimal digits.)
+$BR$BR
+
+(c) Compute the probability that exactly 5 flowers will have smooth leaves.
+$BR$BR
+
+\( P(X = 5) = P(X \leq 5) - P(X \leq 4) = \) \{ ans_rule(8) \} (Carry 4 decimal digits.)
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $a->cmp() );
+ANS( $b->cmp() );
+ANS( $c->cmp() );
+
+ENDDOCUMENT();

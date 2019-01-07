@@ -1,0 +1,48 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$a = Compute("0.5017")->with(tolType=>'absolute', tolerance=>'0.0005');
+$b = Compute("0.0300")->with(tolType=>'absolute', tolerance=>'0.0005');
+$c = Compute("0.9988")->with(tolType=>'absolute', tolerance=>'0.0005');
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+It is estimated that 20% of all school children in America are lefthanded. Let us assume that this estimate is reasonably accurate. Consider a random sample of 13 school children taken from the population.
+$BR$BR
+
+(a) Compute the probability that fewer than 3 children in the sample will be lefthanded.
+$BR$BR
+
+\( P(X < 3) = P(X \leq 2) = \) \{ ans_rule(8) \} (Carry 4 decimal digits.)
+$BR$BR
+
+(b) Compute the probability that between 6 and 9 children (inclusive) will be lefthanded.
+$BR$BR
+
+\( P(6 \leq X \leq 9) = P(X \leq 9) - P(X \leq 5) = \) \{ ans_rule(8) \} (Carry 4 decimal digits.)
+$BR$BR
+
+(c) Compute the probability that more than 5 children will be righthanded.
+$BR$BR
+
+\( P(X \leq 7) = \) \{ ans_rule(8) \} (Carry 4 decimal digits.)
+$BR$BR
+
+Note: For (c) above, "more than 5 righthanded" means "less than or equal to 7 lefthanded."
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $a->cmp() );
+ANS( $b->cmp() );
+ANS( $c->cmp() );
+
+ENDDOCUMENT();

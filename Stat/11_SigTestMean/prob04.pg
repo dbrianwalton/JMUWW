@@ -1,0 +1,70 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+
+#Context("Numeric");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"Step 1: Formulate the null and alternative hypotheses.",
+"\( H_0\!: \mu = 7.50 \) vs. \( H_a\!: \mu \neq 7.50 \)"
+);
+$mc1->extra(
+"\( H_0\!: \mu = 7.50 \) vs. \( H_a\!: \mu > 7.50 \)",
+"\( H_0\!: \mu = 7.50 \) vs. \( H_a\!: \mu < 7.50 \)"
+);
+
+$teststat = Compute("1.4285")->with(tolType=>'absolute', tolerance=>'0.0006');
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"Step 3: Approximate the p-value.",
+"\( 0.10 < p < 0.20 \)"
+);
+$mc2->extra(
+"\( 0.05 < p < 0.10 \)",
+"\( 0.025 < p < 0.05 \)"
+);
+
+$mc3=new_multiple_choice();
+$mc3->qa(
+"Step 4: Make a decision.",
+"Fail to reject the null hypothesis."
+);
+$mc3->extra(
+"Reject the null hypothesis."
+);
+
+#TEXT(beginproblem());
+#Context()->texStrings;
+
+BEGIN_TEXT
+
+A study was conducted to test whether the mean thickness of spearmint gum manufactured for vending machines was 7.50 hundredths of an inch. The mean thickness based on a random sample of 51 gums was 7.52, and the standard deviation was 0.10. At the significance level of .10, conduct a test of hypotheses to determine whether the true mean thickness differs from 7.50 hundredths of an inch.
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+Step 2: Calculate the test statistic.
+$BR$BR
+
+\( \displaystyle t = \frac{\bar{x} - \mu_0}{s/\sqrt{n}} = \) \{ ans_rule(8) \} (Carry 3 decimal digits.)
+$BR$BR
+
+\{ $mc2->print_q() \} $BR
+\{ $mc2->print_a() \} $BR
+
+\{ $mc3->print_q() \} $BR
+\{ $mc3->print_a() \}
+
+END_TEXT
+
+#Context()->normalStrings;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( $teststat->cmp() );
+ANS( radio_cmp( $mc2->correct_ans() ) );
+ANS( radio_cmp( $mc3->correct_ans() ) );
+
+ENDDOCUMENT();

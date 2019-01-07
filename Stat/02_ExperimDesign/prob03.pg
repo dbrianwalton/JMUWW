@@ -1,0 +1,57 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"1. The instance in which certain parts of the population are systematically excluded in a study is an example of which of the following?",
+"Sampling/selection bias."
+);
+$mc1->extra(
+"Non-response bias.",
+"Response bias."
+);
+$mc1->makeLast("None of the above.");
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"2. The instance in which participants' responses are influenced by the way the the study is designed is an example of which of the following?",
+"Response bias."
+);
+$mc2->extra(
+"Non-response bias.",
+"Sampling/selection bias."
+);
+$mc2->makeLast("None of the above.");
+
+$mc3=new_multiple_choice();
+$mc3->qa(
+"3. The instance in which some participants selected for a study fail to provide responses is an example of which of the following?",
+"Non-response bias."
+);
+$mc3->extra(
+"Sampling/selection bias.",
+"Response bias."
+);
+$mc3->makeLast("None of the above.");
+
+BEGIN_TEXT
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+\{ $mc2->print_q() \} $BR
+\{ $mc2->print_a() \} $BR
+
+\{ $mc3->print_q() \} $BR
+\{ $mc3->print_a() \}
+
+END_TEXT
+
+$showPartialCorrectAnswers = 0;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( radio_cmp( $mc2->correct_ans() ) );
+ANS( radio_cmp( $mc3->correct_ans() ) );
+
+ENDDOCUMENT();

@@ -1,0 +1,66 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'algebraic function')
+## Tagged by dbw 9/1/09
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('1/13/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "parserPopUp.pl",
+  "parserMultiAnswer.pl",
+  "problemRandomize.pl",
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+
+@baseList = (2, 3, 4, 5, 6, 7);
+@bases = NchooseK(6,2);
+$b1 = $baseList[$bases[0]];
+$b2 = $baseList[$bases[1]];
+$m1 = random(2,5,1);
+$m2 = random(2,5,1);
+$expF ="$m1 \ln(x) -$m2 \ln($b2)";
+
+Context()->functions->disable("exp","ln");
+
+$expr = Compute("x^$m1/$b2^$m2");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Simplify the following expression so that it does not involve \(e\), \(\ln\) or \(\exp\).
+$BR $BR
+\(  e^{$expF} = \) \{ ans_rule(20) \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $expr->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

@@ -1,0 +1,126 @@
+# DESCRIPTION
+#   Revenue:  Given a demand function, optimize the revenue.
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('extreme value','optimization', 'revenue', 'demand')
+## Date('8/24/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextString.pl",
+  "PGchoicemacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+# Initial price
+@priceMain = ( 2, 4, 5, 6, 8, 10 );
+$pMain = $priceMain[random(0, @priceMain - 1)];
+
+@priceMagn = ( 1, 10, 100 );
+$pMagn = $priceMagn[random(0,@priceMagn - 1)];
+
+$pInitial = $pMain * $pMagn;
+
+@sellMain = (1.2, 1.5, 1.6, 2, 2.5, 4, 5, 7.5);
+@priceCorrect = (0.8, 0.65, 0.6, 0.5, 0.4, 0.25, 0.2, 0.1);
+$si = random(0, @sellMain-1);
+$sMain = $sellMain[ $si ];
+
+$sellMagn = random(2, 4);
+$maxSell = $sMain * 10**$sellMagn;
+
+$sf1 = $scaleFactor1[random(0,@scaleFactor1 - 1)];
+
+@scaleFactor2 = (100, 1000, 10000);
+$sf2 = $scaleFactor2[random(0,@scaleFactor2 - 1)];
+
+$dropBase = random(0.6*$pMain, 0.9*$pMain, 0.1);
+$dropPrice = $dropBase * $pMagn * $priceCorrect[$si] * 10**(-$sellMagn);
+
+$demand = Compute("$pInitial - $dropPrice * x")->reduce();
+$revenue = Compute("x*$demand");
+
+$critPt = $pInitial / (2*$dropPrice);
+$critPtDwn = floor($critPt);
+$critPtUp = ceil($critPt);
+
+$TOL = 1e-6;
+if (abs($critPt - $critPtDwn) < $TOL || abs($critPt - $critPtUp) < $TOL) {
+    $numSell = $critPt;
+    $maxRev = $revenue->eval(x=>$numSell);
+} else {
+    $revDwn = $revenue->eval(x=>$critPtDwn)->value();
+    $revUp = $revenue->eval(x=>$critPtUp)->value();
+    $cmpVal = $revDwn <=> $revUp;
+    if (abs($revDwn - $revUp) < $TOL) {
+        $numSell = $critPtDwn;
+        $maxRev = $revDwn;
+    } elsif ($revDwn > $revUp) {
+        $numSell = $critPtDwn;
+        $maxRev = $revDwn;
+    } else {
+        $numSell = $critPtUp;
+        $maxRev = $revUp;
+    }
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+A company produces and sells $BITALIC widgets $EITALIC 
+so that the price \(p\) of each widget produced and sold
+is related to the total number sold \(x\) according to the demand
+equation
+\[p = $demand, \quad 0 \le x \le $maxSell. \]
+
+$PAR
+What is the formula for total revenue as a function of number sold \(x\)?
+$BR
+\(R(x)\) = \{ ans_rule(30) \}
+
+$PAR
+How many widgets must be sold to maximize the total revenue?
+$BR
+Number sold: \{ ans_rule(10) \}
+$BR
+Price per widget: \{ ans_rule(10) \}
+$BR
+Maximum revenue: \{ ans_rule(10) \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $revenue->cmp );
+ANS( Real($numSell)->cmp );
+ANS( $demand->eval(x=>$numSell)->cmp );
+ANS( Real($maxRev)->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

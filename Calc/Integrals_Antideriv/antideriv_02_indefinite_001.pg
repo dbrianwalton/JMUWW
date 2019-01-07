@@ -1,0 +1,78 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','antiderivative', 'indefinite integral')
+## Tagged by dbw 9/1/09
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('1/13/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "answerHints.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+@vars = ('t', 'x', 'u', 'z');
+$nvars = 4;
+
+$x = $vars[random(0,$nvars-1)];
+Context()->variables->are($x=>'Real');
+
+$A = random(1,10);
+$n = random(0,2);
+
+$isUp = random(0,1);
+
+if ($isUp == 1) {
+  $fprime = Compute("$A*$x^$n*sqrt($x)")->reduce();
+  $f = FormulaUpToConstant("2*$A/(2*$n+3)*$x^((2*$n+3)/2)");
+} else {
+  $fprime = Compute("$A/[$x^$n*sqrt($x)]")->reduce();
+  $f = FormulaUpToConstant("2*$A/(1-2*$n)*$x^((1-2*$n)/2)");
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute the following indefinite integral.
+
+$PAR
+\(\displaystyle \int $fprime \, d$x = \) \{ ans_rule(40) \}
+$BR
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+$f->{limits} = [0,2];
+
+ANS( $f->cmp );
+
+COMMENT("The variable of integration is randomly chosen.");
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

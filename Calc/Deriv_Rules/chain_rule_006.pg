@@ -1,0 +1,71 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative','chain rule', 'algebraic function')
+## Tagged by dbw 9/1/09
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('1/13/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Product with composition.
+$compCode = random(0,2,1);
+
+# Need two basic functions
+$a = non_zero_random(2,5,1);
+$b = non_zero_random(-5,5,1);
+
+$c = random(1,8);
+$k = random(2,5);
+
+$func = Compute("$c/($a*x+$b)^$k")->reduce('(-x)-y'=>0);
+$df = Compute("-$k*$a*$c/($a*x+$b)^($k+1)")->reduce('(-x)-y'=>0);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute
+$BR
+\(\displaystyle \frac{d}{dx}\Big[$func\Big] = \) \{ ans_rule(40) \}
+$BR
+END_TEXT
+
+$showHint = 0;
+BEGIN_HINT
+Instead of using the quotient rule, you can rewrite the fraction as a composition with a negative power and then use the chain rule.
+END_HINT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $df->cmp );
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

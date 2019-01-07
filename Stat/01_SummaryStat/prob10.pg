@@ -1,0 +1,61 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+
+#Context("Numeric");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"(a) How would you describe the skewness of the distribution of the data?",
+"The distribution is skewed to the right."
+);
+$mc1->extra(
+"The distribution is skewed to the left.",
+"The distribution is symmetric.",
+);
+
+$median1 = Compute("77.5")->with(tolType=>'absolute', tolerance=>'0.01');
+$median2 = Compute("77.5")->with(tolType=>'absolute', tolerance=>'0.01');
+
+#TEXT(beginproblem());
+#Context()->texStrings;
+
+BEGIN_TEXT
+
+The stem-and-leaf plot below shows scores on a doctoral comprehensive examination for a total of eight graduate students. The stem width (multiplier for the stem digits) is 10.
+$BR$BR
+
+\( \displaystyle
+    \begin{tabular}{r | l}
+    Stem & Leaf\\ \hline
+    6 & 7\\
+    7 & 1569\\
+    8 & 38\\
+    9 & 4
+    \end{tabular}
+\)
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+(b) Calculate the median score.
+$BR$BR
+
+Answer: \{ans_rule(8)\} (Carry 1 decimal digit.)
+$BR$BR
+
+(c) The doctoral committee, who graded the exams, discovered that there was a grading error. The lowest score was in fact 66 (rather than 67). Find the median score for the correct data.
+$BR$BR
+
+Answer: \{ans_rule(8)\} (Carry 1 decimal digit.)
+
+END_TEXT
+
+#Context()->normalStrings;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( $median1->cmp() );
+ANS( $median2->cmp() );
+
+ENDDOCUMENT();

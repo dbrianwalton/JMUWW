@@ -1,0 +1,63 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'logarithm')
+## Tagged by dbw 8/1/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('8/1/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$A = non_zero_random(-10,10);
+
+$m = non_zero_random(-10,10);
+do {
+  $b = non_zero_random(-10,10);
+} while ($m==$b);
+
+$func = Compute("$A*ln($m*x+$b)")
+	       ->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+$deriv2 = Compute("-$A*($m)^2/($m*x+$b)^2")
+                 ->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Find the second derivative of \(f(x) = $func\).
+$BR $BR
+\(f''(x) = \) \{ ans_rule(20) \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $deriv2->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

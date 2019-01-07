@@ -1,0 +1,50 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+
+#Context("Numeric");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"(c) Are the two events 'the person you met regularly uses the treadmill' and 'the person you met regularly uses the swimming pool' independent?",
+"No."
+);
+$mc1->extra(
+"Yes."
+);
+
+$a = Compute("0.800")->with(tolType=>'absolute', tolerance=>'0.005');
+$b = Compute("0.500")->with(tolType=>'absolute', tolerance=>'0.005');
+
+#TEXT(beginproblem());
+#Context()->texStrings;
+
+BEGIN_TEXT
+
+Of all users of a gym facility, 70% of them use the treadmill regularly, 45% use the swimming pool regularly, and 35% use both the treadmill and swimming pool regularly. Suppose that you just met a person who uses the gym facility.
+$BR$BR
+
+(a) What is the probability that the person whom you met regularly uses the treadmill, swimming pool, or both?
+$BR$BR
+
+Answer: \{ans_rule(8)\} (Carry 3 decimal digits.)
+$BR$BR
+
+(b) What is the probability that the person whom you met is a regular user of the swimming pool, given that he or she uses the treadmill regularly?
+$BR$BR
+
+Answer: \{ans_rule(8)\} (Carry 3 decimal digits.)
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \}
+
+END_TEXT
+
+#Context()->normalStrings;
+
+ANS( $a->cmp() );
+ANS( $b->cmp() );
+ANS( radio_cmp( $mc1->correct_ans() ) );
+
+ENDDOCUMENT();

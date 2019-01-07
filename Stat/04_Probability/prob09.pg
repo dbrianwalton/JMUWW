@@ -1,0 +1,69 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+
+#Context("Numeric");
+
+$a = Compute("0.369")->with(tolType=>'absolute', tolerance=>'0.005');
+$b = Compute("0.631")->with(tolType=>'absolute', tolerance=>'0.005');
+$c = Compute("0.606")->with(tolType=>'absolute', tolerance=>'0.005');
+$d = Compute("0.394")->with(tolType=>'absolute', tolerance=>'0.005');
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"(b) Which of the following is a reasonable interpretation of the association between motivational level and perceived difficulty of course?",
+"Those who have low levels of motivation tend to perceive the course as difficult."
+);
+$mc1->extra(
+"Those who have high levels of motivation tend to perceive the course as difficult.",
+"Higher levels of motivation makes the course more manageable.",
+"Motivational level and perceived difficulty do not have a significant association."
+);
+
+#TEXT(beginproblem());
+#Context()->texStrings;
+
+BEGIN_TEXT
+
+Shown below are frequency data for a survey study investigating the perceived difficulty level of a chemistry course for two groups of students: those who had high levels of motivation to take the course and those who had low levels of motivation.
+$BR$BR
+
+\( \displaystyle
+\begin{tabular}{lcc}
+\hline
+& \multicolumn{2}{c}{Perceived difficulty} \\
+\cline{2-3}
+Motivation &  Difficult & Manageable \\
+\hline
+High       &     24     &     41     \\
+Low        &     20     &     13     \\
+\hline
+\hspace*{0.90in}&\hspace*{0.90in}&\hspace*{0.90in}
+\end{tabular}
+\)
+$BR$BR
+
+(a) Calculate the relative proportions of perceived difficulty for each level of motivation (the four boxes below correspond to the four cells in the table). (Carry 3 decimal digits.)
+$BR$BR
+
+\{ ans_rule(8) \} \{ ans_rule(8) \}
+$BR$BR
+
+\{ ans_rule(8) \} \{ ans_rule(8) \}
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \}
+
+END_TEXT
+
+#Context()->normalStrings;
+
+ANS( $a->cmp() );
+ANS( $b->cmp() );
+ANS( $c->cmp() );
+ANS( $d->cmp() );
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+
+ENDDOCUMENT();

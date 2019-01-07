@@ -1,0 +1,45 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$a = Compute("0.7216")->with(tolType=>'absolute', tolerance=>'0.0005');
+$b = Compute("0.0811")->with(tolType=>'absolute', tolerance=>'0.0005');
+$c = Compute("0.4845")->with(tolType=>'absolute', tolerance=>'0.0005');
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+It is estimated that 30% of all school children in America are obese. Let us assume that this estimate is reasonably accurate, and suppose that you take a random sample of 15 school children.
+$BR$BR
+
+(a) Compute the probability that less than or equal to 5 children in the sample will be obese.
+$BR$BR
+
+\( P(X \leq 5) = \) \{ ans_rule(8) \} (Carry 4 decimal digits.)
+$BR$BR
+
+(b) Compute the probability that exactly 7 children in the sample will be obese.
+$BR$BR
+
+\( P(X = 7) = P(X \leq 7) - P(X \leq 6) = \) \{ ans_rule(8) \} (Carry 4 decimal digits.)
+$BR$BR
+
+(c) Compute the probability that more than 4 children in the sample will be obese.
+$BR$BR
+
+\( P(X > 4) = 1 - P(X \leq 4) = \) \{ ans_rule(8) \} (Carry 4 decimal digits.)
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $a->cmp() );
+ANS( $b->cmp() );
+ANS( $c->cmp() );
+
+ENDDOCUMENT();

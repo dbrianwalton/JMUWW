@@ -1,0 +1,88 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'implicit differentiation')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('6/16/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "answerHints.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+Context()->variables->are(x=>'Real', y=>'Real');
+
+# Simple rational relation of linear parts:  (ax+by)/(cx+dy) = kx
+
+# Want four constants so not factorable.
+$a = non_zero_random(-9,9);
+$b = non_zero_random(-9,9);
+do {
+    $c = non_zero_random(-9,9);
+    $d = non_zero_random(-9,9);
+} while ($b/$a == $d/$c);
+$k  = non_zero_random(-9,9);
+
+# Because there are many valid solutions to dy/dx in terms of y and x,
+# we need to identify some specific points at which to evaluate the answer.
+$yF = Compute("($k*$c*x^2-$a*x)/($b-$k*$d*x)");
+
+# Avoid singular point at x=b/(kd);
+$bad = $b/($k*$d);
+@xVals = ($bad-3, $bad-2, $bad-1,$bad+1, $bad+2, $bad+3);
+for ($i=0; $i<=5; $i++) {
+    $yVals[$i] = $yF->eval(x=>$xVals[$i]);
+}
+
+$ratl = Compute("[$a*x+$b*y]/[$c*x+$d*y]")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+$dydx = Compute("[2*$k*$c*x+$k*$d*y-$a]/[$b-$k*$d*x]");
+$dydx->{test_points} = [ map( [ $xVals[$_], $yVals[$_] ], 0..5 ) ];
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR The following equation defines \(y\) as an implicit function of \(x\).
+\[ $ratl = $k x \]
+
+$PAR
+Find the derivative \(\displaystyle \frac{dy}{dx}\) in terms of \(x\) and \(y\) by implicit differentiation.
+$BR
+$BR
+\(\displaystyle \frac{dy}{dx}\) = \{ ans_rule(30) \}
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $dydx->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

@@ -1,0 +1,81 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','exponential', 'model')
+## Tagged by dbw 8/2/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('8/2/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+##############################################
+
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+Context()->variables->are(t=>'Real');
+
+Context()->flags->set(
+  tolerance=>1,
+  tolType=>"absolute"
+);
+
+########################
+# Create the random nature of the problem
+########################
+
+$finalNumber = 100*random(5,20);
+$initNumber = 50*random(1,4);
+$frac = sprintf("%.2f", 1 - $initNumber/$finalNumber);
+
+$k = random(0.12,0.24, 0.01);
+$model = Compute("$finalNumber*(1-$frac*e^(-$k*t))");
+$rate = $model->D();
+
+$numYears = random(4,8);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR A fast-food restaurant chain is expanding the number of franchises in the region.  
+The number of restaurants \(N\) is modeled by the formula
+\[N(t) = $model\]
+where \(t\) is the number of years from the start of this effort.
+
+$PAR Determine each of the following:  
+$BR - How many restaurants were there initially? \{ ans_rule(10) \}
+$BR - At what instantaneous rate was the number of restaurants changing at \(t=0\) years?
+$BR $SPACE $SPACE Rate: \{ ans_rule(10) \} (restaurants per year)
+$BR - How many restaurants were there after $numYears years? \{ ans_rule(10) \}
+$BR - At what instantaneous rate was the number of restaurants changing at \(t=$numYears\) years?
+$BR $SPACE $SPACE Rate: \{ ans_rule(10) \} (restaurants per year)
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $model->eval(t=>0)->cmp );
+ANS( $rate->eval(t=>0)->cmp );
+ANS( $model->eval(t=>$numYears)->cmp );
+ANS( $rate->eval(t=>$numYears)->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

@@ -1,0 +1,92 @@
+## DESCRIPTION
+##   Find the inverse relation.
+## ENDDESCRIPTION
+
+## KEYWORDS('inverse')
+## Tagged by dbw 10/18/10
+
+## DBsubject('Algebra')
+## DBchapter('Functions')
+## DBsection('Transformations')
+## Date('10/18/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Choose the original points.
+@xVals = 1..6;
+@fVals = NchooseK(10,6);
+
+# Find the inverted sorting order.
+@order = (0..5);
+for ($i=0; $i<5; $i++) {
+    for ($j=$i+1; $j<6; $j++) {
+        if ($fVals[$order[$i]] > $fVals[$order[$j]]) {
+            $temp = $order[$i];
+            $order[$i] = $order[$j];
+            $order[$j] = $temp;
+        }
+    }
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+The following table defines a discrete function.
+$BR
+$BCENTER
+\{ begintable(7) \}
+\{ row( "$SPACE \(x\) $SPACE", @xVals) \}
+\{ row( "$SPACE \(f(x)\) $SPACE", @fVals) \}
+\{ endtable() \}
+$ECENTER
+
+$PAR
+Fill in the table for the inverse function.  For the \(x\) data row, list the domain of \(f^{-1}\) in increasing order.
+$BR
+$BCENTER
+\{ begintable(7) \}
+\{ row( "$SPACE \(x\) $SPACE", ans_rule(5), ans_rule(5), ans_rule(5), ans_rule(5), ans_rule(5), ans_rule(5)) \}
+\{ row( "$SPACE \(f^{-1}(x)\) $SPACE", ans_rule(5), ans_rule(5), ans_rule(5), ans_rule(5), ans_rule(5), ans_rule(5)) \}
+\{ endtable() \}
+$ECENTER
+
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answer checking
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 1;
+
+for ($i=0; $i<6; $i++) {
+    ANS( Real($fVals[$order[$i]])->cmp );
+}
+for ($i=0; $i<6; $i++) {
+    ANS( Real($xVals[$order[$i]])->cmp );
+}
+
+###################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

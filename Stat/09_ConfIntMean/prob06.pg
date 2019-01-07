@@ -1,0 +1,28 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"The width of a confidence interval for the population mean is a function of all of the following except:",
+"the value of the sample mean."
+);
+$mc1->extra(
+"the value of the sample standard deviation.",
+"the confidence level.",
+"the sample size.",
+"the confidence level."
+);
+
+BEGIN_TEXT
+
+\{ $mc1->print_q() \}$BR
+\{ $mc1->print_a() \}
+
+END_TEXT
+
+$showPartialCorrectAnswers = 0;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+
+ENDDOCUMENT();

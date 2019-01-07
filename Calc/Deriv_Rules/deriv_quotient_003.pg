@@ -1,0 +1,92 @@
+# DESCRIPTION
+#   Apply rules of differentiation involving quotients of simple polynomials. 
+#   Specifically:  f(x) = quotient with linear and quadratic parts (randomly ordered)
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('derivative','differentiation', 'quotient rule')
+## Date('6/2/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGpolynomialmacros.pl",
+  "answerHints.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+@varList = ('s', 't', 'x', 'u');
+$vk = random(0,3,1);
+$x = $varList[$vk];
+
+Context()->variables->are($x=>['Real', limits=>[0,4]]);
+
+# Define the quadratic factor
+@c = (random(1,4,1), random(-5,5,1), non_zero_random(-5,5,1));
+$factor[0] = PolyString(~~@c);
+$factor[0] =~ s!x!$x!g;
+$dfactor[0] = Compute($factor[0])->D();
+
+#Define the linear factor
+$m = non_zero_random(1,5,1);
+$b = non_zero_random(-8,8,1);
+$factor[1] = "$m*$x+$b";
+$dfactor[1] = Compute($factor[1])->D();
+
+$fk[0] = random(0,1,1);
+$fk[1] = 1-$fk[0];
+
+$expr = Compute("($factor[$fk[0]])/($factor[$fk[1]])")->reduce('(-x)-y' => 0, '(-x)+y' => 0, 'x^(-1)' => 0);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute the derivative of \(f($x) = $expr\).
+$BR (Repeat this problem for additional practice.)
+
+$PAR
+\(f'($x) = \) \{ ans_rule(40) \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+$ans = $expr->D();
+ANS( $ans->cmp()->withPostFilter(AnswerHints(
+        sub {
+            my ($correct, $student, $ans) = @_;
+            my $wrong = Compute("$dfactor[$fk[0]]/$dfactor[$fk[1]]");
+            return ($student == $wrong);
+        } => "Do not just divide the derivatives of the factors.",
+        sub {
+            my ($correct, $student, $ans) = @_;
+            my $wrong = -$correct;
+            return ($student == $wrong);
+        } => "Double-check the order in the numerator.",
+    )) );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

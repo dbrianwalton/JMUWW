@@ -1,0 +1,148 @@
+# DESCRIPTION
+#   Interpret a piecewise function defined with three intervals.
+#   The function will map each interval to a different interval, with
+#   the objective of reinforcing for students that it is the domain not range
+#   for which the conditions are applied.
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('function','piecewise')
+## Date('5/26/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGpolynomialmacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+# Define two points where the function will break.
+$a0 = random(-5,5,1);
+$q = random(2,5,1);
+$a1 = $a0 + $q;
+
+# Decide if going to left or right of the points for testing.
+$qD = non_zero_random(-1,1,1);
+
+# For the purpose of mapping the intervals will be:
+#   Int0 = (a0-q, a0)
+#   Int1 = (a0, a1=a0+q)
+#   Int2 = (a1, a1+q)
+
+# Determine a random way to map the intervals, at least one different
+@rmap = (0, 1, 2);
+
+# First, identify the interval that must not map to itself.
+$d0 = random(0,2,1);
+do {
+    $r0 = random(0,2,1);
+} while ($d0==$r0);
+$rmap[0] = $r0;
+$rmap[$r0] = 0;
+
+# Then, randomly assign the other two intervals to what is left.
+$k1 = random(1,2,1);
+$r1 = $rmap[$k1];
+$k2 = 3-$k1;
+$r2 = $rmap[$k2];
+#@rmap = ($r0, $r1, $r2);
+
+# Rearrange the interval  mapping list to original order.
+#$rmap[0] = $rmap[$d0];
+#$rmap[$d0] = $r0;
+
+#  Decide the slopes.  
+#    The middle slope is randomly either +1/-1.
+#    The other slopes are random unless we would join the edges.
+@m = (0, 0, 0);
+$m[1] = non_zero_random(-1,1,1);
+if ($rmap[0]+$m[1] == $rmap[1]) {
+    $m[0] = -1*$m[1];
+} else {
+    $m[0] = non_zero_random(-1,1,1);
+}
+if ($rmap[1]+$m[1] == $rmap[2]) {
+    $m[2] = -1*$m[1];
+} else {
+    $m[2] = non_zero_random(-1,1,1);
+}
+
+# Construct the linear expressions.
+foreach $i (0 .. 2) {
+    $a = $a0+($i-1)*$q;
+    $c = $a0 + ($rmap[$i]-1)*$q;
+    $yval = $c + $q*(1-$m[$i])/2;
+    @poly = ($m[$i], $yval-$m[$i]*$a);
+    $str = PolyString(~~@poly);
+    $expr[$i] = Compute($str)->reduce('(-x)+y'=>0, '(-x)-y'=>0);
+}
+
+$ptA = $a0+$qD;
+$ptB = $a1+$qD;
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR The function \(f(x)\) is defined piecewise using the formula
+\[
+f(x) = \begin{cases}
+    $expr[2], & x>$a1 \\
+    $expr[1], & $a0 < x < $a1, \\
+    $expr[0], & x < $a0.
+    \end{cases}
+\]
+
+$PAR
+When \(x = $ptA\), which formula is used for \(f(x)\)? 
+$BR
+\( f(x) \) = \{ ans_rule(10) \} (Leave the answer in terms of \(x\).)
+$BR
+So \(f($ptA)\) = \{ ans_rule(10) \}
+
+$PAR
+When \(x = $ptB\), which formula is used for \(f(x)\)? 
+$BR
+\( f(x) \) =  \{ ans_rule(10) \}
+(Leave the answer in terms of \(x\).)
+$BR
+So \(f($ptB)\) = \{ ans_rule(10) \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+$ans1 = $expr[(1+$qD)/2];
+$ans2 = $ans1->eval(x=>$ptA);
+ANS( $ans1->cmp );
+ANS( $ans2->cmp );
+
+$ans3 = $expr[(3+$qD)/2];
+$ans4 = $ans3->eval(x => $ptB);
+ANS( $ans3->cmp );
+ANS( $ans4->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

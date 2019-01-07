@@ -1,0 +1,93 @@
+# DESCRIPTION
+#   How many apartments to rent?  Based on problem 4.4.40 of Introductory Calculus, by Tan
+#   Generalized.
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('extreme value','optimization', 'profit')
+## Date('8/24/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextString.pl",
+  "PGjmu_poly.pl",
+  "PGchoicemacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+# Number of available apartments.
+$n = random(1,5);
+$numApts = $n*100;
+
+$fk = random(19,23,1);
+$f = $fk/25;
+
+$nOpt = $f*$numApts;
+
+@factors = (2, 3, 5, 5);
+@order = NchooseK(4,4);
+
+$rent = 2 * $n * $fk;
+$i = 0;
+while ($rent < 500) {
+    $rent = $rent * $factors[$order[$i]];
+    $i++;
+}
+
+@p = ( [-$rent, 2*$nOpt], $rent, 0 );
+$simpleProfitStr = GenPolyString(~~@p);
+$simpleProfit = Compute($simpleProfitStr);
+
+# Break even at 50% capacity.
+$cost = $simpleProfit->eval(x=>$numApts/2);
+$profit = Compute("$simpleProfit - $cost")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+$desiredProfit = $profit->eval(x=>$nOpt);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+An apartment complex has $numApts apartment units.  The monthly profit (in dollars)
+obtained by renting out \(x\) apartments is given by
+\[P(x) = $profit.\]
+Determine how to maximize the monthly rental profit.
+
+$PAR
+Number of units to rent: \{ ans_rule(10) \}
+$BR
+Resulting monthly profit: \{ ans_rule(10) \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+
+ANS( Real($nOpt)->cmp );
+ANS( Real($desiredProfit)->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

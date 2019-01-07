@@ -1,0 +1,85 @@
+## DESCRIPTION
+##  Calculus
+## ENDDESCRIPTION
+
+## KEYWORDS('Calculus','Limit', "Definition")
+## Tagged by dbw
+
+## DBsubject('Calculus')
+## DBchapter('Limits and Derivatives')
+## DBsection('Definition of Limit')
+## Date('')
+## Author('')
+## Institution('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+
+##########
+# Determine random character for problem.   f(x) = mx+b, m!=0
+##########
+# Create simple cubic
+$b = random(-6,6);
+$fCore = Compute("x^3 + $b*x")->reduce('(-x)+y'=>0, '(-x)-y'=>0);
+
+# Choose a point
+$c = non_zero_random(-2,2);
+$eps = 0.1;
+
+$fVal = $fCore->eval(x=>$c);
+
+$fFcn = Compute("($fCore - $fVal)/(x-$c)")->reduce();
+$fDeriv = Compute("3x^2+$b");
+$limit = $fDeriv->eval(x=>$c);
+
+if ($c > 0) {
+    $delta1 = -1.5*$c+sqrt(9/4*$c**2+$eps);
+    $delta2 = 1.5*$c-sqrt(9/4*$c**2-$eps);
+} else {
+    $delta1 = 1.5*$c+sqrt(9/4*$c**2+$eps);
+    $delta2 = -1.5*$c-sqrt(9/4*$c**2-$eps);
+}
+$delta = Real(min($delta1, $delta2));
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Using a calculator, approximate numerically the limit of the function \(\displaystyle f(x) = $fFcn\) to 4 significant digits.
+$BR
+\(\displaystyle L = \lim_{x \to $c} f(x) \) = \{ ans_rule(10) \}
+
+$PAR
+Use a graphing calculator to find the largest value of \(\delta>0\) so that the following statement is true:
+$BR 
+\( 0<|x-$c|<\delta \: \Rightarrow \: |f(x) - L| < $eps \)
+$BR
+\( \delta =\) \{ ans_rule(10) \}
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $limit->cmp );
+ANS( $delta->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

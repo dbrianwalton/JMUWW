@@ -1,0 +1,75 @@
+## DESCRIPTION
+##   Given a function, find the domain -- in this case a more complex rational function.
+## ENDDESCRIPTION
+
+## KEYWORDS('algebra','composition')
+## Tagged by dbw 7/22/10
+
+## DBsubject('Algebra')
+## DBchapter('Functions')
+## DBsection('Domain')
+## Date('7/22/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl",
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Choose the coefficients: f(x) = (ax+b)/[(x-c1)(x-c2)]
+$a = non_zero_random(-9,9);
+$b = random(-12,12);
+$c[0] = random(-6,6);
+$c[1] = random(-6,6);
+
+# Now find the coefficients for denominator when multiplied out.
+$p[0] = $c[0]*$c[1];
+$p[1] = $c[0]+$c[1];
+
+$f = Compute("($a*x+$b)/(x^2-$p[1]*x+$p[0])")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+Context('Interval');
+if ($c[0] == $c[1]) {
+    $domain = Interval("(-INF, $c[0])U($c[0],INF)");
+} else {
+    $cLeft = min(@c);
+    $cRight = max(@c);
+    $domain = Interval("(-INF, $cLeft) U ($cLeft, $cRight) U ($cRight,INF)");
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+What is the domain of the function \(\displaystyle f(x) = $f\)? 
+$PAR
+Domain = \{ ans_rule(25) \}
+$BR
+Use interval notation.  Type $BBOLD INF  $EBOLD for \(\infty\) and $BBOLD U $EBOLD for the union symbol \(\cup\).
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answer checking
+
+ANS($domain->cmp);
+
+###################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

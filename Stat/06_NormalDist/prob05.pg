@@ -1,0 +1,28 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$zscore = Compute("1.25"  )->with(tolType=>'absolute', tolerance=>'0.002');
+$prob   = Compute("0.1056")->with(tolType=>'absolute', tolerance=>'0.0001');
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+The height of a tree will be measured using a clinometer. For this device, the measurement error has a normal distribution with mean \(\mu = 0.00\) meter and standard deviation \(\sigma = 0.04\). If the tree is exactly 35 meters tall, what is the probability that the clinometer will indicate a value less than 34.95 meters? (Carry 2 decimal digits for the z-score and 4 decimal digits for the probability.)
+$BR$BR
+
+\( P(X < 34.95) = P(Z < \) \{ ans_rule(8) \} \( ) = \) \{ ans_rule(8) \}
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $zscore->cmp() );
+ANS( $prob->cmp() );
+
+ENDDOCUMENT();

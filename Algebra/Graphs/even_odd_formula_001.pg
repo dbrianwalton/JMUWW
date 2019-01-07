@@ -1,0 +1,137 @@
+## DESCRIPTION
+##   Algebraically determine if a function is even or odd.
+## ENDDESCRIPTION
+
+## KEYWORDS('symmetry','even', 'odd')
+## Tagged by dbw 10/18/10
+
+## DBsubject('Algebra')
+## DBchapter('Functions')
+## DBsection('Transformations')
+## Date('10/18/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "contextLimitedPolynomial.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Choose if odd (-1), even (+1).
+$oddOrEven = non_zero_random(-1,1);
+$makeNeither = random(0,1);
+
+# Select coefficients through power 5.
+for ($i=0; $i<=5; $i++) {
+    $c[$i] = non_zero_random(-4,4);
+}
+
+# Now construct the polynomial.
+if ($oddOrEven == 1) {
+    for ($i=1; $i<=5; $i+=2) {
+        $c[$i] = 0;
+    }
+    if ($makeNeither == 1) {
+        $c[2*random(0,2)+1] = non_zero_random(-4,4);
+        $pchoice = "neither";
+    } else {
+        $pchoice = "even";
+    }
+} elsif ($oddOrEven == -1) {
+    for ($i=0; $i<=4; $i+=2) {
+        $c[$i] = 0;
+    }
+    if ($makeNeither == 1) {
+        $c[2*random(0,2)] = non_zero_random(-4,4);
+        $pchoice = "neither";
+    } else {
+        $pchoice = "odd";
+    }
+}
+$popup = PopUp(["?", "even", "odd", "neither"], $pchoice);
+
+Context("LimitedPolynomial");
+Context()->{error}{msg}{"You can only raise a variable to a power in a polynomial"} 
+= "Expand and then simplify your polynomial.";
+
+$polyStr = "";
+$polyStrHR = "";
+$polyStrVR = "";
+for ($i=5; $i>=0; $i--) {
+    if ($i > 0) {
+        $xTerm = "* x^$i";
+    } else {
+        $xTerm = "";
+    }
+    if ($c[$i] != 0) {
+        $polyStr = $polyStr . "+ $c[$i] $xTerm";
+        $c = $c[$i] * (-1)**$i;
+        $polyStrHR = $polyStrHR . "+ $c $xTerm";
+        $c = -1*$c[$i];
+        $polyStrVR = $polyStrVR . "+ $c $xTerm";
+    }
+}
+$poly = Compute($polyStr)->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+$polyHR = Compute($polyStrHR)->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+$polyVR = Compute($polyStrVR)->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+
+
+
+Context()->texStrings;
+BEGIN_TEXT
+Determine if \(f(x) = $poly\) is even, odd or neither.
+
+$PAR
+Determine \(f(-x)\) and simplify.
+$BR
+$BBLOCKQUOTE
+\(f(-x) = \) \{ ans_rule(25) \}
+$EBLOCKQUOTE
+$BR
+Determine \(-f(x)\) and simplify.
+$BR
+$BBLOCKQUOTE
+\(-f(x) = \) \{ ans_rule(25) \}
+$EBLOCKQUOTE
+$BR
+Based on these calculations, \(f\) is what type of function?
+$BR
+$BBLOCKQUOTE
+\(f\) is \{ $popup->menu() \}
+$EBLOCKQUOTE
+
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answer checking
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 1;
+
+ANS($polyHR->cmp);
+ANS($polyVR->cmp);
+ANS($popup->cmp);
+
+###################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

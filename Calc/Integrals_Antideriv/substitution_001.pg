@@ -1,0 +1,66 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','antiderivative', 'indefinite integral')
+## Tagged by dbw 9/1/09
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('1/13/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$a = random(1,6,1);
+$c = non_zero_random(-8,8,1);
+$u = Formula("$a*x^2+$c")->reduce();
+
+$n = random(3, 9, 1);
+$A = non_zero_random(-10,10,1);
+
+$fprime = Formula("$A*x*($u)^$n")->reduce();
+$f = FormulaUpToConstant("($A/(2*$a*($n+1))) * ($u)^($n+1)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute the following indefinite integral.
+
+$PAR
+\(\displaystyle \int $fprime \, dx = \) \{ ans_rule(40) \}
+$BR
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $f->cmp( limits=>[-1,1] ) );
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

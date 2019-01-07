@@ -1,0 +1,137 @@
+## DESCRIPTION
+## Work with the union and intersection of discrete sets
+## ENDDESCRIPTION
+
+## KEYWORDS('equation', 'slope', 'line')
+
+
+## DBsubject('Discrete Mathematics')
+## DBchapter('Sets')
+## DBsection('Union and Intersection')
+## Date('')
+## Author('D. B. Walton')
+## Institution('JMU')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+#
+# First comes some stuff that appears at the beginning of every problem
+#
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "problemRandomize.pl"
+);
+
+# make sure we're in the context we want
+Context("Numeric");
+
+# Allow retrys with different values.
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# We have two sets coming from {0, 1, 2, ..., 7}
+# We need to assign them to sets A and B randomly so that 
+#   there is a non-empty intersection
+@order = NchooseK(8,8);
+
+# We want each portion of the Venn diagram to have at least 2 elements.
+$inAnotB = random(1,2);
+$inBnotA = random(1,2);
+$inAandB = random(2,3);
+
+$i = 0;
+for ($k=0; $k<$inAnotB; $k++) {
+   $AnotB[$k] = $order[$i];
+   $i++;
+}
+for ($k=0; $k<$inBnotA; $k++) {
+   $BnotA[$k] = $order[$i];
+   $i++;
+}
+for ($k=0; $k<$inAandB; $k++) {
+   $AandB[$k] = $order[$i];
+   $i++;
+}
+
+$inA = $inAnotB + $inAandB;
+$inB = $inBnotA + $inAandB;
+$inAorB = $inA + $inBnotA;
+@A = ( @AnotB, @AandB );
+@B = ( @BnotA, @AandB );
+@AorB = ( @AnotB, @BnotA, @AandB );
+
+
+# The sets were created in a random order.
+#  Let's sort them for cleaner visual appearance.
+for ($i=0; $i<$inA-1; $i++) {
+    for ($k=$i+1; $k<$inA; $k++) {
+        if ($A[$i] > $A[$k]) {
+            $tmp = $A[$i];
+            $A[$i] = $A[$k];
+            $A[$k] = $tmp;
+        }
+    }
+}
+for ($i=0; $i<$inB-1; $i++) {
+    for ($k=$i+1; $k<$inB; $k++) {
+        if ($B[$i] > $B[$k]) {
+            $tmp = $B[$i];
+            $B[$i] = $B[$k];
+            $B[$k] = $tmp;
+        }
+    }
+}
+for ($i=0; $i<$inAandB-1; $i++) {
+    for ($k=$i+1; $k<$inAandB; $k++) {
+        if ($AandB[$i] > $AandB[$k]) {
+            $tmp = $AandB[$i];
+            $AandB[$i] = $AandB[$k];
+            $AandB[$k] = $tmp;
+        }
+    }
+}
+for ($i=0; $i<$inAorB-1; $i++) {
+    for ($k=$i+1; $k<$inAorB; $k++) {
+        if ($AorB[$i] > $AorB[$k]) {
+            $tmp = $AorB[$i];
+            $AorB[$i] = $AorB[$k];
+            $AorB[$k] = $tmp;
+        }
+    }
+}
+
+Context("Interval");
+$setA = Set(@A);
+$setB = Set(@B);
+$setAorB = Set(@AorB);
+$setAandB = Set(@AandB);
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+BEGIN_TEXT
+  Consider the two sets \(A = $setA\) and \(B = $setB\).
+  
+  $PAR
+  Find each of the following:
+$BR
+$BBLOCKQUOTE
+\(A \cup B = \) \{ ans_rule(15) \}
+$BR
+\(A \cap B = \) \{ ans_rule(15) \}
+END_TEXT
+
+$showPartialCorrectAnswers = 0;
+ANS( $setAorB->cmp );
+ANS( $setAandB->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+

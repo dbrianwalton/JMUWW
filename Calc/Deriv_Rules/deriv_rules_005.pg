@@ -1,0 +1,90 @@
+# DESCRIPTION
+#   Apply the rules of differentiation to functions without formulas.
+#    h(x) = f(x) / g(x) (quotient of f and g)
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('derivative','differentiation')
+## Date('6/1/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextFraction.pl",
+  "answerHints.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+Context()->variables->are(x=>'Real');
+
+$a = random(-10,10,1);
+
+#  The following is in a loop so that an incorrect strategy cannot give the correct answer.
+do {
+    $fa = random(-10,10,1);
+    $fpa = random(-8,8,1);
+    $ga = non_zero_random(-10,10,1);
+    $gpa = random(-8,8,1);
+} while ( $gpa*($ga*$fpa-$fa*$gpa) == $fpa*$ga**2 );
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Suppose that \(f($a) = $fa\) and \(f'($a) = $fpa\), and also that \(g($a)=$ga\) and \(g'($a)=$gpa\).
+$BR (Repeat this problem for additional practice.)
+
+$PAR
+If \(\displaystyle h(x) =  \frac{f(x)}{g(x)}\), then 
+$BR
+\(h($a) = \) \{ ans_rule(15) \}.
+$BR
+\(h'($a) = \) \{ ans_rule(15) \}.
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+$ansA = Compute("$fa/$ga")->reduce();
+ANS( $ansA->cmp );
+
+$num = $fpa*$ga-$fa*$gpa;
+$den = $ga**2;
+$ansB = Compute("$num/$den")->reduce();
+ANS($ansB->cmp()->withPostFilter(AnswerHints(
+    sub {
+        my ($correct, $student, $ans) = @_;
+        my $wrong;
+        if ($gpa != 0) {
+            $wrong = Compute("$fpa/$gpa");
+        } else {
+            $wrong = Compute("DNE");
+        }
+        return ($student != $correct && $student == $wrong);
+    } => "Do NOT just divide derivatives.",
+    )) );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

@@ -1,0 +1,45 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"1. What distribution will the sample mean have in this setting?",
+"Approximate normal distribution."
+);
+$mc1->extra(
+"Approximate t distribution.",
+"Exact normal distribution.",
+"Standard normal distribution."
+);
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"2. What theorem assures the result in the question above?",
+"The central limit theorem."
+);
+$mc2->extra(
+"Law of large numbers.",
+"Binomial theorem.",
+"Bayes' theorem."
+);
+
+BEGIN_TEXT
+
+Suppose that the actual weights of 5-pound bags of potatoes have a skewed distribution with a mean of 5.10 pounds and a standard deviation of 0.03. Weights will be measured for a random sample of 35 bags and the sample mean will be computed.
+$BR$BR
+
+\{ $mc1->print_q() \}$BR
+\{ $mc1->print_a() \}$BR
+
+\{ $mc2->print_q() \}$BR
+\{ $mc2->print_a() \}
+
+END_TEXT
+
+$showPartialCorrectAnswers = 0;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( radio_cmp( $mc2->correct_ans() ) );
+
+ENDDOCUMENT();

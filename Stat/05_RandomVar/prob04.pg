@@ -1,0 +1,28 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+
+$mc=new_multiple_choice();
+$mc->qa(
+"A red six-sided die and a blue six-sided die are rolled. Let \(X\) be the value of the red die minus the value of the blue die.  What are the possible values of \(X\)?",
+"\(-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5\)"
+);
+$mc->extra(
+"\(1, 2, 3, 4, 5, 6\)",
+"\(-3, -2, -1, 0, 1, 2, 3\)",
+"\(-6, -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6\)",
+"\(-5, -3, -1, 1, 3, 5\)"
+);
+
+BEGIN_TEXT
+
+\{ $mc->print_q() \} $BR
+\{ $mc->print_a() \}
+
+END_TEXT
+
+$showPartialCorrectAnswers = 0;
+
+ANS( radio_cmp( $mc->correct_ans() ) );
+
+ENDDOCUMENT();

@@ -1,0 +1,64 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+
+#Context("Numeric");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"Step 1: Formulate the null and alternative hypotheses.",
+"\( H_0\!: p = 0.50 \) vs. \( H_a\!: p > 0.50 \)"
+);
+$mc1->extra(
+"\( H_0\!: p = 0.50 \) vs. \( H_a\!: p < 0.50 \)",
+"\( H_0\!: p = 0.50 \) vs. \( H_a\!: p \neq 0.50 \)"
+);
+
+$teststat = Compute("13.52")->with(tolType=>'absolute', tolerance=>'0.1');
+$pvalue   = Compute("0.000")->with(tolType=>'absolute', tolerance=>'0.001');
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"Step 4: Make a decision.",
+"Reject the null hypothesis. The majority of the residents appear to oppose hunting."
+);
+$mc2->extra(
+"Fail to reject the null hypothesis. Those who oppose hunting may not be the majority."
+);
+
+#TEXT(beginproblem());
+#Context()->texStrings;
+
+BEGIN_TEXT
+
+Duck hunting in populated areas faces opposition on the basis of safety and environmental issues. A random sample of 750 local residents of Morrow Bay, CA included 560 who strongly opposed hunting on the bay. Does this observation provide sufficient evidence to conclude that the majority of local residents oppose hunting on Morrow Bay? Test the relevant hypotheses using a 5% significance level.
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+Step 2: Calculate the test statistic.
+$BR$BR
+
+\( \displaystyle z = \frac{\hat{p} - p_0}{\sqrt{p_0(1 - p_0)/n}} = \) \{ ans_rule(8) \} (Carry 2 decimal digits.)
+$BR$BR
+
+Step 3: Calculate the p-value.
+$BR$BR
+
+p-value = \{ ans_rule(8) \} (Carry 4 decimal digits.)
+$BR$BR
+
+\{ $mc2->print_q() \} $BR
+\{ $mc2->print_a() \}
+
+END_TEXT
+
+#Context()->normalStrings;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( $teststat->cmp() );
+ANS( $pvalue->cmp() );
+ANS( radio_cmp( $mc2->correct_ans() ) );
+
+ENDDOCUMENT();

@@ -1,0 +1,31 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+
+$mc=new_multiple_choice();
+$mc->qa(
+"What principle of experimental design is violated?",
+"Randomize"
+);
+$mc->extra(
+"Control",
+"Using enough participants",
+"Sampling bias"
+);
+$mc->makeLast("No principle is violated.");
+
+BEGIN_TEXT
+
+In a study to determine whether a new drug is better than the old drug for solving issues with constipation, the researchers assign the new drug to the female volunteers and the old drug to the male volunteers.
+$BR$BR
+
+\{ $mc->print_q() \} $BR
+\{ $mc->print_a() \}
+
+END_TEXT
+
+$showPartialCorrectAnswers = 0;
+
+ANS( radio_cmp( $mc->correct_ans() ) );
+
+ENDDOCUMENT();

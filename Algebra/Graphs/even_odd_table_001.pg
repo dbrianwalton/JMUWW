@@ -1,0 +1,80 @@
+## DESCRIPTION
+##   Complete the table of an even/odd function
+## ENDDESCRIPTION
+
+## KEYWORDS('symmetry','even', 'odd')
+## Tagged by dbw 10/18/10
+
+## DBsubject('Algebra')
+## DBchapter('Functions')
+## DBsection('Transformations')
+## Date('10/18/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Choose a random point.
+$isEven = non_zero_random(-1,1);
+
+if ($isEven == 1) {
+    $fVal[0] = random(-4,4);
+    $symmetry = "even";
+} else {
+    $fVal[0] = 0;
+    $symmetry = "odd";
+}
+for ($i=1; $i<=3; $i++) {
+    $fVal[$i] = random(-6,6);
+}
+
+@xVals = map("$SPACE $SPACE $_ $SPACE $SPACE", -3..3);
+@yVals = ( ans_rule(5), $isEven*$fVal[2], ans_rule(5), $fVal[0], 
+           $fVal[1], ans_rule(5), $fVal[3] );
+
+
+Context()->texStrings;
+BEGIN_TEXT
+The following incomplete table gives the values of an $symmetry function.
+Complete the table by taking advantage of the symmetry.
+
+$PAR
+$BCENTER
+\{ begintable(8) \}
+\{ row( "$SPACE \(x\) $SPACE", @xVals) \}
+\{ row( "$SPACE \(f(x)\) $SPACE", @yVals) \}
+\{ endtable() \}
+$ECENTER
+
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answer checking
+
+ANS(Real($isEven*$fVal[3])->cmp);
+ANS(Real($isEven*$fVal[1])->cmp);
+ANS(Real($fVal[2])->cmp);
+
+###################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

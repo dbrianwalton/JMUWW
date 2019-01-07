@@ -1,0 +1,92 @@
+## DESCRIPTION
+## Solving an inequality of the form |x-c| > d or |x-c| >= d
+## ENDDESCRIPTION
+
+## KEYWORDS('algebra','inequality','absolute value','distance')
+## Tagged by dbw 6/1/12
+
+## DBsubject('Algebra')
+## DBchapter('Equations and Inequalities')
+## DBsection('Absolute Value')
+## Date('9/1/09')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+
+###################################
+# Setup
+###################################
+Context("Interval");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# c is center of interval, d is distance to edge.
+$c = non_zero_random(-15,15,1);
+$d = random(1,10,1);
+
+# Decide if open or closed intervals.
+$isClosed = random(0,1,1);
+
+$lP = ("(","[")[$isClosed];
+$rP = (")", "]")[$isClosed];
+
+$gt = (">", "\ge")[$isClosed];
+$lt = ("<", "\le")[$isClosed];
+$gtWord = ("greater than", "greater than or equal to")[$isClosed];
+
+$fcn = Compute("x-$c")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+$answer = Interval("(-INF,$c-$d" . $rP . "U" . $lP . "$c+$d,INF)");
+
+
+###################################
+# Display the problem
+###################################
+TEXT(beginproblem);
+Context()->texStrings;
+BEGIN_TEXT
+Solve the inequality \(|$fcn| $gt $d\).  Express your answer in interval notation.
+$PAR
+Solution Set: \{ ans_rule(20) \}
+END_TEXT
+Context()->normalStrings;
+
+
+###################################
+# Answer checking
+###################################
+ANS( $answer->cmp );
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+${PAR}${BBOLD}Solution:${EBOLD}
+${PAR}The inequality \(|$fcn| $gt $d\) can be replaced by the compound inequality
+\($fcn $gt $d\) ${BBOLD}or${EBOLD} \($fcn $lt -$d\).  
+Adding \($c\) to all terms in both inequalities yields a solution set 
+\(x $gt $c+$d\) ${BBOLD}or${EBOLD} \(x $lt $c-$d\).  
+In interval notation, this is written as a union of two intervals, \($answer\).
+${PAR}Alternatively, we can think of \(|$fcn|\) as measuring distance between \(x\) 
+and \($c\) so that the inequality is interpreted as finding all values \(x\) so that
+the distance from \($c\) is ${gtWord} \($d\).  The answer, \($answer\), results from
+starting at \($c\) and subtracting \($d\) and adding \($d\) to find end-points,
+with the solution set including all numbers on either side of these points.
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Randomly decide if end-point is included.  Solution provided.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

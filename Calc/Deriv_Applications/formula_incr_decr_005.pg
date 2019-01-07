@@ -1,0 +1,99 @@
+# DESCRIPTION
+# This problem gives the formula of a polynomial
+# and asks the student to identify where it is
+# increasing and decreasing, using a list of intervals.
+#
+# WeBWorK problem written by Brian Walton (JMU) 
+# <waltondb (at) jmu(dot)edu>
+# ENDDESCRIPTION
+
+## DBsubject('Calculus')
+## DBchapter('Derivatives')
+## DBsection('Increasing')
+## KEYWORDS('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+## Author('Brian Walton')
+## Institution('JMU')
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl",
+);
+
+# make sure we're in the context we want
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Create arbitrary cubic.
+# f(x) = ax^3 + bx^2 + cx + d
+# f'(x) = 3ax^2 + 2bx + c
+$a = non_zero_random(-2,2,1);
+$b = random(-5,5,1);
+$c = random(-9,9,1);
+$d = random(-9,9,1);
+
+$func = Compute("$a*x^3+$b*x^2+$c*x+$d")->reduce('(-x)-y'=>0,'(-x)+y'=>0);
+$deriv = $func->D();
+
+$c2 = 3*$a;
+$c1 = 2*$b;
+$c0 = $c;
+
+$center = -$b/(3*$a);
+$discr = $c1**2-4*$c2*$c0;
+
+Context("Interval");
+if ($discr > 0) {
+    $r1 = $center - sqrt($discr)/abs(6*$a);
+    $r2 = $center + sqrt($discr)/abs(6*$a);
+
+    $outerInt = List(Interval("(-INF,$r1)"),Interval("($r2,INF)"));
+    $innerInt = List(Interval("($r1,$r2)"));
+} elsif ($discr == 0) {
+    $outerInt = List(Interval("(-INF,$center)"),Interval("($center,INF)"));
+    $innerInt = List("NONE");
+} else {
+    $outerInt = List(Interval("(-INF,INF)"));
+    $innerInt = List("NONE");
+}
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+Find the first derivative of the function \(f(x) = $func\).
+$BR
+$BBLOCKQUOTE
+\(f'(x) = \) \{ ans_rule(35) \}
+$EBLOCKQUOTE
+
+
+$PAR
+Use the derivative to determine intervals where \(f(x)\) has is increasing or decreasing. For each, create a list of open intervals, separated by commas (not a union).  If the list is empty, type $BBOLD NONE $EBOLD.  Type $BBOLD INF $EBOLD for \(\infty\).
+$PAR
+\(f(x)\) is increasing on the intervals: \{ ans_rule(35) \}
+$BR
+\(f(x)\) is decreasing on the intervals: \{ ans_rule(35) \}
+END_TEXT
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $deriv->cmp() );
+
+if ($a > 0) {
+    ANS( $outerInt->cmp );
+    ANS( $innerInt->cmp );
+} else {
+    ANS( $innerInt->cmp );
+    ANS( $outerInt->cmp );
+};
+
+ENDDOCUMENT();

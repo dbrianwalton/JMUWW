@@ -1,0 +1,70 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'exponential')
+## Tagged by dbw 7/26/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('7/26/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$a = random(-3,3);
+$b = random(-2,3);
+$ystr = GenMonString(1, $b, 'x'=>"e", 'inFrac'=>1);
+$ytex = GenMonTeX(1, $b, 'x'=>"e", 'inFrac'=>1);
+$y = Compute($ystr);
+
+$k = non_zero_random(-4,4);
+
+## Need ka+c = b; c=b-ka
+$c = $b - $k*$a;
+
+$func = Compute("e^($k*x+$c)")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+$slopeStr = GenMonString($k, $b, 'x'=>"e", 'inFrac'=>1);
+$slope = Real($slopeStr);
+$tangent = Compute("$slopeStr*(x-$a)+$ystr");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Find the equation of the tangent line to the graph of \(y = $func\)
+at the point \(($a, $ytex)\).
+$BR $BR
+\(y = \) \{ ans_rule(30) \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $tangent->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

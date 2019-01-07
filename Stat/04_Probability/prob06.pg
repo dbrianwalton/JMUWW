@@ -1,0 +1,37 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$a = Compute("0.6316")->with(tolType=>'absolute', tolerance=>'0.005');
+$b = Compute("0.0307")->with(tolType=>'absolute', tolerance=>'0.005');
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+There are 20 candidates for a job position, of whom 13 are women and 7 are men. The hiring committee will randomly select 3 candidates and interview them one by one. Of course, a candidate can be interviewed only once.
+$BR$BR
+
+(a) What is the probability that the second interview will be given to a woman, given that the first interview was a given to another woman?
+$BR$BR
+
+Answer: \{ans_rule(8)\} (Carry 3 decimal digits.)
+$BR$BR
+
+(b) What is the probability that all three interviews will be given to men?
+$BR$BR
+
+Answer: \{ans_rule(8)\} (Carry 3 decimal digits.)
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $a->cmp() );
+ANS( $b->cmp() );
+
+ENDDOCUMENT();

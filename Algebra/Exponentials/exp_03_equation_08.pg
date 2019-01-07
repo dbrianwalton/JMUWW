@@ -1,0 +1,87 @@
+## DESCRIPTION
+## Solve an exponential equation requiring a logarithm
+## ENDDESCRIPTION
+
+## KEYWORDS('logarithm','exponential', 'equation')
+## Tagged by dbw 7/20/11
+
+## DBsubject('Algebra')
+## DBchapter('Exponential and Logarithmic Functions')
+## DBsection('Exponential and Logarithmic Equations')
+## Date('8/03/12')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl",
+);
+
+###################################
+# Setup
+###################################
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$b = random(2,8,1);
+$c = random(2.1,10,0.1);
+
+$m = non_zero_random(-10,10,1);
+$r = non_zero_random(-5,5,1);
+$expExpr = Compute("$m*x+$r")->reduce('(-x)-y'=>0);
+
+$nearLastStr = GenPolyString([1, -$r], "x"=>"ln($c)/ln($b)");
+$nearLast = GenPolyTeX([1, -$r], "x"=>"\frac{\ln($c)}{\ln($b)}");
+
+$xVal = Compute("($nearLastStr)/$m");
+
+###################################
+# Display the Problem
+###################################
+TEXT(beginproblem);
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Solve the equation \($b^{$expExpr} = $c\) to find \(x\).
+$BR $BR
+\(  x = \) \{ ans_rule(30) \}
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Check the Answers
+###################################
+$showPartialCorrectAnswers = 1;
+
+ANS( $xVal->cmp );
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+Use a logarithm to isolate the exponent, \(\ln(b^u)=u \ln(b)\).
+\[ $b^{$expExpr} = $c \]
+\[ ($expExpr) \ln($b) = \ln($c) \]
+\[ $expExpr = \frac{\ln($c)}{\ln($b)} \]
+Now solve for \(x\).
+\[ $m x = $nearLast \]
+\[ x = \frac{1}{$m}\left( $nearLast \right) \]
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Solution provided.  Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

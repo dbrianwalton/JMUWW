@@ -1,0 +1,98 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','antiderivative', 'indefinite integral', 'substitution')
+## Tagged by dbw 8/8/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('8/8/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+Context()->variables->are(x => 'Real');
+$A = non_zero_random(-10,10);
+
+$k = non_zero_random(-1,1) * random(2,9);
+$b = non_zero_random(-10,10);
+
+Context()->variables->set(x=>{limits => [(-$b-1)/$k, (-$b+1)/$k]});
+
+$integrandX = Compute("$A*e^($k*x+$b)")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+($An, $Ad) = FractionReduce($A, $k);
+$integralX = FormulaUpToConstant("$An*e^($k*x+$b)/$Ad");
+
+$uSubst = Compute("$k*x+$b");
+$du = Compute("$k");
+
+Context("Numeric");
+Context()->variables->are(u => 'Real');
+Context()->{error}{msg}{"Your formula shouldn't have two arbitrary constants"} 
+= "Did you use the right variable?";
+$integrandU = Compute("$An*e^u/$Ad");
+$integralU = FormulaUpToConstant("$An*e^u/$Ad");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Use the method of substitution to find \(\displaystyle \int $integrandX \, dx\).
+
+$PAR
+${BBOLD}Step 1:${EBOLD} Identify \(u\) (inner function of composition):
+$BR \(u\) = \{ ans_rule(15) \}
+
+$PAR
+${BBOLD}Step 2:${EBOLD} Find \(du = u' \, dx\) (differential):
+$BR \(du\) = \{ ans_rule(8) \} \( \cdot dx \)
+
+$PAR
+${BBOLD}Step 3:${EBOLD} Rewrite the integral in terms of \(u\):
+$BR \(\displaystyle \int $integrandX \, dx = \int\) \{ ans_rule(20) \} \( du \)
+
+$PAR
+${BBOLD}Step 4:${EBOLD} Evaluate the integral above in terms of \(u\):
+$BR \(\displaystyle \int \hbox{(above)} \, du \) = \{ ans_rule(30) \}
+
+$PAR
+${BBOLD}Step 5:${EBOLD} Replace \(u\) by the formula of the inner function:
+$BR \(\displaystyle \int $integrandX \, dx \) = \{ ans_rule(30) \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $uSubst->cmp );
+ANS( $du->cmp );
+ANS( $integrandU->cmp );
+ANS( $integralU->cmp );
+ANS( $integralX->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

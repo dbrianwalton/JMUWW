@@ -1,0 +1,188 @@
+## DESCRIPTION
+## Testing if data are described by a linear function.
+## ENDDESCRIPTION
+
+## KEYWORDS('equation', 'line')
+## Tagged by DBW
+
+## DBsubject('Algebra')
+## DBchapter('Linear Functions')
+## DBsection('Linear Functions')
+## Date('6/15/12')
+## Author('D. B. Walton')
+## Institution('JMU')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+#
+# First comes some stuff that appears at the beginning of every problem
+#
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+###################################
+# Setup the Problem
+###################################
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# INITIALIZATION FOR True/False question
+Context()->strings->add(NA=>{});
+Context()->variables->are(t=>'Real');  
+
+# Decide if this will be true or false.
+$IS_LINEAR = random(0,1,1);
+
+$dailyLoss = random(0.25,1.5,0.25);
+$startWeight = random(190,300,1);
+$targetDate = random(60,88,4);
+
+$linearModel = Compute("-$dailyLoss*t+$startWeight");
+$targetWeight = $linearModel->eval('t'=>$targetDate);
+
+$numDaysShow = 6;
+@count = (1..12);
+for $i (@count) {
+    $days[$i-1] = 3*$i;
+    $weight[$i-1] = $startWeight - $dailyLoss*3*$i;
+};
+
+@select = num_sort(NchooseK(12,$numDaysShow));
+@useDays = @days[ @select ];
+@useWeights = @weight[ @select ];
+
+# Now mess up the weightloss on two of the days if nonlinear.
+if ($IS_LINEAR == 0) {
+   $probDay = random(1,$numDaysShow)-1;
+   $useWeights[$probDay] += $dailyLoss*non_zero_random(-1,1,1);
+};
+$badDay = ($IS_LINEAR) ? String('NA') :  Real($useDays[$probDay]);
+
+# Prepare for the solution.
+# Compute the slopes of the pairs of points
+for $i (1..$numDaysShow-1) {
+    $slopeCalc = Real(($useWeights[$i]-$useWeights[$i-1])/($useDays[$i]-$useDays[$i-1]));
+
+  $slopeRows[$i-1] = row("$SPACE (".$useDays[$i-1].", ".$useWeights[$i-1].") $SPACE",
+      "$SPACE(".$useDays[$i].", ".$useWeights[$i].") $SPACE",
+      "$SPACE".$slopeCalc."$SPACE");
+}
+
+# Learn how to describe the line from formula (point-slope)
+# Need a valid point (the first one)
+($goodX,$goodY) = ($IS_LINEAR || $probDay>0)
+		? ($useDays[0], $useWeights[0])
+		: ($useDays[1], $useWeights[1]);
+$yStr = GenPolyTeX([1,-$goodY], "x"=>"w");
+$xStr = GenPolyTeX([1,-$goodX], "x"=>"t");
+$yFcnStr = Compute("-$dailyLoss*(t-$goodX)+$goodY")->reduce('(-x)+y'=>0);
+
+###################################
+# Display the Problem
+###################################
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+The table below describes Paul's weight \(w\) in pounds \(t\) days after
+starting his diet.
+With a possible exception of a single data point, \(w\) is a linear function 
+of \(t\).
+Find the linear function, determine which day (if any) violates the linear
+relation, and determine what day Paul would reach his target weight of 
+$targetWeight pounds.
+
+$PAR
+$BCENTER
+\{ begintable($numDaysShow+1) \}
+\{ row( "Days \(t\)", @useDays ) \}
+\{ row( "Weight \(w\)",@useWeights) \}
+
+\{ endtable() \}
+$ECENTER
+
+$PAR
+Give the linear function of \(t\) that describes most (or all) of the data.
+$BR
+\(w\) = \{ans_rule(30)\} 
+
+$PAR
+Which day fails to follow the linear function?
+$BR
+\(t\) = \{ans_rule(5)\} (type ${BBOLD}NA${EBOLD} if all days are valid)
+
+$PAR
+Determine on what day Paul will reach his target weight of $targetWeight pounds.
+$BR
+Days to Target: \{ans_rule(8)\} (type NA if not linear)
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Check the Answers.
+###################################
+
+ANS( $linearModel->cmp );
+ANS( $badDay->cmp );
+ANS( Real($targetDate)->cmp );
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+Data are described by a linear function if the slope between points is always 
+the same. 
+So to test our data, we will compute the slope between pairs of points.
+$BCENTER
+\{begintable(3)\}
+\{row(	"$SPACE First Point $SPACE", 
+	"$SPACE Second Point $SPACE", 
+	"$SPACE Slope $SPACE")
+\}
+@slopeRows
+\{endtable\}
+$ECENTER
+Notice that the slopes are all the 
+same\{ $IS_LINEAR 
+       ? ", so the linear model is valid for all days." .
+       	 "The slope" 
+       : " except when involving the day \(t=$badDay\)".
+       	 " for which the linear model fails. For all other pairs, the slope"
+\}
+is -$dailyLoss.  Using the point-slope equation of a line with the 
+given data point
+\{ ($IS_LINEAR || $probDay>0) 
+   ? "($useDays[0], $useWeights[0]),"
+   : "($useDays[1], $useWeights[1]) (which is on the line),"
+\}
+we have \($yStr = -$dailyLoss($xStr)\).  Solving for \(w\), we have 
+\(w=$yFcnStr\).
+
+$PAR
+To find the day on which Paul reaches his target weight, 
+we set \(w=$targetWeight\) 
+\[ $targetWeight = $yFcnStr \]
+and solve for \(t\).  This gives \(t=$targetDate\).
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('The data table has a 50% chance that one data point is off the line. Solution provided.  Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+

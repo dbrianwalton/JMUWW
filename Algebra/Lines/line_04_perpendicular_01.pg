@@ -1,0 +1,143 @@
+## DESCRIPTION
+## Testing Data as Proportional
+## ENDDESCRIPTION
+
+## KEYWORDS('equation', 'perpendicular', 'slope', 'line')
+## Tagged by DBW
+
+## DBsubject('Algebra')
+## DBchapter('Linear Functions')
+## DBsection('Equations for Lines')
+## Date('')
+## Author('D. B. Walton')
+## Institution('JMU')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+#
+# First comes some stuff that appears at the beginning of every problem
+#
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+###################################
+# Setup the Problem.
+###################################
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Coefficients of the general equation of original line
+$A = non_zero_random(-5,5,1);
+$B = non_zero_random(-5,5,1);
+
+# Find the coordinates of the point
+$a = random(-5,5,1);
+$b = random(-5,5,1);
+
+# Choose a line that does NOT go through the point
+$C = $A*$a+$B*$b+non_zero_random(-4,4,1);
+
+# In the following, most strings are generated for the
+# presentation of the solution.
+
+# Compute the slope
+$origslope = Real(-$A/$B);
+$perpslope = Real($B/$A);
+$origSlopeStr = FractionTeX([-$A,$B]);
+$perpSlopeStr = FractionTeX([$B,$A]);
+
+# When solving Ax+By=C for y=(-A/B)x+(C/B)
+@p = ([-$A,$B], [$C,$B]);
+$origFcn = GenPolyTeX(~~@p, "inFrac"=>0);
+
+# The following strings are for point-slope form y-b=m(x-a).
+$xStr = GenPolyString([1,-$a]);
+$yStr = GenPolyString([1,-$b], "x"=>"y");
+
+# And then for y=m(x-a)+b
+$ansStr = GenPolyTeX([[$B,$A], $b], "x"=>"($xStr)", "inFrac"=>0);
+
+# Define the function y=f(x)
+$fcn = Compute("$perpslope*(x-$a)+$b");
+
+# Use MathObjects to define the general equation of the original line
+Context("Numeric");
+Context()->variables->are(x=>'Real', y=>'Real');
+$origLineLeft = Formula("$A*x+$B*y")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+###################################
+# Display the Problem.
+###################################
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Find an equation for the line that goes through the point \(($a,$b)\) 
+and is perpendicular to the line satisfying \($origLineLeft=$C\).
+
+$PAR
+What is the slope of the original line?
+$BR
+Slope: \{ans_rule(15)\}
+
+$PAR
+What is the slope of the perpendicular line?
+$BR
+Slope: \{ans_rule(15)\}
+
+$PAR
+Now, write the actual formula for \(y\) as a function of \(x\).
+$BR  
+\(y\) = \{ ans_rule(30) \}
+  
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Check the Answers
+###################################
+
+ANS( $origslope->cmp );
+ANS( $perpslope->cmp );
+
+ANS( $fcn->cmp );
+
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+Two lines are perpendicular if the products of their slopes are -1, 
+\(m_1 m_2=-1\).
+The slope of the original line \(m_1\) can be found by rewriting 
+the equation \($origLineLeft=$C\) in slope-intercept form.
+This gives \(y=$origFcn\), which reveals the slope \(m_1=$origSlopeStr\).
+So the slope of the perpendicular line is \(m_2=$perpSlopeStr\).
+
+$PAR
+The perpendicular line can then be written in point-slope form
+\($yStr = $perpSlopeStr($xStr)\).
+Solving for \(y\), we have \(y=$ansStr\).
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Solution provided. Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+

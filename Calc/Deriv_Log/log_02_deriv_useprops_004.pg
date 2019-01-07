@@ -1,0 +1,83 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'logarithm', 'chain rule')
+## Tagged by dbw 7/27/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('7/25/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+@cList = (-10 .. 10);
+$nc = @cList;
+@ck = NchooseK($nc, 3);
+
+# Find the powers.
+for ($i=0; $i<3; $i++) {
+    $k[$i] = random(1,6);
+}
+
+# Determine how many terms go in the denominator.
+$numNeg = random(0,2);
+$numPos = 3 - $numNeg;
+
+$ans = Compute("0");
+$numer = Compute("1");
+$j=0;
+for ($i=0; $i<$numPos; $i++, $j++) {
+    $numer = Compute("$numer * (x-$cList[$ck[$j]])^$k[$j]");
+    $ans = Compute("$ans + $k[$j]/(x-$cList[$ck[$j]])");
+}
+$denom = Compute("1");
+for ($i=0; $i<$numNeg; $i++, $j++) {
+    $denom = Compute("$denom * (x-$cList[$ck[$j]])^$k[$j]");
+    $ans = Compute("$ans - $k[$j]/(x-$cList[$ck[$j]])");
+}
+
+$func = Compute("ln($numer/$denom)")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+$ans = $ans->reduce();
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Find the derivative of \(\displaystyle f(x) = $func\).
+$BR $BR
+\(f'(x) = \) \{ ans_rule(30) \}
+$BR $BR
+Note: Practice using the properties of the logarithm.
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $ans->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

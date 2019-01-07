@@ -1,0 +1,63 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+
+#Context("Numeric");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"(a) What do the relative locations of the mean and median tell you about the skewness of the distribution of the exam scores?",
+"The distribution is skewed to the left."
+);
+$mc1->extra(
+"The distribution is skewed to the right.",
+"The distribution is symmetric.",
+);
+
+$zscore = Compute("-0.390")->with(tolType=>'absolute', tolerance=>'0.005');
+$mean   = Compute("74.8")->with(tolType=>'absolute', tolerance=>'0.01');
+$stdev  = Compute("12.3")->with(tolType=>'absolute', tolerance=>'0.01');
+
+#TEXT(beginproblem());
+#Context()->texStrings;
+
+BEGIN_TEXT
+
+1. For an intermediate calculus course, the scores on the final exam had a mean of 64.8 and a standard deviation of 12.3. The median score was 68.0.
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+(b) Compute the z-score for a student whose exam score was 60.
+$BR$BR
+
+Answer: \{ans_rule(8)\} (Carry 3 decimal digits.)
+$BR$BR
+
+2. Refer to Problem 1 above. The instructor of the course felt that the scores were lower than anticipated. Thus, the instructor decided to apply a "curve" by adding 10 points to every student.
+$BR$BR
+
+(c) What would the value of the mean score be after applying the curve?
+$BR$BR
+
+Answer: \{ans_rule(8)\} (Carry 1 decimal digit.)
+$BR$BR
+
+(d) What would the value of the standard deviation be after applying the curve?
+$BR$BR
+
+Answer: \{ans_rule(8)\} (Carry 1 decimal digit.)
+
+
+
+END_TEXT
+
+#Context()->normalStrings;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( $zscore->cmp() );
+ANS( $mean->cmp() );
+ANS( $stdev->cmp() );
+
+ENDDOCUMENT();

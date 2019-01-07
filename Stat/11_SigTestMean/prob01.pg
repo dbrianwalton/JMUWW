@@ -1,0 +1,70 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+
+#Context("Numeric");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"Step 1: Formulate the null and alternative hypotheses.",
+"\( H_0\!: \mu = 120.0 \) vs. \( H_a\!: \mu \neq 120.0 \)"
+);
+$mc1->extra(
+"\( H_0\!: \mu = 120.0 \) vs. \( H_a\!: \mu > 120.0 \)",
+"\( H_0\!: \mu = 120.0 \) vs. \( H_a\!: \mu < 120.0 \)"
+);
+
+$teststat = Compute("1.6075")->with(tolType=>'absolute', tolerance=>'0.0006');
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"Step 3: Approximate the p-value.",
+"\( 0.10 < p < 0.20 \)"
+);
+$mc2->extra(
+"\( 0.05 < p < 0.10 \)",
+"\( 0.025 < p < 0.05 \)"
+);
+
+$mc3=new_multiple_choice();
+$mc3->qa(
+"Step 4: Make a decision.",
+"Fail to reject the null hypothesis."
+);
+$mc3->extra(
+"Reject the null hypothesis."
+);
+
+#TEXT(beginproblem());
+#Context()->texStrings;
+
+BEGIN_TEXT
+
+The manager of a recreational park was interested in estimating the mean number of visitors per day. On randomly chosen 30 days, the numbers of visitors were recorded. The mean was 123.7 with a standard deviation of 12.6. At the significance level of 0.05, conduct a test to determine whether the true mean daily number of visitors differs from 120.0.
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+Step 2: Calculate the test statistic.
+$BR$BR
+
+\( \displaystyle t = \frac{\bar{x} - \mu_0}{s/\sqrt{n}} = \) \{ ans_rule(8) \} (Carry 3 decimal digits.)
+$BR$BR
+
+\{ $mc2->print_q() \} $BR
+\{ $mc2->print_a() \} $BR
+
+\{ $mc3->print_q() \} $BR
+\{ $mc3->print_a() \}
+
+END_TEXT
+
+#Context()->normalStrings;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( $teststat->cmp() );
+ANS( radio_cmp( $mc2->correct_ans() ) );
+ANS( radio_cmp( $mc3->correct_ans() ) );
+
+ENDDOCUMENT();

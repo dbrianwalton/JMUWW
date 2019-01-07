@@ -1,0 +1,70 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+
+#Context("Numeric");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"Step 1: Formulate the null and alternative hypotheses.",
+"\( H_0\!: \mu = 65.00 \) vs. \( H_a\!: \mu \neq 65.00 \)"
+);
+$mc1->extra(
+"\( H_0\!: \mu = 65.00 \) vs. \( H_a\!: \mu > 65.00 \)",
+"\( H_0\!: \mu = 65.00 \) vs. \( H_a\!: \mu < 65.00 \)"
+);
+
+$teststat = Compute("-2.5495")->with(tolType=>'absolute', tolerance=>'0.0006');
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"Step 3: Approximate the p-value.",
+"\( 0.01 < p < 0.02 \)"
+);
+$mc2->extra(
+"\( 0.005 < p < 0.01 \)",
+"\( 0.025 < p < 0.05 \)"
+);
+
+$mc3=new_multiple_choice();
+$mc3->qa(
+"Step 4: Make a decision.",
+"Reject the null hypothesis."
+);
+$mc3->extra(
+"Fail to reject the null hypothesis."
+);
+
+#TEXT(beginproblem());
+#Context()->texStrings;
+
+BEGIN_TEXT
+
+It is claimed that the distribution of monthly parking fees in a city is normal with a mean of $65.00. In order to test the truth of this claim, you randomly sampled 26 residents in the city and asked them how much they pay for parking each month. The mean was $62.50 with a standard deviation of $5.00 With an alpha level of 0.05, conduct a test of interest.
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+Step 2: Calculate the test statistic.
+$BR$BR
+
+\( \displaystyle t = \frac{\bar{x} - \mu_0}{s/\sqrt{n}} = \) \{ ans_rule(8) \} (Carry 3 decimal digits.)
+$BR$BR
+
+\{ $mc2->print_q() \} $BR
+\{ $mc2->print_a() \} $BR
+
+\{ $mc3->print_q() \} $BR
+\{ $mc3->print_a() \}
+
+END_TEXT
+
+#Context()->normalStrings;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( $teststat->cmp() );
+ANS( radio_cmp( $mc2->correct_ans() ) );
+ANS( radio_cmp( $mc3->correct_ans() ) );
+
+ENDDOCUMENT();

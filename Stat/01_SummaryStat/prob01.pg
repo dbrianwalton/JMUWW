@@ -1,0 +1,43 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+Context()->flags->set(tolerance=>0.01, tolType=>"absolute");
+
+$mean  = Compute("3.833")->with(tolType=>'absolute', tolerance=>'0.005' );
+$var   = Compute("9.767")->with(tolType=>'absolute', tolerance=>'0.005' );
+$stdev = Compute("3.125")->with(tolType=>'absolute', tolerance=>'0.005' );
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+Featured below are numbers of soda drinks consumed last week by a sample of six high school students.
+$BR$BR
+
+\( X\!: \langle 2, 7, 4, 2, 0, 8 \rangle \)
+$BR$BR
+
+Note that \( \sum x = 23 \) and \( \sum x^2 = 137 \). Compute the following summary statistics. (Carry 3 decimal digits.)
+$BR$BR
+
+(a) Sample mean: \( \displaystyle \bar{x} = \frac{\sum x}{n} = \) \{ ans_rule(8) \}
+$BR$BR
+
+(b) Sample variance: \( \displaystyle s^2 = \frac{\sum(x - \bar{x})^2}{n - 1} = \frac{\sum x^2 - (\sum x)^2/n}{n - 1} = \) \{ ans_rule(8) \}
+$BR$BR
+
+(c) Sample standard deviation: \( \displaystyle s = +\sqrt{s^2} = \) \{ ans_rule(8) \}
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $mean->cmp() );
+ANS( $var->cmp() );
+ANS( $stdev->cmp() );
+
+ENDDOCUMENT();

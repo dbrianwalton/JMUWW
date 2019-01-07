@@ -1,0 +1,263 @@
+# DESCRIPTION
+#   Create a graph of a function with multiple segments
+#   of concavity behavior and ask the student
+#   to identify the corresponding intervals.
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('function','derivative', 'concavity')
+## Date('7/31/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "PGgraphmacros.pl",
+  "PGpolynomialmacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Interval");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+$refreshCachedImages=1;
+
+$minHorizDisp = 2;
+$maxHorizDisp = 3;
+$minVertDisp = 2;
+$maxVertDisp = 4;
+$totPossIncr = ($maxHorizDisp-$minHorizDisp+1) * ($maxVertDisp-$minVertDisp+1);
+
+##########
+# Determine random character for problem.
+##########
+
+$minSegments = 4;
+$maxSegments = 7;
+$numShapeSegments = random($minSegments,$maxSegments);
+
+# For this problem, both endpoints are closed.
+@includeEnds = (1, 1);
+
+#  Shape is characterized by the sign of 1st and 2nd derivatives on each interval
+#  We keep the signs in arrays called @d1sgn and @d2sgn respectively.
+$curY = 0;
+$totalWidth = 0;
+for ($seg=0; $seg<$numShapeSegments; $seg++) {
+    # Specify the new shape characteristic.
+    if ($seg == 0) {
+        $d1sgn[0] = non_zero_random(-1,1);
+        $d2sgn[0] = non_zero_random(-1,1);
+    } else {
+        $d1sgn[$seg] = $d2sgn[$seg-1];
+        $d2sgn[$seg] = -$d1sgn[$seg-1];
+    }
+
+    # If incr/ccup or decr/ccdown, then left end has horiz. tang and right needs random slope
+    if ($seg == 0 || $d1sgn[$seg] == $d2sgn[$seg]) {
+        $hdisp[$seg] = random($minHorizDisp,$maxHorizDisp);
+        $vdisp[$seg] = random($minVertDisp,$maxVertDisp);
+        $preSlope = random(3*$vdisp[$seg], 6*$vdisp[$seg]);
+        $slope[$seg] = $preSlope / (2*$hdisp[$seg]);
+    # Otherwise, we need to match the previous slope to create differentiable function.
+    } else {
+        $slope[$seg] = $slope[$seg-1];
+
+        # And choose displacements consistent with this slope.
+        @randomIncrList = NchooseK($totPossIncr, $totPossIncr);
+
+        # Loop is guaranteed to terminate by at least finding identical increment as previously.
+        $k=0;
+        do {
+            $hdisp[$seg] = ($randomIncrList[$k] % ($maxHorizDisp-$minHorizDisp+1)) + $minHorizDisp;
+            $vdisp[$seg] = ($randomIncrList[$k] + $minHorizDisp - $hdisp[$seg]) / ($maxHorizDisp-$minHorizDisp+1) + $minVertDisp;
+            $k++;
+        } while (2*$slope[$seg]*$hdisp[$seg] < 3*$vdisp[$seg] || 2*$slope[$seg]*$hdisp[$seg] > 6*$vdisp[$seg]);
+    }
+    $totalWidth += $hdisp[$seg];
+
+    $curY += $d1sgn[$seg]*$vdisp[$seg];
+    if ($curY > $maxY) {
+        $maxY = $curY;
+    }
+    if ($curY < $minY) {
+        $minY = $curY;
+    }
+}
+$totalHeight = $maxY - $minY;
+
+# Based on the above information, the piecewise cubic function is specified up to a translation.
+# We still need to identify the starting point.
+$x[0] = random(-$totalWidth + ($totalWidth - ($totalWidth % 3))/3, 5, 1);
+$y[0] = random(-$totalHeight + ($totalHeight - ($totalHeight % 3))/3, 5, 1) - $minY;
+$minX = $x[0];
+$maxX = $x[0] + $totalWidth;
+$minY += $y[0];
+$maxY += $y[0];
+
+$xLimMin = $minX - 2;
+$xLimMax = $maxX + 2;
+
+$yLimMin = $minY - 2;
+$yLimMax = $maxY + 2;
+
+$graph = init_graph($xLimMin, $yLimMin, $xLimMax, $yLimMax,
+#             'axes'=>[($minX+$maxX+$totalWidth%2)/2-2, ($minY+$maxY+$totalHeight%2)/2-2], 
+#             'grid'=>[$totalWidth+4, $totalHeight+4],
+             'size'=>[300,300]
+         );
+$grcol = 'red';
+
+# Now go through the intervals to find each of the parts and determine the intervals for the answer.
+$numCCUIntervals = 0;
+$numCCDIntervals = 0;
+for ($k=0; $k<$numShapeSegments; $k++) {
+    $x[$k+1] = $x[$k] + $hdisp[$k];
+    $y[$k+1] = $y[$k] + $d1sgn[$k] * $vdisp[$k];
+
+    # Now determine the coefficients of the cubic segment.
+    $m = $slope[$k];
+    $a = ($m-2*$vdisp[$k]/$hdisp[$k])/($hdisp[$k]**2);
+    $b = (3*$vdisp[$k]/$hdisp[$k] - 2*$m)/$hdisp[$k];
+    # When the signs are the same, the slope starts at zero, so we expand about the right side.
+    if ($d1sgn[$k] == $d2sgn[$k]) {
+        $fcn[$k] = "$y[$k+1] - $d1sgn[$k]*($x[$k+1]-x)*($m+($x[$k+1]-x)*($b + $a*($x[$k+1]-x)))" .
+                   " for x in <$x[$k], $x[$k+1]> using color:$grcol and weight:2";
+
+    # When the signs are different, we expand about the left side.
+    } else {
+        $fcn[$k] = "$y[$k] + $d1sgn[$k]*(x-$x[$k])*($m+(x-$x[$k])*($b + $a*(x-$x[$k])))" .
+                   " for x in <$x[$k], $x[$k+1]> using color:$grcol and weight:2";
+    }
+
+    add_functions($graph, $fcn[$k]);
+
+    if ($k==0 || $d2sgn[$k] != $d2sgn[$k-1]) {
+        if ($d2sgn[$k] > 0) {
+            $numCCUIntervals++;
+            $i = $numCCUIntervals-1;
+            $ccuIntLeft[$i] = $x[$k];
+            $ccuIntRight[$i] = $x[$k+1];
+        } else {
+            $numCCDIntervals++;
+            $i = $numCCDIntervals-1;
+            $ccdIntLeft[$i] = $x[$k];
+            $ccdIntRight[$i] = $x[$k+1];
+        }
+    } else {
+        if ($d2sgn[$k] > 0) {
+            $i = $numCCUIntervals-1;
+            $ccuIntRight[$i] = $x[$k+1];
+        } else {
+            $i = $numCCDIntervals-1;
+            $ccdIntRight[$i] = $x[$k+1];
+        }
+    }
+}
+
+for ($k=1; $k<$numShapeSegments; $k++) {
+    $graph->stamps( closed_circle($x[$k], $y[$k], $grcol) );
+    if ($d1sgn[$k] == $d2sgn[$k]) {
+        $vStr = ('bottom', 'middle', 'top')[$d2sgn[$k]+1];
+        $graph->lb( new Label( $x[$k], $y[$k]-($d2sgn[$k]*0.1), "($x[$k],$y[$k])",
+                'black', 'center', $vStr
+            ));
+        # Also add a short horizontal tangent line segment
+        $graph->moveTo($x[$k]-1, $y[$k]);
+        $graph->lineTo($x[$k]+1, $y[$k], 'blue', 2);
+    } else {
+        $graph->lb( new Label( $x[$k]+0.5, $y[$k], "($x[$k],$y[$k])",
+                'black', 'left', 'middle'
+            ));
+    }
+}
+
+# Left end-point
+if ($includeEnds[0] == 0) {
+    $graph->stamps( open_circle($x[0], $y[0], $grcol) );
+} else {
+    $graph->stamps( closed_circle($x[0], $y[0], $grcol) );
+}
+$vStr = ('bottom', 'middle', 'top')[1+$d1sgn[0]];
+$graph->lb( new Label( $x[0], $y[0]-($d1sgn[0]*0.1), "($x[0],$y[0])",
+        'black', 'center', $vStr
+    ));
+
+# Right end-point
+if ($includeEnds[1] == 0) {
+    $graph->stamps( open_circle($x[$numShapeSegments], $y[$numShapeSegments], $grcol) );
+} else {
+    $graph->stamps( closed_circle($x[$numShapeSegments], $y[$numShapeSegments], $grcol) );
+}
+$vStr = ('bottom', 'middle', 'top')[1-$d1sgn[$numShapeSegments-1]];
+$graph->lb( new Label( $x[$numShapeSegments], $y[$numShapeSegments]+($d1sgn[$numShapeSegments-1]*0.1), 
+        "($x[$numShapeSegments],$y[$numShapeSegments])",
+        'black', 'center', $vStr
+    ));
+
+Context('Interval');
+@leftBracket = ('(', '[');
+@rightBracket = (')', ']');
+
+for ($i=0; $i<$numCCUIntervals; $i++) {
+    $ccuInterval[$i] = Compute("($ccuIntLeft[$i], $ccuIntRight[$i])");
+}
+for ($i=0; $i<$numCCDIntervals; $i++) {
+    $ccdInterval[$i] = Compute("($ccdIntLeft[$i], $ccdIntRight[$i])");
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+The graph of a function \(y=f(x)\) is shown below along with 
+critical points and all points where the concavity changes.
+$BR
+$BCENTER
+\{ image(insertGraph($graph), width=>250, height=>250) \}
+$BR
+(Click on the graph to enlarge it.)
+$ECENTER
+
+$PAR
+Based on this graph, determine all intervals where \(f\) is concave up or concave down.
+Express your answer as a list of comma-separated open intervals.  
+Type $BBOLD NONE $EBOLD if there are no such intervals.
+$BR
+\(f\) is concave up on: \{ ans_rule(30) \}
+$BR
+\(f\) is concave down on: \{ ans_rule(30) \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+if ($numCCUIntervals > 0) {
+    ANS(List(@ccuInterval)->cmp);
+} else {
+    ANS(List("NONE")->cmp);
+}
+if ($numCCDIntervals > 0) {
+    ANS(List(@ccdInterval)->cmp);
+} else {
+    ANS(List("NONE")->cmp);
+}
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

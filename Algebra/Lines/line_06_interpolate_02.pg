@@ -1,0 +1,166 @@
+## DESCRIPTION
+## Use a line to interpolate between two points.
+## ENDDESCRIPTION
+
+## KEYWORDS('equation', 'slope', 'line', 'interpolate', 'interpolation')
+
+## DBsubject('Algebra')
+## DBchapter('Linear Functions')
+## DBsection('Equation for Lines')
+## Date('6/13/12')
+## Author('D. B. Walton')
+## Institution('JMU')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+#
+# First comes some stuff that appears at the beginning of every problem
+#
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+###################################
+# Setup the Problem
+###################################
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+@indepList = ('t', 'x', 'v');
+@depList = ('s', 'y', 'T', 'S', 'E');
+
+$x = $indepList[random(0,@indepList-1)];
+$y = $depList[random(0,@depList-1)];
+
+Context()->variables->are($x=>'Real', $y=>'Real');
+
+$xmagn = 10**random(0,3) / 10;
+$ymagn = 10**random(0,3) / 10;
+
+@incrList = (1.0, 1.5, 2.0, 2.5, 4.0, 5.0);
+$which = random(0,@incrList);
+$xincr = $incrList[$which] * $xmagn;
+
+$nPts = 5;
+
+$xpts[0] = 0;
+$ypts[0] = random(1,9,0.1) * $ymagn;
+$yincr = non_zero_random(-9,9,0.2) * $ymagn;
+$yscale = (0.7, 0.8, 0.9, 1.2, 1.4)[random(0,4)];
+for ($i=1; $i < $nPts; $i++) {
+    $xpts[$i] = $xpts[$i-1] + $xincr;
+    $ypts[$i] = $ypts[$i-1] + $yincr;
+    $ypts[$i] = floor(100*$ypts[$i] / $ymagn) * $ymagn / 100;
+    $yincr *= $yscale;
+}
+
+@xvals = map("$SPACE $_ $SPACE", @xpts);
+@yvals = map("$SPACE $_ $SPACE", @ypts);
+
+$interval = random(1,$nPts-1);
+$partial = random(0.05,0.95,0.01);
+
+$yRef = $ypts[$interval-1] + $partial * ($ypts[$interval]-$ypts[$interval-1]);
+$xRef = $xpts[$interval-1] + $partial * ($xpts[$interval]-$xpts[$interval-1]);
+
+$deltaY = ($ypts[$interval] - $ypts[$interval-1]);
+$deltaX = ($xpts[$interval] - $xpts[$interval-1]);
+
+$slope = Real("$deltaY/$deltaX");
+$formula = Compute("$slope*($x-$xpts[$interval-1])+$ypts[$interval-1]")->reduce('(-x)-y'=>0);
+
+###################################
+# Display the Problem
+###################################
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+An experiment results in the following data relating the dependent variable \($y\)
+in terms of the independent variable \($x\).
+
+$BCENTER
+\{ begintable($nPts+1) \}
+\{ row( "$SPACE \($x\) $SPACE", @xvals) \}
+\{ row( "$SPACE \($y\) $SPACE", @yvals) \}
+\{ endtable() \}
+$ECENTER
+  
+$BR
+We wish to interpolate this relationship to find 
+the value \($x\) so that \($y=$yRef\).  
+
+$PAR
+If we use a linear interpolation, what slope should be used?
+$BR
+  \( m = \) \{ ans_rule(20) \}
+
+$PAR
+What is the equation for \($y\) in terms of \($x\)?
+$BR
+  \( $y = \) \{ ans_rule(20) \}
+
+$PAR
+What is the predicted value for \($x\) so that \($y($x)=$yRef\)?
+$BR
+  \( $x = \) \{ ans_rule(10) \}
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Check the Answers
+###################################
+$showPartialCorrectAnswers = 1;
+
+ANS( Real($slope)->cmp );
+ANS( $formula->cmp );
+ANS( Real($xRef)->cmp );
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+The first step is to identify the interval to which the 
+\($y\)-value \($y=$yRef\) belongs.
+We see that \($yRef\) is between \($ypts[$interval-1]\) 
+and \($ypts[$interval]\), so we will find an equation of the 
+line going through the two points
+\(P_1=(${x}_1,${y}_1) = ($xpts[$interval-1],$ypts[$interval-1])\)
+and
+\(P_2=(${x}_2,${y}_2) = ($xpts[$interval],$ypts[$interval])\).
+
+$PAR
+The equation of the line requires knowing the slope and a point.
+The slope is the rate of change \(m = \frac{\Delta $y}{\Delta $x} =
+\frac{$ypts[$interval]-$ypts[$interval-1]}{$xpts[$interval]-$xpts[$interval-1]}
+= $slope\).  
+If we use the point \(P_1=($xpts[$interval-1],$ypts[$interval-1])\),
+then the equation for \($y\) as a function of \($x\) can be written
+\($y = $formula\).
+
+$PAR
+Now that we have an equation describing how \($y\) depends on \($x\) 
+in the interval of interest, we can set \($y=$yRef\) 
+to get the equation \($yRef = $formula\) and solve for the value of \($x\).
+We find \($x=$xRef\).
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Variable names are randomly chosen. Solution provided. Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+

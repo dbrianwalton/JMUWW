@@ -1,0 +1,102 @@
+## DESCRIPTION
+## Compount interest models
+## ENDDESCRIPTION
+
+## KEYWORDS('exponential', 'interest')
+## Tagged by dbw 7/20/11
+
+## DBsubject('Algebra')
+## DBchapter('Exponential and Logarithmic Functions')
+## DBsection('Applications of Exponential and Logarithmic Functions')
+## Date('8/06/12')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl",
+  "contextLimitedNumeric.pl",
+);
+
+
+###################################
+# Setup
+###################################
+Context("Numeric");
+Context()->variables->are(t=>'Real');
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$intRate = random(0.5, 3, 0.25);
+$decRate = 0.01*$intRate;
+$numTerms = 12;
+$startBalance = random(1,50) * 100;
+
+$year = random(4,25);
+
+$formula = Formula("$startBalance*(1+$decRate/12)^(12*t)");
+$value = $formula->eval(t=>$year);
+
+Context("LimitedNumeric");
+$balance = Real(sprintf("%.2f", $value));
+
+###################################
+# Display the Problem
+###################################
+TEXT(beginproblem);
+Context()->texStrings;
+BEGIN_TEXT
+$PAR A bank offers an annual $intRate% interest rate for its savings account, compounded monthly.  If you start with ${DOLLAR}$startBalance, how much would this account have after $year years?
+
+$PAR The equation for the account balance \(A(t)\) (in dollars) after \(t\) years is given by $BR $BR
+\(A(t)\) = \{ ans_rule(25) \}
+$BR $BR
+The value after $year years is given by $BR $BR
+\(A($year)\) = \{ ans_rule(15) \} (dollars)
+$BR $BITALIC NOTE:  Formulas are not allowed. $EITALIC
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Check the Answers
+###################################
+$showPartialCorrectAnswers = 1;
+
+ANS( $formula->cmp );
+ANS( $balance->cmp(tolType=>"absolute", tolerance=>0.005) );
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+The annual interest rate is $intRate%, so the ${BITALIC}monthly${EITALIC} 
+interest rate is \(r=\frac{$intRate$PERCENT}{12} =\frac{$decRate}{12}\).
+Every year has 12 interest payment events, so after \(t\) years there will
+be \(12t\) interest payment events.
+The balance after each interest event corresponds to the old balance times
+\((1+\frac{$decRate}{12})\), so that our formula for the account balance 
+is given by repeated multiplication (using powers)
+\[ A(t) = $startBalance (1+\frac{$decRate}{12})^{12 t}. \]
+The value after $year years is given by
+\[ A($year) = $startBalance (1+\frac{$decRate}{12})^{12 \cdot $year} 
+= $value \]
+which corresponds to ${DOLLAR}$balance.
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Solution provided. Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

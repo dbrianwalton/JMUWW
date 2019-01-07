@@ -1,0 +1,75 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','exponential', 'model')
+## Tagged by dbw 8/2/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('8/2/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+##############################################
+
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+Context()->variables->are(t=>'Real');
+
+########################
+# Create the random nature of the problem
+########################
+
+$numElements = 7;
+@elements = ("cobalt-60", "krypton-85", "hydrogen-3", 
+             "strontium-90", "cesium-137", "radium-226", 
+             "carbon-14",
+            );
+@halflives = (5.26, 10.76, 12.26, 28.1, 30.23, 1600, 5730, );
+
+$whichElement = random(0, $numElements-1);
+$eName = $elements[$whichElement];
+$eHalfLife = $halflives[$whichElement];
+
+$initialM = random(0.1, 5, 0.05);
+
+$k = -ln(2)/$eHalfLife;
+$func = Compute("$initialM*e^($k*t)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR The mass of radioactive $eName can be modeled with exponential decay with
+a half-life of $eHalfLife years.
+Initially, there are $initialM grams of $eName.
+
+$PAR Determine the model for the mass \(M\) of $eName as a function of time \(t\) (years) elapsed:
+$BR
+\(M(t) = \) \{ ans_rule(20) \}
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $func->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

@@ -1,0 +1,156 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','definite integral', 'Riemann sum')
+## Tagged by dbw 8/8/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('8/8/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGgraphmacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$width = 2;
+$unitN = 3;
+$n = $width*$unitN;
+
+$deltaX = $width/$n;
+
+$cLeft = random(-1,3);
+
+@c = ($cLeft, $cLeft + $width);
+$cMid = $cLeft + 0.5*$width;
+
+$A = random(4, 8);
+
+$funcRaw = Formula("$A/3*(x-$cMid)^3 - 0.25*$A*(x-$cMid)");
+$fMin = random(3,6);
+$func = $funcRaw + $fMin - $funcRaw->eval(x=>$cMid-0.5);
+$deriv = Formula("$A*(x-$cMid)^2-0.25*$A");
+
+# Use the midpoints of subintervals for the rectangles.
+@xPts = map( Real($c[0]+$deltaX*($_-0.5)), 1 .. $n );
+@fVal = map( 0, 1..$n );
+@fShow = map( 0, 1..$n );
+@fSlope = map( 0, 1..$n );
+
+$riemannSum = Real(0);
+for ($i=0; $i<$n; $i++) {
+  $fVal[$i] = $func->eval(x=>$xPts[$i]);
+  $fSlope[$i] = $deriv->eval(x=>$xPts[$i]);
+  
+  # Round to make it cleaner.
+  $fShow[$i] = Real( sprintf("%.1f", $fVal[$i]) );
+  $riemannSum = $riemannSum + $deltaX * $fShow[$i];
+}
+
+### Prepare the graph that will be used.
+# a graph object
+$fmax = max(@fVal);
+$gr = init_graph($c[0]-0.5, -0.2*$fmax, $c[1]+0.5, 1.2*$fmax,
+                 axes=>[0,0], size=>[400,400]
+      );
+
+$lightblue = $gr->im->colorAllocate(201,226,255);
+$darkblue  = $gr->im->colorAllocate(100,100,255);
+$gr->new_color("lightblue", 148, 201, 255); # RGB
+$gr->new_color("darkblue", 100, 100, 255);
+$gr->new_color("gray", 100, 100, 100);
+
+# specify tickmarks
+# x-axis ticks entered as y-value, color, list of x-values
+$gr->h_ticks(0,"black", $c[0] .. $c[1]);
+$gr->lb( new Label($c[0]+0.05,-0.02*$fmax, $c[0], 'black','left','top'));
+$gr->lb( new Label($c[1]+0.05,-0.02*$fmax, $c[1], 'black','left','top'));
+
+## Draw the rectangles.
+for ($i=0; $i<$n; $i++) {
+  #  translate from graph coordinates to pixel coordinates
+  #
+  $xmin = $xPts[$i]->value()-0.5*$deltaX;
+  $xmax = $xPts[$i]->value()+0.5*$deltaX;
+
+  $xminpixel = $gr->ii($xmin);
+  $xmaxpixel = $gr->ii($xmax);
+  $yminpixel = $gr->jj(0);
+  $ymaxpixel = $gr->jj($fVal[$i]->value());
+
+  # 
+  #  use filledRectangle and rectangle from GD.pm, accessed via ->im-> 
+  #
+  $gr->im->filledRectangle($xminpixel,$yminpixel,$xmaxpixel,$ymaxpixel,$lightblue);
+ ## $gr->im->rectangle($xminpixel,$yminpixel,$xmaxpixel,$ymaxpixel,$darkblue);
+
+  $gr->moveTo($xmin, 0);
+  $gr->lineTo($xmin, $fVal[$i], "darkblue", 2);
+  $gr->lineTo($xmax, $fVal[$i], "darkblue", 2);
+  $gr->lineTo($xmax, 0, "darkblue", 2);
+  $gr->lineTo($xmin, 0, "darkblue", 2);
+
+  $gr->moveTo($xPts[$i], 0);
+  $gr->lineTo($xPts[$i], $fVal[$i], "gray");
+
+  if ($deltaX*$fSlope[$i]->value() > 0.05*$fmax) {
+    $hAlign = 'right';
+  } elsif ($deltaX*$fSlope[$i]->value() < -0.05*$fmax) {
+    $hAlign = 'left';
+  } else {
+    $hAlign = 'center';
+  }
+  $gr->lb( new Label($xPts[$i]->value(),$fVal[$i]->value()+0.02*$fmax,
+           $fShow[$i]->string(), 'black',$hAlign,'bottom'))
+}
+
+## Add the final curve
+add_functions($gr, $func->string() . 
+         sprintf(" for x in <%d,%d>", $c[0], $c[1]) .
+         " using color:black and weight:2"
+  );
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Find an approximation of the area under the graph of a function \(y=f(x)\) 
+illustrated by the figure below using the visualized Riemann sum using the midpoints
+of subintervals of equal width.
+
+$PAR
+$BCENTER
+\{ image( insertGraph($gr), height=>400, width=>400, tex_size=>800 ) \}
+$ECENTER
+
+$PAR The Riemann sum that approximates the definite integral is then
+$BR $BR
+\( \displaystyle \int_{$c[0]}^{$c[1]} f(x) \, dx \approx \) \{ans_rule(10)\}
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $riemannSum->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

@@ -1,0 +1,67 @@
+# DESCRIPTION
+#   Practice with higher order derivatives.
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('derivative','differentiation', 'power rule', 'higher order', 'second derivative')
+## Date('6/11/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "answerHints.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+Context()->variables->are(x=>'Real');
+
+# Choose a power.
+$k = random(2,6);
+$C = non_zero_random(-9,9);
+
+$expr = Compute("$C*x^($k)")->reduce();
+
+# Choose the number of derivatives
+$n = random(3,4);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute 
+\(\displaystyle \frac{d^$n}{dx^$n}[$expr] = \) \{ ans_rule(20)\}.
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+$ans = $expr;
+for ($i=1; $i<=$n; $i++) {
+    $ans = $ans->D()->reduce();
+}
+ANS( $ans->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

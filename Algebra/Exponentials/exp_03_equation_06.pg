@@ -1,0 +1,104 @@
+## DESCRIPTION
+## Solve an exponential equation requiring a logarithm
+## ENDDESCRIPTION
+
+## KEYWORDS('logarithm','exponential', 'equation')
+## Tagged by dbw 7/20/11
+
+## DBsubject('Algebra')
+## DBchapter('Exponential and Logarithmic Functions')
+## DBsection('Exponential and Logarithmic Equations')
+## Date('8/02/12')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl",
+);
+
+
+###################################
+# Setup
+###################################
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+$x = ('t', 'x', 'u')[random(0,2)];
+
+Context()->variables->are($x=>'Real');
+
+do {
+  $A = random(0.1, 10, 0.1);
+} until ($A != 1);
+
+$k = non_zero_random(-5,5,0.1);
+
+$f = random(0.1, 0.9, 0.1);
+$B = 10*random(1,10);
+
+$C = $f*$B;
+
+$BToC = FractionTeX([$B,$C]);
+$BToCm1 = FractionTeX([$B-$C,$C]);
+($numer, $denom) = FractionReduce($B-$C, $C);
+$finalFrac = FractionTeX([$numer,$denom*$A]); 
+
+$expr = Formula("$B/(1+$A e^{$k $x})")->reduce();
+
+$ans = Real("ln[(1/$f - 1)/$A]/$k");
+
+###################################
+# Display the Problem
+###################################
+TEXT(beginproblem);
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Solve the equation for \($x\).
+\[ $expr = $C \]
+
+$PAR
+\($x\) = \{ ans_rule(15) \}
+
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Check the Answers
+###################################
+$showPartialCorrectAnswers = 1;
+
+ANS( $ans->cmp );
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+As a first step to isolate the exponential, compute reciprocal.
+\[ $expr = $C \]
+\[ \frac{1+$A e^{$k $x}}{$B} = \frac{1}{$C} \]
+\[ 1+$A e^{$k $x} = $BToC \]
+\[ e^{$k $x} = \frac{1}{$A} \left( $BToCm1 \right) = $finalFrac \]
+Use a logarithm on both sides.
+\[ \ln(e^{$k $x}) = \ln( $finalFrac ) \]
+\[ $k $x = \ln( $finalFrac ) \]
+\[ $x = \frac{1}{$k}\ln( $finalFrac ) \]
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Solution provided.  Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

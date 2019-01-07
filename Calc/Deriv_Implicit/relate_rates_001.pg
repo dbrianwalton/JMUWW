@@ -1,0 +1,111 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'related rates')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('6/14/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserNumberWithUnits.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Volumes
+$nShapes = 7;
+@name = ( "square", "circle", "equilateral triangle", "cube", "cube", "sphere", "sphere" );
+@indVar = ('s', 'r', 'x', 's', 's', 'r', 'r');
+@depVar = ('A', 'A', 'A', 'V', 'A', 'V', 'A');
+@indDim = ('side', 'radius', 'edge', 'side', 'side', 'radius', 'radius');
+@depType = (0, 0, 0, 1, 0, 1, 0);
+@formula = ("s^2", "pi*r^2", "sqrt(3)*x^2/4", "s^3", "6s^2", "4/3*pi*r^3", "4*pi*r^2");
+@dForm = ("2*s", "2*pi*r", "sqrt(3)*x/2", "3s^2", "12s", "4*pi*r^2", "8*pi*r");
+@texformula = ("s^2", "\pi r^2", "\frac{\sqrt{3}}{4} x^2", "s^3", "6s^2", "\frac{4}{3}\pi r^3", "4 \pi r^2");
+
+@depDim = ('area', 'volume');
+@depUnit = ('L^2', 'L^3');
+
+@unitList = ('mm', 'in', 'cm', 'ft', 'm');
+$unit = $unitList[random(0,4)];
+
+@timeUnits = ('s', 'min', 'hr');
+$tunit = $timeUnits[random(0,2)];
+
+# Now choose a random shape and declare the needed variables.
+$k = random(0,$nShapes-1);
+$type = $depType[$k];
+
+$xvar = $indVar[$k];
+$yvar = $depVar[$k];
+$xprime = "D$xvar";
+$yprime = "D$yvar";
+
+# Declare our variables.
+Context()->variables->are("$xvar"=>'Real', "$xprime"=>'Real');
+
+$expr = Compute($formula[$k]);
+$deriv = Compute("$dForm[$k] * $xprime");
+
+$xval = random(1,8,0.5);
+$depRate = non_zero_random(-8,8,0.5);
+$absDepRate = abs($depRate);
+if ($depRate < 0) {
+    $rateWord = "decreasing";
+} else {
+    $rateWord = "increasing";
+}
+
+$rateUnits = $depUnit[$type];
+$rateUnits =~ s!L!$unit!g;
+$rateOfChange = NumberWithUnits($deriv->eval($xvar => $xval, $xprime=>$depRate), "$rateUnits/$tunit");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR The $depDim[$type] of a $name[$k] with $indDim[$k] \($xvar\) is \($yvar = $texformula[$k]\). Suppose the $indDim[$k] is changing with respect to time \(t\).
+
+$PAR
+Find a relationship between \(\frac{d$yvar}{dt}\) and \(\frac{d$xvar}{dt}\). Type $BBOLD D$xvar $EBOLD  to represent \(\frac{d$xvar}{dt}\).
+$BR
+\( \displaystyle \frac{d$yvar}{dt}\) = \{ ans_rule(25) \}
+
+$PAR
+What is the rate of change of $depDim[$type] if the side is $xval $unit and is $rateWord at  the rate of $absDepRate ${unit}/$tunit?
+$BR
+\( \displaystyle \frac{d$yvar}{dt}\) = \{ ans_rule(25) \}
+$BR
+Note: Be sure to use the correct units in your answer.
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $deriv->cmp );
+ANS( $rateOfChange->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

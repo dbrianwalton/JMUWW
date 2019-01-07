@@ -1,0 +1,91 @@
+# DESCRIPTION
+#   Understand that the derivative of distance is velocity.
+#    f(t) = at^2+bt (constant acceleration)
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('derivative','velocity')
+## Date('5/31/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+Context()->variables->are(t=>'Real', h=>'Real');
+
+$a = non_zero_random(1,3,0.1);
+$b = random(5,25, 0.5);
+$a2 = 2*$a;
+
+$expr = Compute("$a*t^2+$b*t")->reduce('(-x)+y'=>0, '(-x)-y'=>0);
+$dexpr = Compute("$a2*t+$b")->reduce('(-x)+y'=>0, '(-x)-y'=>0);
+
+$ta = random(1,4,1);
+$tb = $ta + random(0.1,0.5,0.1);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR The distance (in feet) traveled by a car as a function of time (in seconds)
+is given by \(f(t) = $expr\).  The derivative is given by \(f'(t) = $dexpr\).  Answer the following questions.
+$BR (Repeat this problem for additional practice.)
+
+$PAR
+What is the distance traveled from \(t=0\) until \(t=$ta\) seconds?  \{ ans_rule(10) \} [feet]
+$BR
+What is the average speed over the interval \([0,$ta]\) above? \{ ans_rule(10) \} [feet per second]
+$BR
+What is the distance traveled from \(t=$ta\) until \(t=$tb\) seconds?  \{ ans_rule(10) \} [feet]
+$BR
+What is the average speed over the interval \([$ta, $tb]\) above? \{ ans_rule(10) \} [feet per second]
+$BR
+What is the instantaneous speed at \(t = $ta\)? \{ ans_rule(10) \} [feet per second]
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+$pos0 = $expr->eval(t => 0);
+$pos1 = $expr->eval(t => $ta);
+$ans1 = Compute("$pos1-$pos0");
+ANS( $pos1->cmp );
+
+$ans2 = Compute("($pos1 - $pos0) / ($ta-0)");
+ANS( $ans2->cmp );
+
+$pos2 = $expr->eval(t => $tb);
+$ans3 = Compute("$pos2-$pos1");
+ANS( $ans3->cmp );
+
+$ans4 = Compute("($pos2 - $pos1) / ($tb-$ta)");
+ANS( $ans4->cmp );
+
+$ans5 = $dexpr->eval(t=>$ta);
+ANS( $ans5->cmp );
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

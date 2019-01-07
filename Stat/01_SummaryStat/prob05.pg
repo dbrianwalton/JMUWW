@@ -1,0 +1,45 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"1. What do the relative locations of the mean and median tell yo about the skewness of the distribution of commuting time?",
+"The distribution is skewed to the right (positively skewed)."
+);
+$mc1->extra(
+"The distribution is skewed to the left (negatively skewed).",
+"The distribution is symmetric."
+);
+$mc1->makeLast("Insufficient information to determine.");
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"2. Which of the following is a reasonable interpretation of the calculated standard deviation?",
+"On the average, commuting times deviate from the mean by about 3.31 minutes."
+);
+$mc2->extra(
+"The largest difference between a data value and the mean is 3.31.",
+"The smallest difference between a data value and the mean is 3.31.",
+"The difference between the smallest and the largest data values is 3.31."
+);
+
+BEGIN_TEXT
+
+For randomly selected 150 college professors at a large university, commuting time from home to work showed a mean of 11. 29 minutes with a standard deviation of 3.31. The median commuting time was 9.42.
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+\{ $mc2->print_q() \} $BR
+\{ $mc2->print_a() \}
+
+END_TEXT
+
+$showPartialCorrectAnswers = 0;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( radio_cmp( $mc2->correct_ans() ) );
+
+ENDDOCUMENT();

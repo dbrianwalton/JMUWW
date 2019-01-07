@@ -1,0 +1,39 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$slope = Compute("-0.007")->with(tolType=>'absolute', tolerance=>'0.0001');
+$yint  = Compute("48.842")->with(tolType=>'absolute', tolerance=>'0.001' );
+
+TEXT(beginproblem());
+Context()->texStrings;
+
+BEGIN_TEXT
+
+In a study, the relationship between vehicle weight (in pounds) and fuel efficiency (in miles per gallon) was investigated. The following summary statistics were obtained (\(x =\) vehicle weight; \(y =\) fuel efficiency).
+$BR$BR
+
+\( \bar{x} = 3006 \ \ \   s_x = 735 \) $BR$BR
+\( \bar{y} = 27.8 \ \ \ \ s_y = 6.9 \) $BR$BR
+
+The Pearson correlation coefficient between the vehicle weight and fuel efficiency was \( r = -0.746 \). Calculate the least-squares regression equation for predicting fuel efficiency from vehicle weight.
+$BR$BR
+
+Answer: \( \hat{y} = a + b\,x \), where
+$BR$BR
+
+\( \displaystyle b = r \frac{s_y}{s_x} = \) \{ ans_rule(8) \} (Carry 3 decimal digits.)
+$BR$BR
+
+\( \displaystyle a = \bar{y} - b \, \bar{x} = \) \{ ans_rule(8) \} (Carry 3 decimal digits.)
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $slope->cmp() );
+ANS( $yint->cmp() );
+
+ENDDOCUMENT();

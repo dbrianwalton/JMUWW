@@ -1,0 +1,88 @@
+## DESCRIPTION
+## Finding the equation of a line
+## ENDDESCRIPTION
+
+## KEYWORDS('equation', 'slope', 'line')
+
+
+## DBsubject('Algebra')
+## DBchapter('Linear Functions')
+## DBsection('Equations for Lines')
+## Date('6/12/12')
+## Author('D. B. Walton')
+## Institution('JMU')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+#
+# First comes some stuff that appears at the beginning of every problem
+#
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+###################################
+# Setup the Problem
+###################################
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$m = Real(random(-10, 10, 0.1));
+$h = Real(random(-10, 10, 0.2));
+$k = Real(random(-10, 10, 0.2));
+
+$formula = Compute("$m(x-$h)+$k")->reduce('(-x)-y'=>0, '(-x)+y'=>0, 'x-0'=>0, 'x+0'=>0);
+
+Context("Point");
+$P = Point($h,$k);
+
+###################################
+# Display the Problem
+###################################
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+The equation \(y = $formula\) is the point-slope form of a line
+with a particular slope and passing through a particular point.
+$BR
+Slope: \(m = \) \{ ans_rule(8) \}
+$BR
+Point: \((a,b) = \) \{ ans_rule(15) \}
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Check the Answers
+###################################
+ANS( $m->cmp );
+ANS( $P->cmp );
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+The symbols in the point-slope equation of a line \(y-b=m(x-a)\) 
+are that \(m\) is the slope and \((a,b)\) is a point on the line.  
+Since this is equivalent to \(y=m(x-a)+b\) and we are given
+\(y=$formula\), we know the slope \(m=$m\) and point \((a,b)=($h,$k)\).
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Solution provided. Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+

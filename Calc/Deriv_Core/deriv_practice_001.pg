@@ -1,0 +1,81 @@
+# DESCRIPTION
+#   Apply rules of differentiation involving sums of powers with decimal coeffs. 
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('derivative','differentiation')
+## Date('6/1/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+Context()->variables->are(x=>'Real');
+
+# Choose a random location.
+$a = non_zero_random(-5,5,1);
+
+# Determine the highest power
+$d = random(-2,2,1);
+
+# Determine the number of terms.
+$n = random(2,4,1);
+
+# Create the random coefficients, with nonzero leading coeff.
+$c[0] = non_zero_random(-5,5,1);
+$pstr = "$c[0]*x^($d)";
+for ($k=1; $k<$n; $k++) {
+    $c[$k] = random(-5, 5, 1);
+    $pstr = $pstr . "+$c[$k]*x^($d-$k)";
+}
+
+$expr = Compute("$pstr")->reduce('(-x)-y' => 0, '(-x)+y' => 0, 'x^(-1)' => 0);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute the derivative of \(f(x) = $expr\).
+$BR (Repeat this problem for additional practice.)
+
+$PAR
+\(f'(x) = \) \{ ans_rule(25) \}
+$BR
+\(f'($a) = \) \{ ans_rule(25) \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+$ansA = $expr->D();
+ANS( $ansA->cmp );
+
+$ansB = $ansA->eval(x => $a);
+ANS( $ansB->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

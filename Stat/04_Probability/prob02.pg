@@ -1,0 +1,50 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+
+#Context("Numeric");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"(c) Are the events 'selected person is male' and 'selected person holds a managerial duty' independent?",
+"No."
+);
+$mc1->extra(
+"Yes."
+);
+
+$a = Compute("0.784")->with(tolType=>'absolute', tolerance=>'0.005');
+$b = Compute("0.760")->with(tolType=>'absolute', tolerance=>'0.005');
+
+#TEXT(beginproblem());
+#Context()->texStrings;
+
+BEGIN_TEXT
+
+Of all the employees in a company, 68% are male, 37% hold managerial duties, and 29% are male and hold managerial duties. Suppose that you select one employee at random from this company.
+$BR$BR
+
+(a) What is the probability that the selected person will be male, given that the person holds a managerial duty?
+$BR$BR
+
+Answer: \{ans_rule(8)\} (Carry 3 decimal digits.)
+$BR$BR
+
+(b) What is the probability that the selected person will be male, hold a managerial duty, or both?
+$BR$BR
+
+Answer: \{ans_rule(8)\} (Carry 3 decimal digits.)
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \}
+
+END_TEXT
+
+#Context()->normalStrings;
+
+ANS( $a->cmp() );
+ANS( $b->cmp() );
+ANS( radio_cmp( $mc1->correct_ans() ) );
+
+ENDDOCUMENT();

@@ -1,0 +1,38 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$corr = Compute("0.905" )->with(tolType=>'absolute', tolerance=>'0.005' );
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+A nurse measured systolic and diastolic blood pressures (in mmHg) for a sample of six adults.
+$BR$BR
+
+\( \displaystyle
+\begin{tabular}{l|r|r|r|r|r|r}
+Systolic  & 124 & 138 & 119 & 130 & 146 & 125\\
+\hline
+Diastolic &  82 &  90 &  76 &  92 &  95 &  82\\
+\end{tabular}
+\)
+$BR$BR
+
+Use your calculator's built-in function to compute the Pearson correlation coefficient between systolic and diastolic pressures.
+$BR$BR
+
+The correlation coefficient is: \{ans_rule(8)\} (Carry 3 decimal digits.)
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $corr->cmp() );
+
+ENDDOCUMENT();

@@ -1,0 +1,85 @@
+# DESCRIPTION
+#   Understand that the derivative is a function that provides the slope or
+#   or instantaneous rate of change of a function.
+#    f(x) = ax^2+bx+c (quadratic)
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('derivative','limit')
+## Date('5/31/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGjmu_poly.pl",
+  "answerHints.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+Context()->variables->are(x=>'Real', h=>'Real');
+
+$a = non_zero_random(-5,5,1);
+$b = random(-8, 8, 1);
+$c = random(-12, 12, 1);
+
+$xa = random(-5,5,1);
+
+$expr = Compute(GenPolyString([$a,$b,$c]));
+$dexpr = Compute(GenPolyString([2*$a,$b]));
+
+$m = $dexpr->eval(x=>$xa);
+$ya = $expr->eval(x=>$xa);
+$texpr = Compute("$m*(x-$xa)+$ya");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR The derivative of the function \(f(x) = $expr\) is given by \(f'(x) = $dexpr\).
+$BR (Repeat this problem for additional practice.)
+
+$PAR
+Determine the equation of the tangent line at \(x=$xa\).
+$BR
+\( y = \) \{ans_rule(20)\}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $texpr->cmp()->withPostFilter(AnswerHints(
+        sub {
+            my ($correct, $student, $ans) = @_;
+            return ($student != $correct) && ($student == $dexpr);
+        } => "f'(x) is not the tangent line itself",
+        sub {
+            my ($correct, $student, $ans) = @_;
+            my $wrong = Compute("$dexpr*(x-$xa)+$ya");
+            return ($student == $wrong);
+        } => "Must evaluate f'(x) at x=$xa to find slope.",
+    )) );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

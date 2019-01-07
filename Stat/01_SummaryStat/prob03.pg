@@ -1,0 +1,49 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"1. Which data set has the larger mean?",
+"Both have the same mean."
+);
+$mc1->extra(
+"\( X \)",
+"\( Y \)"
+);
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"2. Which data set has the larger variance?",
+"\( Y \)"
+);
+$mc2->extra(
+"\( X \)",
+"Both have the same variance."
+);
+
+BEGIN_TEXT
+
+Consider the following hypothetical data sets.
+$BR$BR
+
+\( X\!: \langle 1, 2, 3, 4, 5, 6, 7, 8, 9 \rangle \)
+$BR$BR
+
+\( Y\!: \langle 1, 1, 2, 2, 5, 8, 8, 9, 9 \rangle \)
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+\{ $mc2->print_q() \} $BR
+\{ $mc2->print_a() \}
+
+END_TEXT
+
+$showPartialCorrectAnswers = 0;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( radio_cmp( $mc2->correct_ans() ) );
+
+ENDDOCUMENT();

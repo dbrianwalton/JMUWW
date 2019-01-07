@@ -1,0 +1,72 @@
+# DESCRIPTION
+#   Typical fence/area problem with one internal division.
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('extreme value','optimization', 'area')
+## Date('8/24/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+# Total fencing
+$totalFence = 100 * random(4, 12, 0.25);
+
+@unitChoice = ('ft', 'm', 'yd');
+$unit = $unitChoice[random(0,@unitChoice-1)];
+
+$maxArea = Real("$totalFence^2/24");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+A landowner has $totalFence $unit of fencing material
+with which to enclose a rectangular space divided into
+two equal rectangles.  The fencing is used to surround
+entire region as well as to separate the two rectangles.
+What is the largest total area that can be enclosed?
+
+$PAR
+Maximum area: \{ ans_rule(10) \} (sq. $unit)
+$BR
+Length of dividing edge: \{ ans_rule(10) \} ($unit)
+$BR
+Width of each rectangle: \{ ans_rule(10) \} ($unit)
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $maxArea->cmp );
+ANS( Real("$totalFence/6")->cmp );
+ANS( Real("$totalFence/8")->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

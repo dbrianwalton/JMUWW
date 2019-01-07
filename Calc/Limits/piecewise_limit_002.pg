@@ -1,0 +1,121 @@
+# DESCRIPTION
+#   Evaluate a limit of a piecewise linear function at the break point.
+#   - The formula involves a constant parameter.
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('limit','piecewise function')
+## Date('7/31/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+Context()->variables->are(x=>'Real', a=>'Real');
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+# Define where the function will break.
+$c = random(-5,5,1);
+
+# Decide if the constant is on left (0) or right (1).
+$sEq = random(0,1);
+
+# Decide if equality is on left (-1), on right (1) or neither (0).
+$qEq = random(-1,1,1);
+
+# Use two simple linear formulas
+$mLeft = random(-4,4,1);
+$mRight = random(-4,4,1);
+
+$dValue = random(-6,6,1);
+if ($sEq == 0) {
+    $b = $dValue - $mRight*$c;
+    $fLeft = Compute("$mLeft*x+a")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+    $fRight = Compute("$mRight*x+$b")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+    $leftLimit = Compute("$mLeft*$c+a");
+    $rightLimit = Real($dValue);
+    $aValue = Real($dValue - $mLeft*$c);
+} else {
+    $b = $dValue - $mLeft*$c;
+    $fLeft = Compute("$mLeft*x+$b")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+    $fRight = Compute("$mRight*x+a")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+    $leftLimit = Real($dValue);
+    $rightLimit = Compute("$mRight*$c+a");
+    $aValue = Real($dValue - $mRight*$c);
+}
+
+$leftIneq = "\lt";
+$rightIneq = "\gt";
+if ($qEq == -1) {
+    $leftIneq = "\le";
+    $value = $leftLimit;
+} elsif ($qEq == 1) {
+    $rightIneq = "\ge";
+    $value = $rightLimit;
+} else {
+    $value = String('DNE');
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR The function \(f(x)\) is defined piecewise using the formula
+$BR
+\( \displaystyle
+    f(x) = \begin{cases}
+        $fLeft, & x $leftIneq $c \\
+        $fRight, & x $rightIneq $c.
+    \end{cases}
+\)
+
+$PAR Compute the following:
+$BR $BR
+\(f($c) \) = \{ ans_rule(10) \}
+$BR $BR
+\(\displaystyle \lim_{x \to $c^-} f(x) \) = \{ ans_rule(10) \}
+$BR $BR
+\(\displaystyle \lim_{x \to $c^+} f(x) \) = \{ ans_rule(10) \}
+$BR
+Type $BBOLD DNE $EBOLD if the value does not exist and $BBOLD INF $EBOLD for \(\infty\).
+
+$PAR
+Find the value of \(a\) so that \(\displaystyle \lim_{x \to $c} f(x)\) exists:
+$BR
+\(a \) = \{ ans_rule(10) \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $value->cmp );
+ANS( $leftLimit->cmp );
+ANS( $rightLimit->cmp );
+ANS( $aValue->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

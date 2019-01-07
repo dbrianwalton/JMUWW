@@ -1,0 +1,88 @@
+## DESCRIPTION
+## Compound interest models
+## ENDDESCRIPTION
+
+## KEYWORDS('exponential', 'interest', 'present value')
+## Tagged by dbw 7/25/11
+
+## DBsubject('Algebra')
+## DBchapter('Exponential and Logarithmic Functions')
+## DBsection('Applications of Exponential and Logarithmic Functions')
+## Date('8/06/12')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl",
+);
+
+
+###################################
+# Setup
+###################################
+
+Context()->variables->are(t=>'Real', 'P'=>'Real');
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$intRate = random(1, 5, 0.25);
+$numTerms = 12;
+$decRate = 0.01*$intRate;
+
+$startBalance = (1, 2, 4, 5, 8, 10, 15, 20, 25, 40, 50)[random(0,10)] * 1000;
+$endBalance = $startBalance * (1.5, 2, 2.5, 3, 4)[random(0,4)];
+
+$time = Real("ln($endBalance/$startBalance)/($decRate)");
+
+###################################
+# Display the Problem
+###################################
+TEXT(beginproblem);
+Context()->texStrings;
+BEGIN_TEXT
+$PAR You invest ${DOLLAR}${startBalance} at an annual interest rate of $intRate%, compounded continuously.  Find the time (years) required for the balance to attain a value of ${DOLLAR}${endBalance}.
+$BR $BR
+\(t\) = \{ ans_rule(15) \} (years)
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Check the Answers
+###################################
+$showPartialCorrectAnswers = 1;
+
+ANS( $time->cmp );
+
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+Interest is compounded continuously so that with a starting balance
+of \(P=$startBalance\), after \(t\) years the new balance will be
+\[ B(t) = $startBalance e^{$decRate t}. \]
+To find the time so that \(B(t)=$endBalance\),
+we solve the equation
+\[ $endBalance = $startBalance e^{$decRate t} \]
+to get
+\[ t = \frac{\ln($endBalance / $startBalance)}{$decRate} \approx $time. \]
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Solution provided. Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

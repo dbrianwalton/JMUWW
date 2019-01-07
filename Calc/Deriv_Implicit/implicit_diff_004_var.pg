@@ -1,0 +1,116 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'implicit differentiation')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('6/15/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "answerHints.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# List of valid variables.
+@varList = ("s", "t", "x", "y", "z", "u", "v", "w");
+$numVars = @varList;
+
+@vars = NchooseK($numVars,2);
+$xvar = $varList[min(@vars)];
+$yvar = $varList[max(@vars)];
+$yprime = "D$yvar";
+
+# Modify what it means to be a name to include primes.
+Context()->variables->{namePattern} = qr/[a-z][a-z0-9_]*'*/i;
+
+Context()->variables->are("$xvar"=>'Real', "$yvar"=>'Real', "$yprime"=>'Real');
+
+# Simple quadratic in two variables = constant
+# Want three terms:  Either two quadratic one proportional, or one quadratic and two proportional.
+$nQ = random(1,2);
+$nP = 3 - $nQ;
+
+@qterms = NchooseK(3,$nQ);
+@pterms = NchooseK(2,$nP);
+
+$expr = $dExpr = $cFactor = $pFactor = Compute(0);
+
+for ($i=0; $i<$nQ; $i++) {
+    $c = non_zero_random(-5,5);
+    $k = $qterms[$i];
+   
+    $expr = $expr + Compute("$c*$xvar^(2-$k)*$yvar^$k");
+    $dExpr = $dExpr + Compute("$c*$xvar^(1-$k)*$yvar^($k-1)*((2-$k)*$yvar + $k*$xvar*$yprime)");
+    $cFactor = $cFactor + Compute("$c*(2-$k)*$xvar^(1-$k)*$yvar^($k)");
+    $pFactor = $pFactor + Compute("$c*$k*$xvar^(2-$k)*$yvar^($k-1)");
+}
+
+for ($i=0; $i<$nP; $i++) {
+    $c = non_zero_random(-5,5);
+    $k = $pterms[$i];
+
+    $expr = $expr + Compute("$c*$xvar^(1-$k)*$yvar^$k");
+    $dExpr = $dExpr + Compute("$c*[$k*$yprime+(1-$k)]");
+
+    $cFactor = $cFactor + Compute("$c*(1-$k)");
+    $pFactor = $pFactor + Compute("$c*$k");
+}
+
+$const = random(-10,10);
+
+$expr = $expr->reduce( '(-x)-y'=>0, '(-x)+y' => 0 );
+$dExpr = $dExpr->reduce( '(-x)-y'=>0, '(-x)+y' => 0 );
+$dydx = -$cFactor / $pFactor;
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR The following equation defines \($yvar\) as an implicit function of \($xvar\).
+\[ $expr = $const \]
+
+$PAR
+Find the derivative \(\displaystyle \frac{d$yvar}{d$xvar}\) by implicit differentiation.
+$BR
+Computing the derivative of each side of the equation with respect to \($xvar\) produces the following equation:
+$BR
+\{ ans_rule(20) \} = \{ ans_rule(5) \} (Type $BBOLD D$yvar $EBOLD to represent \(d$yvar/d$xvar\).)
+
+$PAR
+Solving for \(\displaystyle \frac{d$yvar}{d$xvar}\) results in
+\(\displaystyle \frac{d$yvar}{d$xvar}\) = \{ ans_rule(30) \}
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $dExpr->cmp );
+ANS( Formula(0)->cmp );
+ANS( $dydx->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

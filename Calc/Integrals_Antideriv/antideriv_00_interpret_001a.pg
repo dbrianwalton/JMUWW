@@ -1,0 +1,83 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','antiderivative')
+## Tagged by dbw 8/2/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('8/2/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+@fcnLabel = ('f', 'g');
+$which = 0;
+
+$n = random(2,9,1);
+
+$an = non_zero_random(-10,10,1);
+$ad = random(1,10);
+
+$fstr = GenMonTeX([$an, $ad], $n, "inFrac"=>0);
+$gstr = GenMonTeX([$n*$an, $ad], $n-1, "inFrac"=>0);
+
+$f = Compute(GenMonString([$an, $ad], $n));
+$g = Compute(GenMonString([$n*$an, $ad], $n-1));
+
+@fcnList = ($f, $g);
+@fcnStr = ($fstr, $gstr);
+
+@tfList = ('True', 'False');
+$popup = PopUp(["?", @tfList], $tfList[1-$which]);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Suppose \(f(x)\) is an antiderivative of \(g(x)\).
+
+$PAR
+If you are told \($fcnLabel[1-$which](x) = $fcnStr[1-$which]\),
+then a valid formula for \($fcnLabel[$which]\) would be given by
+$BR \($fcnLabel[$which](x) = \) \{ ans_rule(40) \}.
+
+$PAR
+True/False \{$popup->menu\}: The formula given for \($fcnLabel[$which]\) is unique.
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $fcnList[$which]->cmp( upToConstant=>1-$which ) );
+ANS( $popup->cmp );
+
+COMMENT("This problem always gives the formula for g.");
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

@@ -1,0 +1,171 @@
+## DESCRIPTION
+## Solving an inequality that is presented as a factored quadratic.
+## ENDDESCRIPTION
+
+## KEYWORDS('algebra','inequality','factor')
+## Tagged by dbw 6/8/12
+
+## DBsubject('Algebra')
+## DBchapter('Equations and Inequalities')
+## DBsection('Inequality')
+## Date('6/8/12')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+###################################
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Each factor will be linear.  Find the coefficients.
+@a = map( random(-9,9), 1..2);
+@b = map( non_zero_random(-5,5), 1..2);
+
+while ($a[0]/$b[0] == $a[1]/$b[1]) {
+  $a[1] = random(-9,9);
+  $b[1] = non_zero_random(-5,5,1);
+}
+
+# Compute the points where inequality switches
+@p = (-$a[0]/$b[0], -$a[1]/$b[1]);
+$pmin = min(@p);
+$pmax = max(@p);
+
+# order gives the index of the larger root.
+$order = (-$a[0]/$b[0] < -$a[1]/$b[1]);
+
+# Decide on the type of inequality
+$ineqType = random(0,3,1);
+$isClosed = $ineqType % 2;
+$wantSign = ($ineqType - $isClosed)-1;
+$leadCoef = $b[0] * $b[1];
+
+@leftCap = ("(","[");
+@rightCap = (")", "]");
+@ineq = ("<", "\le", ">", "\ge");
+
+@signWord = ("negative", "positive");
+@signSymbol = ("-", "+");
+
+for $i (0..1) {
+  $factor[$i] = Compute("$a[$i]+$b[$i]*x")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+  $rootTeX[$i] = FractionTeX([-$a[$i],$b[$i]]);
+  $orderRoot[$i] = FractionString([-$a[$i==$order],$b[$i==$order]]);
+  $orderRootTeX[$i] = FractionTeX([-$a[$i==$order],$b[$i==$order]]);
+}
+
+@intervals = ("(-\infty,$orderRootTeX[0])", 
+	   "($orderRootTeX[0],$orderRootTeX[1])",
+	   "($orderRootTeX[1],\infty)");
+
+$fcn = $factor[0] * $factor[1];
+
+Context("Interval");
+
+# Reminder: As constructed, the two endpoints must be different.
+$outerInt = Compute("(-inf,$orderRoot[0] $rightCap[$isClosed]" .
+	  "U $leftCap[$isClosed] $orderRoot[1],inf)");
+$outerIntTeX = "(-\infty,$orderRootTeX[0] $rightCap[$isClosed]" .
+	  "\cup $leftCap[$isClosed] $orderRootTeX[1],\infty)";
+
+$innerInt = Compute("$leftCap[$isClosed] $orderRoot[0],$orderRoot[1] $rightCap[$isClosed]");
+$innerIntTeX = "$leftCap[$isClosed] $orderRootTeX[0],$orderRootTeX[1] $rightCap[$isClosed]";
+
+if ($leadCoef*$wantSign > 0) {
+    $solnInterval = $outerInt;
+    $solnIntTeX = $outerIntTeX;
+} else {
+    $solnInterval = $innerInt;
+    $solnIntTeX = $innerIntTeX;
+}
+
+$ltgt = $ineq[$ineqType];
+
+Context()->texStrings;
+BEGIN_TEXT
+Solve the inequality \($fcn $ltgt 0\).
+Express your answer in interval notation.
+$PAR
+Solution Set: \{ ans_rule(20) \}
+END_TEXT
+Context()->normalStrings;
+
+
+###################################
+# Answer checking
+###################################
+
+ANS( $solnInterval->cmp );
+
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+Because the function \(f(x)=$fcn\) is already factored, we can find the zeros for each factor.
+END_SOLUTION
+
+for $i (0..1) {
+BEGIN_SOLUTION
+The \{("first","second")[$i]\} factor \($factor[$i]\) has a zero at \($rootTeX[$i]\).
+Because the slope of this factor is \{$signWord[$b[$i]>0]\}, 
+the factor is \{$signWord[$b[$i]<0]\} on \((-\infty,$rootTeX[$i])\)
+and \{$signWord[$b[$i]>0]\} on \(($rootTeX[$i],\infty)\). 
+END_SOLUTION
+}
+
+BEGIN_SOLUTION
+The sign of the product within each of the intervals \((-\infty,$rootTeX[1-$order])\), \(($rootTeX[1-$order],$rootTeX[$order])\), and \(($rootTeX[$order],\infty)\) can now be determined.
+$BCENTER
+\{ begintable(4) \}
+\{ row( "$SPACE Interval $SPACE", "$SPACE \($factor[0]\) $SPACE", "$SPACE \($factor[1]\) $SPACE", "$SPACE \(f(x)\) $SPACE") \}
+\{ row( "$SPACE \($intervals[0]\) $SPACE", 
+   "$SPACE \($signSymbol[$b[0]<0]\) $SPACE", 
+   "$SPACE \($signSymbol[$b[1]<0]\) $SPACE", 
+   "$SPACE \($signSymbol[$leadCoef>0]\) $SPACE") 
+\}
+\{ row( "$SPACE \($intervals[1]\) $SPACE", 
+   "$SPACE \($signSymbol[($order==1 && $b[0]>0) || ($order==0 && $b[0]<0)]\) $SPACE", 
+   "$SPACE \($signSymbol[($order==0 && $b[1]>0) || ($order==1 && $b[1]<0)]\) $SPACE", 
+   "$SPACE \($signSymbol[$leadCoef<0]\) $SPACE") 
+\}
+\{ row( "$SPACE \($intervals[2]\) $SPACE", 
+   "$SPACE \($signSymbol[$b[0]>0]\) $SPACE", 
+   "$SPACE \($signSymbol[$b[1]>0]\) $SPACE", 
+   "$SPACE \($signSymbol[$leadCoef>0]\) $SPACE") 
+\}
+\{ endtable() \}
+$ECENTER
+Alternatively, since \(f(x)\) is continuous, we could have chosen one point in each interval and then found the value of \(f(x)\) to determine the signs instead of looking at the factors separately.
+
+$PAR
+The inequality is looking for where \(f(x) $ltgt 0\), so the solution set is the union of all intervals where \(f(x)\) is $signWord[$ineqType>=2], \{("excluding","including")[$isClosed]\} points where \(f(x)=0\).  So the solution set is \($solnIntTeX\).
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Random inequality, each linear factor has +/- slope. Solution provided. Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

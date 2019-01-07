@@ -1,0 +1,84 @@
+## DESCRIPTION
+## Solve an exponential equation requiring a logarithm
+## ENDDESCRIPTION
+
+## KEYWORDS('logarithm','exponential', 'equation')
+## Tagged by dbw 7/20/11
+
+## DBsubject('Algebra')
+## DBchapter('Exponential and Logarithmic Functions')
+## DBsection('Exponential and Logarithmic Equations')
+## Date('8/03/12')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl",
+  "contextLimitedPowers.pl"
+);
+
+###################################
+# Setup
+###################################
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+do {
+  $A = random(0.1, 10, 0.1);
+} until ($A != 1);
+
+$b = random(2,8,1);
+$c = random(2.1,10,0.1);
+$xVal = Compute("ln($c/$A)/ln($b)");
+
+###################################
+# Display the Problem
+###################################
+TEXT(beginproblem);
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Solve the equation \($A ($b)^x = $c\) to find \(x\).
+$BR $BR
+\(  x = \) \{ ans_rule(30) \}
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Check the Answers
+###################################
+$showPartialCorrectAnswers = 1;
+
+ANS( $xVal->cmp );
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+First, isolate the exponential.
+\[ $A \cdot $b^x = $c \]
+\[ $b^{x} = \frac{$c}{$A} \]
+Use a logarithm to isolate the exponent, 
+\(\ln(b^{x})=x \ln(b)\).
+\[ \ln($b^{x}) = \ln($c /$A) \]
+\[ x \ln($b) = \ln($c / $A) \]
+\[ x = \frac{\ln($c / $A)}{\ln($b)s} \]
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Solution provided.  Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

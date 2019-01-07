@@ -1,0 +1,72 @@
+# DESCRIPTION
+#   Evaluate the end behavior of a rational function.
+#   f(x) = [mx+b] / [kx+c]
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('limit','indeterminate')
+## Date('5/25/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGpolynomialmacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem. [mx+b]/[kx+c]
+##########
+do {
+    $m = non_zero_random(-6,6,1);
+    $b = random(-10,10,1);
+    $k = non_zero_random(-6,6,1);
+    $c = random(-10,10,1);
+} while ($m==$k && $b==$c);
+
+@numer = ($m, $b);
+@denom = ($k, $c);
+
+$nstr = PolyString(~~@numer);
+$dstr = PolyString(~~@denom);
+
+$expr = Compute("($nstr)/($dstr)")->reduce('(-x)+y'=>0, '(-x)-y'=>0);
+$limit = Compute("$m/$k");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute the limit
+$BR
+\(\displaystyle \lim_{x \to \infty} $expr \) = \{ ans_rule(10) \}
+
+$PAR
+Type $BBOLD DNE $EBOLD if the limit does not exist and $BBOLD INF $EBOLD for \(\infty\).
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $limit->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

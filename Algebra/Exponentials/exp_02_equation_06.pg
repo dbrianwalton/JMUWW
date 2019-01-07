@@ -1,0 +1,100 @@
+## DESCRIPTION
+## Solve an exponential equation involving related bases.
+## ENDDESCRIPTION
+
+## KEYWORDS('exponential', 'equation', 'solve')
+## Tagged by dbw 7/18/11
+
+## DBsubject('Algebra')
+## DBchapter('Exponential and Logarithmic Functions')
+## DBsection('Exponential and Logarithmic Equations')
+## Date('7/18/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl",
+);
+
+
+###################################
+# Setup the Problem
+###################################
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$b = random(2,5,1);
+$sign = non_zero_random(-1,1);
+$k1 = $sign*random(2,4);
+$k2 = -$sign*random(2,4);
+
+$d = non_zero_random(-5,5);
+
+if ($sign>0) {
+    $b1 = $b**$k1;
+    $b2r = $b**abs($k2);
+    $b2 = "(\frac{1}{$b2r})";
+} else {
+    $b1r = $b**abs($k1);
+    $b1 = "(\frac{1}{$b1r})";
+    $b2 = $b**$k2;
+}
+
+$expr1 = Formula("x+$d")->reduce();
+
+$xSoln = List(Real("(-$k1*$d)/($k1-$k2)"));
+$solnStr = FractionTeX([-$k1*$d, $k1-$k2]);
+
+###################################
+# Display the Problem
+###################################
+TEXT(beginproblem);
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Solve the equation \($b1^{$expr1} = $b2^{x}\) to find \(x\).
+$BR $BR
+\(  x = \) \{ ans_rule(10) \}
+$PAR Enter multiple solutions as a comma-separated list.  Type $BBOLD NONE $EBOLD if there are no solutions.
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Check the Answers
+###################################
+$showPartialCorrectAnswers = 0;
+
+ANS( $xSoln->cmp );
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+We first attempt to rewrite both exponentials with a common base.  
+Notice that the base \($b1\) and the base \($b2\) are both powers of \($b\),
+with \($b1=$b^{$k1}\) and \($b2=$b^{$k2}\).
+So we can rewrite our original equation as
+\(($b^{$k1})^{$expr1} = ($b^{$k2})^x\)
+which is equivalent to
+\($b^{$k1($expr1)} = $b^{$k2 x}\).
+The solution must therefore satisfy the simple equation \($k1($expr1)=$k2 x\),
+which gives \(x=$solnStr\).
+END_SOLUTION
+
+COMMENT('Solution provided. Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

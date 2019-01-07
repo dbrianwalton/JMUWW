@@ -1,0 +1,102 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'exponential', 'increasing', 'decreasing')
+## Tagged by dbw 7/26/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('7/26/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$n = non_zero_random(-5,5);
+$k = random(1,9);
+
+$rt = FractionString([-1,$n]);
+
+$func = Compute("x^$n*ln(x^$k)")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+Context("Interval");
+
+# Even has domain (-inf,0) U (0,inf)
+if ($k % 2 == 0) {
+  if ($n % 2 == 0) {
+    if ($n*$k > 0) {
+      $incrInterval = Compute("(-e^($rt),0), (e^($rt),INF)");
+      $decrInterval = Compute("(-INF,-e^($rt)), (0,e^($rt))");
+    } else {
+      $incrInterval = Compute("(-INF,-e^($rt)), (0,e^($rt))");
+      $decrInterval = Compute("(-e^($rt),0), (e^($rt),INF)");
+    }
+  } else {
+    if ($n*$k > 0) {
+      $incrInterval = Compute("(-INF,-e^($rt)), (e^($rt),INF)");
+      $decrInterval = Compute("(-e^($rt),0), (0,e^($rt))");
+    } else {
+      $incrInterval = Compute("(-e^($rt),0), (0,e^($rt))");
+      $decrInterval = Compute("(-INF,-e^($rt)), (e^($rt),INF)");
+    }
+  }
+# Odd has domain (0,inf)
+} else {
+  if ($n*$k > 0) {
+      $decrInterval = List(Compute("(0,e^($rt))"));
+      $incrInterval = List(Compute("(e^($rt),INF)"));
+  } else {
+      $incrInterval = List(Compute("(0,e^($rt))"));
+      $decrInterval = List(Compute("(e^($rt),INF)"));
+  }
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Determine the intervals where the function \(f(x) = $func\)
+is increasing and where it is decreasing.
+$BR 
+$BBLOCKQUOTE
+$BR
+\(f\) is increasing on: \{ ans_rule(30) \}
+$BR $BR
+\(f\) is decreasing on: \{ ans_rule(30) \}
+$BR
+$EBLOCKQUOTE
+$BR
+Note: Use open intervals. Type ${BBOLD}INF${EBOLD} for \(\infty\).
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $incrInterval->cmp );
+ANS( $decrInterval->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

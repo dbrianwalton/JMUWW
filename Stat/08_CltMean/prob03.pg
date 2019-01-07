@@ -1,0 +1,28 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$zscore = Compute("2.355"  )->with(tolType=>'absolute', tolerance=>'0.006' );
+$prob   = Compute("0.00925")->with(tolType=>'absolute', tolerance=>'0.0003');
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+The lifetime of a 100-watt light bulb is modeled by a certain distribution with a mean of 750 hours and a standard deviation of 750 hours. According to this model, many light bulbs last relatively short and a small number of bulbs last long. Thus, the distribution is positively skewed. You have just purchased fifty 100-watt bulbs for your office building. Assume that these bulbs constitute a random sample and that they burn out independently. Compute the probability that the mean lifetime of the fifty bulbs will exceed 1,000 hours. (Carry 2 decimal digits for the z-score and 4 decimal digits for the probability.)
+$BR$BR
+
+\( P(\bar{X} > 1000) = P(Z > \) \{ ans_rule(8) \} \( ) = \) \{ ans_rule(8) \}
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $zscore->cmp() );
+ANS( $prob->cmp() );
+
+ENDDOCUMENT();

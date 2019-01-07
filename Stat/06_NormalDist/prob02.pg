@@ -1,0 +1,25 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$price = Compute("2.86875")->with(tolType=>'absolute', tolerance=>'0.0025');
+
+TEXT(beginproblem());
+Context()->texStrings;
+
+BEGIN_TEXT
+
+The retail price of 12-pack soda can be characterized as having a normal distribution with a mean of 3.00 dollars and a standard deviation of 0.25. Below what price do you find 30 percent of all 12-packs? (Carry 2 decimal digits.)
+$BR$BR
+
+Answer: \{ ans_rule(8) \} dollars.
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS($price->cmp());
+
+ENDDOCUMENT();

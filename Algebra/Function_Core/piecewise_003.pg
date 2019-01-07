@@ -1,0 +1,135 @@
+# DESCRIPTION
+#   Interpret a piecewise function defined with two intervals.
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('function','piecewise')
+## Date('7/19/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGpolynomialmacros.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+# Define where the function will break.
+$c = random(-2,2,1);
+
+# Define the sampling points.
+$cL = $c - 1;
+$cR = $c + 1;
+
+# Decide if equality is on left, on right or neither.
+$qEq = random(-1,1,1);
+
+# Define the function to use on the left randomly.
+$d = random(-6,6,1);
+$m = random(-4,4,1);
+$b = $d - $m*$c;
+$fLeftChoices[0] = Compute("$m*x+$b")->reduce( '(-x)-y'=>0, '(-x)+y'=>0 );
+$a = non_zero_random(-2,2,1); 
+$quadStr = GenPolyTeX([[$a,2], 0, $d]);
+$fLeftChoices[1] = Compute("($a/2)*x^2+$d")->reduce( '(-x)-y'=>0, '(-x)+y'=>0 );
+$fLeftChoices[2] = Compute("$d+sqrt($c-x)")->reduce( '(-x)-y'=>0, '(-x)+y'=>0 );
+$fLeftChoices[3] = Compute("$d/($c-x)")->reduce( '(-x)-y'=>0, '(-x)+y'=>0 );
+
+$whichLeft = random(0,3);
+$fLeft = $fLeftChoices[$whichLeft];
+if ($whichLeft == 1) {
+    $fLeftStr = $quadStr;
+} else {
+    $fLeftStr = $fLeft;
+}
+
+# Define the function to use on the right randomly.
+$d = $d + non_zero_random(-2,2,1);
+$m = random(-4,4,1);
+$b = $d - $m*$c;
+$fRightChoices[0] = Compute("$m*x+$b")->reduce( '(-x)-y'=>0, '(-x)+y'=>0 );
+$a = non_zero_random(-2,2,1); 
+$quadStr = GenPolyTeX([[$a,2], 0, $d]);
+$fRightChoices[1] = Compute("($a/2)*x^2+$d")->reduce( '(-x)-y'=>0, '(-x)+y'=>0 );
+$fRightChoices[2] = Compute("$d+sqrt(x-$c)")->reduce( '(-x)-y'=>0, '(-x)+y'=>0 );
+$fRightChoices[3] = Compute("$d/(x-$c)")->reduce( '(-x)-y'=>0, '(-x)+y'=>0 );
+
+$whichRight = random(0,3);
+$fRight = $fRightChoices[$whichRight];
+if ($whichRight == 1) {
+    $fRightStr = $quadStr;
+} else {
+    $fRightStr = $fRight;
+}
+if (($whichLeft==3 && $qEq==-1) || ($whichRight==3 && $qEq==1)) {
+    $qEq = 0;
+}
+
+
+$ans1 = $fLeft->eval(x=>$cL);
+$ans3 = $fRight->eval(x=>$cR);
+$leftIneq = "\lt";
+$rightIneq = "\gt";
+if ($qEq == -1) {
+    $leftIneq = "\le";
+    $ans2 = $fLeft->eval(x=>$c);
+} elsif ($qEq == 1) {
+    $rightIneq = "\ge";
+    $ans2 = $fRight->eval(x=>$c);
+} else {
+    $ans2 = Compute("DNE");
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR The function \(f(x)\) is defined piecewise using the formula
+\[
+f(x) = \begin{cases}
+    $fLeftStr, & x $leftIneq $c \\
+    $fRightStr, & x $rightIneq $c.
+    \end{cases}
+\]
+
+$PAR
+Find each of the following values. Type $BBOLD DNE $EBOLD if a value is undefined.
+$BR
+\(f($cL)\) = \{ ans_rule(10) \}
+$BR
+\(f($c)\) = \{ ans_rule(10) \}
+$BR
+\(f($cR)\) = \{ ans_rule(10) \}
+END_TEXT
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+
+ANS( $ans1->cmp );
+ANS( $ans2->cmp );
+ANS( $ans3->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

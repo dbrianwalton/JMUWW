@@ -1,0 +1,134 @@
+## DESCRIPTION
+##   Find the inverse relation.
+## ENDDESCRIPTION
+
+## KEYWORDS('inverse')
+## Tagged by dbw 10/18/10
+
+## DBsubject('Algebra')
+## DBchapter('Functions')
+## DBsection('Transformations')
+## Date('10/18/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "PGjmu_poly.pl",
+  "contextLimitedPolynomial.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("LimitedPolynomial");
+
+Context()->{error}{msg}{"You can only use '-' with monomials"} 
+= "Simplify your answer.";
+Context()->{error}{msg}{"Multiplication can only be used between coefficients and variables"} 
+= "Simplify your answer.";
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$whichInverse = random(0,1);
+
+# Define the function f as linear function.
+@cn = (non_zero_random(-5,5), random(-9,9));
+@cd = (random(1,8), 1);
+@c = map( [$cn[$_], $cd[$_]], 0..1 );
+$fFcnStr = GenPolyString(~~@c);
+$fFcnTex = GenPolyTeX(~~@c);
+$fFcn = Compute($fFcnStr);
+
+@cgn = ($cd[0], -$cn[1]*$cd[0]);
+@cgd = ($cn[0], $cn[0]);
+@cg = map( [$cgn[$_], $cgd[$_]], 0..1 );
+$gFcnStr[0] = GenPolyString(~~@cg);
+$gFcnTex[0] = GenPolyTeX(~~@cg);
+$gFcn[0] = Compute($gFcnStr[0]);
+
+@chn = ($cd[0], -$cn[1]);
+@chd = ($cn[0], 1);
+@ch = map( [$chn[$_], $chd[$_]], 0..1 );
+$gFcnStr[1] = GenPolyString(~~@ch);
+$gFcnTex[1] = GenPolyTeX(~~@ch);
+$gFcn[1] = Compute($gFcnStr[1]);
+
+@fogn = ( $cn[0] * $cgn[0], $cn[1]*$cd[0]*$cgd[1] + $cn[0]*$cgn[1]*$cd[1]);
+@fogd = ( $cd[0] * $cgd[0], $cd[0]*$cgd[1]*$cd[1]);
+@fog = map( [$fogn[$_], $fogd[$_]], 0..1 );
+$fogStr[0] = GenPolyString(~~@fog);
+$fogFcn[0] = Compute($fogStr[0])->reduce();
+
+@gofn = ( $cgn[0] * $cn[0], $cgn[1]*$cgd[0]*$cd[1] + $cgn[0]*$cn[1]*$cgd[1]);
+@gofd = ( $cgd[0] * $cd[0], $cgd[0]*$cd[1]*$cgd[1]);
+@gof = map( [$gofn[$_], $gofd[$_]], 0..1 );
+$gofStr[0] = GenPolyString(~~@gof);
+$gofFcn[0] = Compute($gofStr[0])->reduce();
+
+@fohn = ( $cn[0] * $chn[0], $cn[1]*$cd[0]*$chd[1] + $cn[0]*$chn[1]*$cd[1]);
+@fohd = ( $cd[0] * $chd[0], $cd[0]*$chd[1]*$cd[1]);
+@foh = map( [$fohn[$_], $fohd[$_]], 0..1 );
+$fogStr[1] = GenPolyString(~~@foh);
+$fogFcn[1] = Compute($fogStr[1])->reduce();
+
+@hofn = ( $chn[0] * $cn[0], $chn[1]*$chd[0]*$cd[1] + $chn[0]*$cn[1]*$chd[1]);
+@hofd = ( $chd[0] * $cd[0], $chd[0]*$cd[1]*$chd[1]);
+@hof = map( [$hofn[$_], $hofd[$_]], 0..1 );
+$gofStr[1] = GenPolyString(~~@hof);
+$gofFcn[1] = Compute($gofStr[1])->reduce();
+
+Context("Numeric");
+Context()->strings->add('g'=>{}, 'h'=>{});
+@fcnNames = ("g", "h");
+$invFcn = String($fcnNames[$whichInverse]);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+The functions \(f\), \(g\) and \(h\) are defined as
+\[ f(x) = $fFcnTex, \quad g(x) = $gFcnTex[$whichInverse], \quad h(x) = $gFcnTex[1-$whichInverse] \]
+
+$PAR
+Compute each of the following compositions and simplify the result.
+$BR
+\( f \circ g(x) = \) \{ ans_rule(25) \}
+$BR
+\( g \circ f(x) = \) \{ ans_rule(25) \}
+$BR
+\( f \circ h(x) = \) \{ ans_rule(25) \}
+$BR
+\( h \circ f(x) = \) \{ ans_rule(25) \}
+
+$PAR
+Which function is the inverse of \(f\)?  \{ans_rule(5)\}
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answer checking
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 1;
+
+ANS($fogFcn[$whichInverse]->cmp);
+ANS($gofFcn[$whichInverse]->cmp);
+ANS($fogFcn[1-$whichInverse]->cmp);
+ANS($gofFcn[1-$whichInverse]->cmp);
+
+ANS( $invFcn->cmp );
+###################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

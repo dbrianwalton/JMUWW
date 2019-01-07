@@ -1,0 +1,101 @@
+# DESCRIPTION
+#   Understand that the derivative is a function that provides the slope or
+#   or instantaneous rate of change of a function.
+#    f(x) = ax^k+c (power plus constant)
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('derivative','differentiation')
+## Date('5/31/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+Context()->variables->are(x=>'Real');
+
+@rules = ("Constant Rule", "Power Rule", "Constant Multiple Rule", "Sum Rule");
+$constR = 0;
+$powerR = 1;
+$constMultR = 2;
+$sumR = 3;
+
+do {
+    $a = non_zero_random(-5,5,1);
+} while (abs($a) == 1);
+
+$k = random(2, 8, 1);
+
+$c = non_zero_random(-12, 12, 1);
+
+$expr = Compute("$a*x^$k+$c")->reduce('(-x)-y'=>0, '(-x)+y' => 0);
+
+$popupA = PopUp(["?", @rules], $rules[$powerR]);
+$popupB = PopUp(["?", @rules], $rules[$constMultR]);
+$popupC = PopUp(["?", @rules], $rules[$constR]);
+$popupD = PopUp(["?", @rules], $rules[$sumR]);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute the derivative of \(f(x) = $expr\) step-by-step using rules of differentiation.
+At each step, indicate which rule of differentiation you used.
+$BR (Repeat this problem for additional practice.)
+
+$PAR
+The derivative of \(x^{$k}\) is \{ ans_rule(15) \} using \{ $popupA->menu() \}
+$BR
+The derivative of \($a x^{$k}\) is \{ ans_rule(15) \} using \{ $popupB->menu() \}
+$BR
+The derivative of \($c\) is \{ ans_rule(15) \} using \{ $popupC->menu() \}
+$BR
+The derivative of \($expr\) is \{ ans_rule(15) \} using \{ $popupD->menu() \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+$ansA = Compute("$k * x^($k-1)");
+ANS( $ansA->cmp );
+ANS( $popupA->cmp );
+
+$ansB = Compute("$a*$ansA");
+ANS( $ansB->cmp );
+ANS( $popupB->cmp );
+
+$ansC = Real(0);
+ANS( $ansC->cmp );
+ANS( $popupC->cmp );
+
+$ansD = Compute($ansB+$ansC);
+ANS( $ansD->cmp );
+ANS( $popupD->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

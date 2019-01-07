@@ -1,0 +1,149 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'exponential', 'increasing', 'decreasing', 'concavity')
+## Tagged by dbw 7/27/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('7/27/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Determine the rates so that non-zero and non-equal.
+$k[0] = non_zero_random(-5,5);
+$dk = $k[0];
+while ($dk == $k[0]) {
+  $dk = non_zero_random(-4,4);
+}
+$k[1] = $k[0] - $dk;
+
+$A[0] = random(1,10);
+$A[1] = non_zero_random(-10,10);
+
+$func = Compute("$A[0]*e^($k[0]*x)+$A[1]*e^($k[1]*x)")
+        ->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+$deriv = Compute("$k[0]*$A[0]*e^($k[0]*x)+$k[1]*$A[1]*e^($k[1]*x)")
+         ->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+$deriv2 = Compute("($k[0])^2*$A[0]*e^($k[0]*x)+($k[1])^2*$A[1]*e^($k[1]*x)")
+         ->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+Context("Interval");
+
+$ratio = (-$A[1]*$k[1])/($A[0]*$k[0]);
+if ($ratio > 0) {
+    ## If opposite sign, there is a critical point.
+    if ($dk > 0) {
+      $c = FractionString([1,$dk]) . "*ln(" .
+           FractionString([-$A[1]*$k[1], $A[0]*$k[0]]) . ")";
+    } else {
+      $c = FractionString([1,-$dk]) . "*ln(" .
+           FractionString([-$A[0]*$k[0], $A[1]*$k[1]]) . ")";
+    }
+    $leftInterval = Compute("(-INF, $c)");
+    $rightInterval = Compute("($c, INF)");
+    if ($A[0]*$k[0]*$dk > 0) {
+        $decrInterval = List($leftInterval);
+        $incrInterval = List($rightInterval);
+    } else {
+        $incrInterval = List($leftInterval);
+        $decrInterval = List($rightInterval);
+    }
+} else {
+    ## Otherwise, always same monotonicity.
+    if ($k[0] > 0) {
+        $incrInterval = List(Interval("(-INF,INF)"));
+        $decrInterval = List("None");
+    } else {
+        $decrInterval = List(Interval("(-INF,INF)"));
+        $incrInterval = List("None");
+    }
+}
+
+if ($A[1] < 0) {
+    ## If opposite sign, there is point of inflection.
+    if ($dk > 0) {
+      $c = FractionString([1,$dk]) . "*ln(" .
+           FractionString([-$A[1]*$k[1]**2, $A[0]*$k[0]**2]) . ")";
+    } else {
+      $c = FractionString([1,-$dk]) . "*ln(" .
+           FractionString([-$A[0]*$k[0]**2, $A[1]*$k[1]**2]) . ")";
+    }
+
+    $leftInterval = Compute("(-INF, $c)");
+    $rightInterval = Compute("($c, INF)");
+    if ($dk > 0) {
+        $ccuInterval = List($rightInterval);
+        $ccdInterval = List($leftInterval);
+    } else {
+        $ccdInterval = List($rightInterval);
+        $ccuInterval = List($leftInterval);
+    }
+} else {
+    ## Otherwise, always same concavity.
+    $ccuInterval = List(Interval("(-INF,INF)"));
+    $ccdInterval = List("None");
+}
+
+
+Context()->texStrings;
+
+BEGIN_TEXT
+Find the first and second derivatives of the function \(f(x) = $func\).
+$PAR
+\(f'(x) = \) \{ ans_rule(35) \}
+$PAR
+\(f''(x) = \) \{ ans_rule(35) \}
+$BR
+$PAR
+Determine intervals where \(f(x)\) has each of the following properties.
+$PAR
+\(f(x)\) is increasing on: \{ ans_rule(35) \}
+$BR
+\(f(x)\) is decreasing on: \{ ans_rule(35) \}
+$PAR
+\(f(x)\) is concave up on: \{ ans_rule(35) \}
+$BR
+\(f(x)\) is concave down: \{ ans_rule(35) \}
+$PAR
+List open intervals separated by commas.  Type ${BBOLD}NONE${EBOLD} if there are no such intervals. Type ${BBOLD}INF${EBOLD} for \(\infty\).
+END_TEXT
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $deriv->cmp() );
+ANS( $deriv2->cmp() );
+
+ANS( $incrInterval->cmp );
+ANS( $decrInterval->cmp );
+ANS( $ccuInterval->cmp );
+ANS( $ccdInterval->cmp );
+
+ENDDOCUMENT();

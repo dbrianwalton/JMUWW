@@ -1,0 +1,96 @@
+## DESCRIPTION
+## Rewriting absolute value of a linear function with positive slope as a piecewise function
+## ENDDESCRIPTION
+
+## KEYWORDS('algebra','piecewise','absolute value')
+## Tagged by dbw 9/1/09
+
+## DBsubject('Precalculus')
+## DBchapter('Functions')
+## DBsection('Piecewise Defined Functions')
+## Date('9/1/09')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+
+###################################
+# Setup
+###################################
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$a = non_zero_random(2,5,1);
+$c = non_zero_random(-9,9,1);
+$fcn = Compute("$a*x+$c")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+$fcnOpp = Compute("-$a*x-$c")->reduce('(-x)-y'=>0, '(-x)+y'=>0);;
+
+$popupA = PopUp(["?", ">", ">="], ">=");
+$popupB = PopUp(["?", "<", "<="], "<");
+
+###################################
+# Display the Problem
+###################################
+TEXT(beginproblem);
+Context()->texStrings;
+BEGIN_TEXT
+Rewrite the formula \(|\{$fcn\}|\) as a piecewise function,
+\[ |\{$fcn\}| = \begin{cases} A, & x \ge c \hbox{ or } x > c \\ B, & x \le c \hbox{ or } x < c \end{cases}\]
+where \(A\) and \(B\) represent expressions, \(c\) represents a number, and you need to determine which inequality would include the equal sign according to the definition of absolute value.
+
+$PAR
+\(A = \) \{ ans_rule(20) \} with \(x\) \{ $popupA->menu() \} \(c\) $BR
+\(B = \) \{ ans_rule(20) \} with \(x\) \{ $popupB->menu() \} \(c\) $BR
+and \(c = \) \{ ans_rule(10) \}
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answer checking
+###################################
+ANS( $fcn->cmp );
+ANS( $popupA->cmp );
+
+ANS( $fcnOpp->cmp );
+ANS( $popupB->cmp );
+
+ANS( Compute("-$c/$a")->cmp );
+
+###################################
+# Solution
+###################################
+$cstr = FractionTeX([-$c,$a]);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+$PAR
+$PAR
+The absolute value function, say \(|u|\), looks at the input \(u\) and tests if it is negative or not.  When the input is negative, the absolute value changes the sign to positive by multiplying by \(-1\),
+\[|u| = \begin{cases} u, & u \ge 0 \\ -u, & u < 0. \end{cases}\]
+
+$PAR
+For this problem, the input is \($fcn\), so we need to test if \($fcn < 0\), which occurs for \(x<$cstr\).  That is, for \(x<$cstr\), \(|$fcn| = $fcnOpp\).  Otherwise, \(|$fcn|=$fcn\).  This is written
+\[|$fcn| = \begin{cases} $fcn, & x \ge $cstr \\ $fcnOpp, & x < $cstr. \end{cases}\]
+
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Solution provided.  Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

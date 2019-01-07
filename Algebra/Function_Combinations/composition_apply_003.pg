@@ -1,0 +1,78 @@
+## DESCRIPTION
+##   Given two functions, the student writes down the composition.
+## ENDDESCRIPTION
+
+## KEYWORDS('algebra','composition')
+## Tagged by dbw 7/10/10
+
+## DBsubject('Algebra')
+## DBchapter('Functions')
+## DBsection('Composition')
+## Date('9/1/09')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGpolynomialmacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# This is a composition of a linear function of sqrt with simple quadratic
+$m = random(1,5);
+$b = non_zero_random(-8,8);
+$f = Compute("$m*sqrt(x)+$b")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+$c = non_zero_random(-9,9);
+$g = Compute("x^2+$c")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+$fcircg = $f->substitute(x => $g);
+if ($c < 0) {
+    $pmin = sqrt(abs($c));
+    $fcircg->{limits} = [$pmin, $pmin+4];
+}
+
+$gcircf = $g->substitute(x => $f);
+$gcircf->{limits} = [0,4];
+
+Context()->texStrings;
+BEGIN_TEXT
+Suppose you are given the functions \(f(x) = $f\) and \(g(x) = $g\).
+
+$PAR
+Determine the expressions for
+$BR
+\(f \circ g(x) = f(g(x)) = \)\{ ans_rule(20) \}
+$BR
+and
+$BR
+\(g \circ f(x) = g(f(x)) = \)\{ ans_rule(20) \}.
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answer checking
+
+$showPartialCorrectAnswers = 0;
+ANS($fcircg->cmp);
+ANS($gcircf->cmp);
+
+###################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

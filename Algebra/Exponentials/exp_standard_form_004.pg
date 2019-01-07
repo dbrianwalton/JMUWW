@@ -1,0 +1,114 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'algebraic function')
+## Tagged by dbw 9/1/09
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('1/13/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "problemRandomize.pl",
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$b1 = random(2,5,1);
+do { $b2 = random(2,5,1); } while ($b1 == $b2);
+
+$k1 = non_zero_random(-3,3);
+$c1 = non_zero_random(-3,3);
+$line1 = Compute("$k1*x+$c1")->reduce('(-x)-y'=>0);
+
+$k2 = non_zero_random(-3,3);
+$c2 = non_zero_random(-3,3);
+$line2 = Compute("$k2*x+$c2")->reduce('(-x)-y'=>0);
+
+$base = Real("($b1^$k1)/($b2^$k2)");
+$initial = Real("($b1^$c1)/($b2^$c2)");
+
+$An = 1;
+$Ad = 1;
+if ($c1 >= 0) {
+    $An = $An * $b1**$c1;
+} else {
+    $Ad = $Ad * $b1**abs($c1);
+}
+if ($c2 < 0) {
+    $An = $An * $b2**abs($c2);
+} else {
+    $Ad = $Ad * $b2**$c2;
+}
+
+# Reduce.
+foreach $p (2, 3, 5) {
+    while ($An % $p == 0  && $Ad % $p == 0) {
+        $An = $An / $p;
+        $Ad = $Ad / $p;
+    }
+}
+
+$bn = 1;
+$bd = 1;
+if ($k1 >= 0) {
+    $bn = $bn * $b1**$k1;
+} else {
+    $bd = $bd * $b1**abs($k1);
+}
+if ($k2 < 0) {
+    $bn = $bn * $b2**abs($k2);
+} else {
+    $bd = $bd * $b2**$k2;
+}
+
+# Reduce.
+foreach $p (2, 3, 5) {
+    while ($bn % $p == 0  && $bd % $p == 0) {
+        $bn = $bn / $p;
+        $bd = $bd / $p;
+    }
+}
+
+$f = Compute("($An/$Ad)*($bn/$bd)^x");
+$xmax = ln(3)/abs(ln($bn/$bd));
+$f->{limits} = [-$xmax,$xmax];
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Rewrite the function \(\displaystyle f(x) = \frac{$b1^{$line1}}{$b2^{$line2}}\) in the form
+\(f(x) = A \cdot b^{x}\).
+$BR $BR
+\(A = \) \{ ans_rule(10) \}
+and \(b = \) \{ ans_rule(15) \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+# ANS( $f->cmp );
+ANS( $initial->cmp );
+ANS( $base->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

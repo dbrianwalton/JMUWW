@@ -1,0 +1,53 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('logarithm','definition')
+## Tagged by dbw 7/20/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('7/20/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl",
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$pow = random(-2,2,0.01);
+$value = sprintf("%0.5f",exp($pow));
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Express the equation \(\ln($value) \approx $pow\) as the corresponding exponential equation \(e^A \approx C\).
+$BR $BR
+\(e\)${CARET}(\{ ans_rule(8) \}) \(\approx\) \{ans_rule(5)\}.
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( Real($pow)->cmp );
+ANS( Real($value)->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

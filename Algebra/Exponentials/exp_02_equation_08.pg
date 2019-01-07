@@ -1,0 +1,112 @@
+## DESCRIPTION
+## Solve an quadratic equation involving exponential substitution.
+## ENDDESCRIPTION
+
+## KEYWORDS('exponential', 'equation', 'solve', 'substitution')
+## Tagged by dbw 7/18/11
+
+## DBsubject('Algebra')
+## DBchapter('Exponential and Logarithmic Functions')
+## DBsection('Exponential and Logarithmic Equations')
+## Date('7/18/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl",
+);
+
+
+###################################
+# Setup
+###################################
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$base = random(2,3,1);
+
+$a = random(0,3);
+$c=$a;
+while ($c==$a) {
+  $c = random(0,3);
+}
+
+$sgn = non_zero_random(-1,1);
+
+## (b^x-b^a)(b^x+sgn*b^c) = 0 ##
+## b^(2x) + (sgn*b^c-b^a) b^x - (sgn*b^(a+c)) = 0 ##
+$coef1 = $sgn*$base**($c) - $base**($a);
+$coef2 = -$sgn*$base**($c+$a);
+
+if ($sgn > 0) {
+    $xSoln = List(Real("$a"));
+    $secondSoln = "which has no solution since exponentials are always positive";
+} else {
+    $xSoln = List(Real("$a"), Real("$c"));
+    $secondSoln = "which gives \(x=$c\)";
+}
+
+$expr = Compute("$base^(2x)+$coef1*$base^(x)+$coef2")->reduce();
+$substPoly = GenPolyTeX([1, $coef1, $coef2], "x"=>"u");
+
+$factor1 = GenPolyTeX([1, -$base**$a], "x"=>"u");
+$root1 = $base**$a;
+$factor2 = GenPolyTeX([1, $sgn*$base**$c], "x"=>"u");
+$root2 = -$sgn*$base**$c;
+
+###################################
+# Display the Problem
+###################################
+TEXT(beginproblem);
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Solve the equation \($expr = 0\) to find \(x\).
+$BR $BR
+\(  x = \) \{ ans_rule(10) \}
+$PAR Enter multiple solutions as a comma-separated list.  
+Type $BBOLD NONE $EBOLD if there are no solutions.
+END_TEXT
+Context()->normalStrings;
+
+
+###################################
+# Check the Answers
+###################################
+$showPartialCorrectAnswers = 0;
+
+ANS( $xSoln->cmp );
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+The key to this problem is to recognize that since \($base^{2x} = ($base^x)^2\)
+so that the overall equation is a quadratic in \(u=$base^x\).
+That is, \($expr = $substPoly = 0\).  
+Once we solve for \(u\), we can then find \(x\).
+
+The quadratic equation \($substPoly=0\) is factored as 
+\(($factor1)($factor2)=0\) which has solutions \(u=$root1\) and \(u=$root2\).
+We then solve for \(x\) by solving \($base^x=$root1\), which gives \(x=$a\), 
+and solving \($base^x=$root2\), $secondSoln.
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('The quadratic factors, and at least one root will lead to a solution. Solution provided. Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

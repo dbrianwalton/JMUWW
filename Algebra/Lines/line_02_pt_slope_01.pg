@@ -1,0 +1,112 @@
+## DESCRIPTION
+## Finding the equation of a line
+## ENDDESCRIPTION
+
+## KEYWORDS('equation', 'slope', 'line')
+
+
+## DBsubject('Algebra')
+## DBchapter('Linear Functions')
+## DBsection('Equations for Lines')
+## Date('6/12/12')
+## Author('D. B. Walton')
+## Institution('JMU')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+#
+# First comes some stuff that appears at the beginning of every problem
+#
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+###################################
+# Setup the Problem
+###################################
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Choose a random slope m
+$m = Real(random(-10, 10, 0.1));
+
+# Choose a random point (h,k)
+$h = Real(random(-10, 10, 0.2));
+$k = Real(random(-10, 10, 0.2));
+
+# The formula
+$fcn = Compute("$m*(x-$h)+$k")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+# Prepare some strings for the solution.
+@p = (1,-$k);
+$yStr = GenPolyTeX(~~@p, "x"=>"y");
+
+@p = (1,-$h);
+$xStr = GenPolyTeX(~~@p);
+
+###################################
+# Display the Problem
+###################################
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+Find the equation of the line passing through the point
+\(P = ($h,$k)\) and having slope \($m\) using the point-slope form.
+  
+$PAR
+The point-slope form of the line is based on the equation \(y-b = m(x-a)\)
+where
+$BR
+\(a = \) \{ ans_rule(8) \}
+$BR
+\(b = \) \{ ans_rule(8) \}
+$BR
+\(m = \) \{ ans_rule(8) \}
+
+$PAR
+When solving for \(y\) this becomes, 
+$BR
+\(y = \) \{ ans_rule(20) \}
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Check the Answers
+###################################
+ANS( $h->cmp );
+ANS( $k->cmp );
+ANS( $m->cmp );
+ANS( $fcn->cmp );
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+The symbols in the point-slope equation of a line \(y-b=m(x-a)\) 
+are that \(m\) is the slope and \((a,b)\) is a point on the line.  
+So we are given the slope \(m=$m\) and point \((a,b)=($h,$k)\).
+Using these values, the point-slope equation for the line gives
+\($yStr = $m($xStr)\).  
+Solve for \(y\) by adding $k to both sides of the equation to get \(y=$fcn\).
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Solution provided. Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+

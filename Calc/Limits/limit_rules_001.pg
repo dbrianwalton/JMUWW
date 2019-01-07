@@ -1,0 +1,344 @@
+## DESCRIPTION
+##  Calculus
+## ENDDESCRIPTION
+
+## KEYWORDS('Calculus','Limit', "Definition")
+## Tagged by dbw
+
+## DBsubject('Calculus')
+## DBchapter('Limits and Derivatives')
+## DBsection('Definition of Limit')
+## Date('')
+## Author('')
+## Institution('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PG.pl",
+  "PGstandard.pl",
+  "PGinfo.pl",
+  "MathObjects.pl",
+  "contextString.pl",
+  "parserMultiAnswer.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+#####
+# Load from the last entry how many steps are required.
+#####
+if (defined $inputs_ref->{'numSteps'}) {
+    $numSteps = $inputs_ref->{'numSteps'};
+} else {
+    $numSteps = 3;
+}
+
+$INPUTSPACE = M3( qq! \\rule{${len}in}{.01in}!,
+qq!\begin{rawhtml}<INPUT TYPE = "TEXT" NAME="numSteps"
+VALUE="$numSteps">\end{rawhtml}!,
+qq!<INPUT TYPE = "TEXT" NAME="numSteps" VALUE="$numSteps">!
+);
+
+#####
+# Define the available rules
+#####
+@ruleList = (
+        "?",
+        "A", 
+        "B", 
+        "C", 
+        "D", 
+        "E", 
+        "F", 
+        "G", 
+        "H", 
+        "I"
+);
+
+Context("String");
+Context()->strings->add("?"=>{}, A=>{}, B=>{}, C=>{}, D=>{}, E=>{},F=>{}, G=>{}, H=>{}, I=>{});
+$stringChoice = Compute("");
+
+Context("Numeric");
+
+#####
+# Identify the point to evaluate a limit
+$cVal = non_zero_random(-4,4);
+#####
+# Build the actual formula.  f(x) = [ m1 x + b1 ] {*/} [m2 x + b2]
+#####
+$m1 = non_zero_random(-5,5);
+$b1 = non_zero_random(-10,10);
+do {
+    $m2 = non_zero_random(-5,5);
+    $b2 = non_zero_random(-10,10);
+} while (($m1==$m2 && $b1==$b2) || $m2*$cVal+$b2==0);
+
+$whichOp = random(0,1);
+@ops = ("*", "/");
+$fFunction = Compute("($m1*x+$b1)$ops[$whichOp]($m2*x+$b2)")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+$fLimit = $fFunction->eval(x=>$cVal);
+
+#####
+# Build the pseudo-answer to be used in the checker.
+#####
+@formulas = ();
+@limits = ();
+
+for ($i=0; $i<$numSteps; $i++) {
+    $ansBlank[0] = $fFunction;
+    $ansBlank[1] = $stringChoice;
+    $ansBlank[2] = Real($i);
+    $ansBlank[3] = Real(0);
+    $ansBlank[4] = $fLimit;
+    
+    $multians[$i] = MultiAnswer(@ansBlank)->with(
+        singleResult => 1,
+        allowBlankAnswers => 0,
+        checker => sub {
+            my ( $correct, $student, $self ) = @_;
+            my $fFormula = shift @{$correct}; 
+            shift @{$correct}; 
+            my $curRow = shift @{$correct};
+            shift @{$correct};
+            my $fLimit = shift @{$correct};
+    
+            my $valid = 1;
+    
+            # To check the answers, we make sure each row is valid, then that the last row answers the question.
+            my $rule;
+            
+        
+            $formulas[$curRow] = ${$student}[0];
+            $rule = ${$student}[1];
+            $fBlank = ${$student}[2];
+            $gBlank = ${$student}[3];
+            $limits[$curRow] = ${$student}[4];
+
+            # Limit of a constant
+            if ($rule == $ruleList[0]) {
+                $self->setMessage(0,"Must select a rule");
+            } elsif ($rule == $ruleList[1]) {
+                if ($fBlank != Real(0)) {
+                    $self->setMessage(0, "k should be 0 for Rule A.");
+                    $valid = 0;
+                } elsif ($formulas[$curRow] != $gBlank) {
+                    $self->setMessage(0, "b should match the formula constant.");
+                    $valid = 0;
+                } elsif ($limits[$curRow] != $gBlank) {
+                    $self->setMessage(0, "Incorrect limit.");
+                    $valid = 0;
+                }
+
+            # Limit of the identity
+            } elsif ($rule == $ruleList[2]) {
+                if ($fBlank != Real(1)) {
+                    $self->setMessage(0, "k should be 1 for Rule B.");
+                    $valid = 0;
+                } elsif ($gBlank != Real(0)) {
+                    $self->setMessage(0, "b should be 0 for Rule B.");
+                    $valid = 0;
+                } elsif ($formulas[$curRow] != Formula("x")) {
+                    $self->setMessage(0, "Invalid rule choice; only for h(x)=x.");
+                    $valid = 0;
+                } elsif ($limits[$curRow] != Real($cVal)) {
+                    $self->setMessage(0, "Incorrect limit.");
+                    $valid = 0;
+                }
+
+            # Limit of a linear fcn
+            } elsif ($rule == $ruleList[3]) {
+                if ($fBlank == Real(1) && $gBlank == Real(0)) {
+                    $self->setMessage(0, "For just x, use identity function.");
+                }
+                if ($fBlank == Real(0)) {
+                    $self->setMessage(0, "For just constants, use constant function.");
+                }
+                if ($formulas[$curRow] != Formula("$fBlank*x+$gBlank")) {
+                    $self->setMessage(0, "Formula does not match h(x)=$fBlank x + $gBlank.");
+                    $valid = 0;
+                } elsif ($limits[$curRow] != Real($fBlank*$cVal+$gBlank)) {
+                    $self->setMessage(0, "Incorrect limit.");
+                    $valid = 0;
+                }
+
+            # Limit of a power
+            } elsif ($rule == $ruleList[4]) {
+                if ($fBlank == Real(1) && $gBlank == Real(0)) {
+                    $self->setMessage(0, "x^1 is just identity function.");
+                }
+                if ($gBlank != Real(0)) {
+                    $self->setMessage(0, "b should be 0 for Rule D.");
+                } elsif ($formulas[$curRow] != Formula("x^$fBlank")) {
+                    $self->setMessage(0, "Formula does not match h(x)=x^$fBlank.");
+                    $valid = 0;
+                } elsif ($limits[$curRow] != Real("($cVal)^$fBlank")) {
+                    $self->setMessage(0, "Incorrect limit.");
+                    $valid = 0;
+                }
+
+            # Limit of a constant multiple
+            } elsif ($rule == $ruleList[5]) {
+                if ($fBlank == Real(1)) {
+                    $self->setMessage(0, "Unnecessary step if k=1.");
+                }
+                if ($gBlank > $curRow) {
+                    $self->setMessage(0, "Row for g(x) must be previous to this row.");
+                    $self->setMessage(0, "Unjustified limit.");
+                    $valid = 0;
+                } elsif ($gBlank <= 0 || $gBlank != floor($gBlank) ) {
+                    $self->setMessage(0, "Invalid row number for g(x).");
+                    $valid = 0;
+                } elsif ($formulas[$curRow] != $fBlank * $formulas[$gBlank-1]) {
+                    $self->setMessage(0, "Formula does not match using rule.");
+                    $valid = 0;
+                } elsif ($limits[$curRow] != $fBlank * $limits[$gBlank-1]) {
+                    $self->setMessage(0, "Incorrect limit.");
+                    $valid = 0;
+                }
+
+            # Limit of a sum
+            } elsif ($rule == $ruleList[6] || $rule == $ruleList[7] || $rule == $ruleList[8] || $rule == $ruleList[9]) {
+                my $op;
+                if ($rule == $ruleList[6]) {
+                    $op = "+";
+                } elsif ($rule == $ruleList[7]) {
+                    $op = "-";
+                } elsif ($rule == $ruleList[8]) {
+                    $op = "*";
+                } elsif ($rule == $ruleList[9]) {
+                    $op = "/";
+                }
+                
+                if ($fBlank > $curRow  ||  $gBlank > $curRow) {
+                    if ($fBlank > $curRow) {
+                        $self->setMessage(0, "Row for f(x) must be previous to this row.");
+                    }
+                    if ($gBlank > $curRow) {
+                        $self->setMessage(0, "Row for g(x) must be previous to this row.");
+                    }
+                    $self->setMessage(0, "Unjustified limit.");
+                    $valid = 0;
+                } elsif ($fBlank <= 0 || $fBlank != floor($fBlank) ||$gBlank <= 0 || $gBlank != floor($gBlank) ) {
+                    if ($fBlank <= 0 || $fBlank != floor($fBlank)) {
+                        $self->setMessage(0, "Invalid row number for f(x).");
+                    }
+                    if ($gBlank <= 0 || $gBlank != floor($gBlank)) {
+                        $self->setMessage(0, "Invalid row number for g(x).");
+                    }
+                    $valid = 0;
+                } elsif ($formulas[$curRow] != Compute("($formulas[$fBlank-1])$op($formulas[$gBlank-1])")){
+                    $self->setMessage(0, "Formula does not match using rule.");
+                    $valid = 0;
+                } elsif ($limits[$curRow] != Compute("($limits[$fBlank-1])$op($limits[$gBlank-1])")) {
+                    $self->setMessage(0, "Incorrect limit.");
+                    $valid = 0;
+                }
+            }
+
+            if ($valid == 1  && $curRow == ($numSteps-1) &&
+                     ($formulas[$curRow] != $fFormula  ||  $limits[$curRow] != $fLimit)) {
+                $self->setMessage(0, "How'd I get here.");
+                if ($formulas[$curRow] != $fFormula) {
+                    $self->setMessage(0, "Last step should be formula in question.");
+                } elsif ($limits[$curRow] != $fLimit) {
+                    $self->setMessage(0, "Error?? E-mail instructor!!.");
+                }
+                $valid = 0;
+            }
+            return $valid;
+        }
+    );
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Evaluate the following limit step-by-step:
+\[ \lim_{x \to $cVal} $fFunction \]
+
+$PAR
+To do this, you will need to fill in the table below so that each row represents the result of
+a single limit rule.  Each rule must be completely determined by a rule and possible limits
+computed on earlier rows.  The last row must answer the original question.
+
+$PAR
+On each row, the first column \(h(x)\) represents the formula for which you can compute a limit.
+The second column specifies which limit rule you use to compute that limit.  The third and fourth columns
+either refer to numbers \(k\) and \(b\) necessary to evaluate a limit, or the row(s) of formulas
+whose limits have previously been computed.  The fifth column is the limit of the formula \(h(x)\)
+for the current row.
+
+$PAR
+Available rules:
+$BCENTER
+\{ begintable{3} \}
+\{ row("Rule", "Description", "Applicable Formula") \}
+\{ row("A", "Limit of a Constant", "\(h(x) = b\) (use k=0)") \}
+\{ row("B", "Limit of Identity", "\(h(x) = x\) (use k=1, b=0)") \}
+\{ row("C", "Limit of Linear Function", "\(h(x) = kx + b\)") \}
+\{ row("D", "Limit of Integer Power", "\(h(x) = x^k\) (use b=0)") \}
+\{ row("E", "Limit of Constant Multiple", "\(h(x) = k*g(x) \) ") \}
+\{ row("F", "Limit of Sum", "\(h(x) = f(x)+g(x) \) ") \}
+\{ row("G", "Limit of Difference", "\(h(x) = f(x)-g(x) \) ") \}
+\{ row("H", "Limit of Product", "\(h(x) = f(x)*g(x) \) ") \}
+\{ row("I", "Limit of Quotient", "\(h(x) = f(x)/g(x) \) ") \}
+\{ endtable() \}
+$ECENTER
+
+$PAR
+You can set the number of rows needed for your work with the following box:
+$BR
+Number of rows:  \{ $INPUTSPACE \} (Push Preview Answers to then update the table.)
+
+$PAR
+\[ \lim_{x \to $cVal} $fFunction \]
+$BR
+$BCENTER
+\{ begintable(6) \}
+\{ row( "$SPACE Row $SPACE", "$SPACE \(h(x)\) $SPACE", "$SPACE Rule $SPACE", 
+             "$SPACE \(k\) or row of \(f(x)\) $SPACE", "$SPACE \(b\) or row of \(g(x)\)", 
+             "$SPACE \(\displaystyle \lim_{x \to $cVal} h(x)\)" )
+\}
+END_TEXT
+
+for ($i=0; $i < $numSteps; $i++) {
+    BEGIN_TEXT
+    \{
+      row( $i+1, $multians[$i]->ans_rule(20), $multians[$i]->ans_rule(5), 
+                          $multians[$i]->ans_rule(5), $multians[$i]->ans_rule(5), 
+                          $multians[$i]->ans_rule(5) )
+    \}
+    END_TEXT
+}
+
+BEGIN_TEXT
+\{ endtable() \}
+$ECENTER
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+install_problem_grader(~~&std_problem_grader);
+
+for ($i=0; $i<$numSteps; $i++) {
+    ANS( $multians[$i]->cmp );
+}
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

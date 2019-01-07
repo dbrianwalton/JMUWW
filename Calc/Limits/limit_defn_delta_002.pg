@@ -1,0 +1,142 @@
+## DESCRIPTION
+##  Calculus
+## ENDDESCRIPTION
+
+## KEYWORDS('Calculus','Limit', "Definition")
+## Tagged by dbw
+
+## DBsubject('Calculus')
+## DBchapter('Limits and Derivatives')
+## DBsection('Definition of Limit')
+## Date('')
+## Author('')
+## Institution('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "answerHints.pl",
+  "problemRandomize.pl"
+);
+
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.   f(x) = x^2+bx
+##########
+# Create simple linear function.
+$c = random(-6,6);
+
+$b = random(-8,8);
+
+$a = (0.1, 0.2, 0.5, 1, 2)[random(0,4)];
+
+$fFcn = Compute("x^2+$b*x")->reduce('(-x)+y'=>0, '(-x)-y'=>0);
+
+$limit = $fFcn->eval(x=>$c);
+$fRewrite = Compute("abs($fFcn - $limit)");
+
+$factor = Formula("abs(x+$b+$c)");
+$factorTI = Compute("abs(x) + abs($b+$c)");
+
+$xmin = $c-$a;
+$xmax = $c+$a;
+$fBndA = $factor->eval(x=>$xmin);
+$fBndB = $factor->eval(x=>$xmax);
+
+$factorBnd = max($fBndA, $fBndB);
+$fTIBnd = $factorTI->eval(x=>max(abs($xmin), abs($xmax)));
+
+Context("Interval");
+$setRestrict = Compute("($xmin,$c)U($c,$xmax)");
+
+Context("Numeric");
+Context()->variables->are(eps=>'Real');
+
+#  Add the new functions to the Context
+Context()->functions->add(min => {class => 'NewFunc',
+             TeX => '\min'}, );
+
+$delta = Compute("eps/$factorBnd");
+$deltaTI = Compute("eps/$fTIBnd");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute the limit of the function \(\displaystyle f(x) = $fFcn\):
+$BR
+(a) \(\displaystyle L = \lim_{x \to $c} f(x) \) = \{ ans_rule(10) \}
+
+$PAR
+When considering the formal definition of the limit, we compute the expression \(|f(x)-L|\):
+$BR
+(b) \( |f(x) - L| = \) \{ ans_rule(25) \}.
+$BR
+$BBOLD Note: $EBOLD For absolute value, you can either use the function $BBOLD abs( )$EBOLD or vertical bars $BBOLD | | $EBOLD.
+
+$PAR
+By factoring, this can be written as a multiple of \( |x-$c| \).  What is the multiple?
+$BR 
+(c) \( |f(x) - L| = \) \{ ans_rule(15) \} \( \cdot |x - $c| \).
+$BR
+For reference in later parts, let \(C\) represent the formula you typed in (c).
+
+$PAR
+Under the restriction that \(\delta \le $a\), if \( 0 < |x-$c| < \delta\),
+what values of \(x\) are under consideration?
+$BR
+(d) \(x \in \) \{ ans_rule(20) \} (use interval notation)
+
+$PAR
+On this restricted set, what is the least upper bound for the factor you found in part (c)?
+$BR
+(e) \( |f(x) - L|  \le \) \{ans_rule(10)\} \( \cdot |x-$c| \).
+
+$PAR
+Based on your work above, what choice of delta (\(\delta\)) would make the
+implication below true for $BITALIC any $EITALIC value \(\epsilon>0\)?
+$BR
+\(  0<|x-$c|<\delta \Rightarrow |f(x)-L|<\epsilon\)
+$BR
+(f) \( \delta = \min($a, \) \{ans_rule(20)\} ).
+$BR
+$BBOLD Note:$EBOLD Type $BBOLD eps $EBOLD for the variable epsilon (\(\epsilon\)).
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $limit->cmp );
+ANS( $fRewrite->cmp );
+ANS( $factor->cmp );
+ANS( $setRestrict->cmp );
+ANS( $factorBnd->cmp()->withPostFilter(AnswerHints(
+        sub {
+                        my ($correct,$student,$ans) = @_;
+                        return $correct != $fTIBnd && $student==$fTIBnd;
+        }  => [ "Valid use of the triangle inequality, but not ideal.", 
+                       checkCorrect=>0, score=>0.5]
+    )) );
+ANS( $delta->cmp()->withPostFilter(AnswerHints(
+        sub {
+                        my ($correct,$student,$ans) = @_;
+                        return $correct != $deltaTI && $student==$deltaTI;
+        }  => [ "Based on valid use of the triangle inequality, but not ideal.", 
+                       checkCorrect=>0, score=>0.5]
+    )) );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

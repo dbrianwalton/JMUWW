@@ -1,0 +1,58 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'exponential')
+## Tagged by dbw 7/26/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('7/26/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$A = non_zero_random(-10,10,1);
+$k = non_zero_random(-10,10);
+
+$func = Compute("$A*x^2*e^($k*x)")->reduce;
+$deriv = Compute("($k*$A*x^2 + 2*$A*x)*e^($k*x)");
+$deriv2 = Compute("(($k)^2*$A*x^2 + 4*$k*$A*x + 2*$A)*e^($k*x)")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Find the second derivative of \(f(x) = $func\).
+$BR $BR
+\(f''(x) = \) \{ ans_rule(30) \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $deriv2->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

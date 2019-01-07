@@ -1,0 +1,67 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','exponential', 'model')
+## Tagged by dbw 8/2/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('8/2/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+##############################################
+
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+Context()->variables->are(t=>'Real');
+Context()->flags->set(
+  tolerance=>1,
+  tolType=>"absolute"
+);
+
+########################
+# Create the random nature of the problem
+########################
+
+$c14_fraction = random(0.2, 0.8, 0.02);
+$c14_percent = 100*$c14_fraction;
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Carbon-14 has a half-life of 5730 years.  
+Suppose that wood deposits from an archaelogical dig contains
+${c14_percent}$PERCENT of the carbon-14 as would be expected
+when the wood was originally deposited.
+
+$PAR Estimate the age of the wood deposits, as predicted by the model to within 1 year.
+$BR
+- Age of wood: \{ans_rule(10)\} (years)
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( Real("5730*ln($c14_fraction)/ln(0.5)")->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

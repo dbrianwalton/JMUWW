@@ -1,0 +1,95 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','antiderivative', 'indefinite integral')
+## Tagged by dbw 8/3/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('8/3/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "PGchoicemacros.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+@vars = ('t', 'x', 'u', 'z');
+$nvars = 4;
+
+$x = $vars[random(0,$nvars-1)];
+Context()->variables->are($x=>'Real');
+
+# We want 3 terms in the integrand, but randomly choose them.
+$nTerms = 3;
+$maxDegree = 7;
+
+@n = NchooseK($maxDegree,$nTerms);
+@n = num_sort(@n);
+@n = reverse(@n);
+
+## Coefficients of integrand
+$degree = max(@n);
+@a = map(0, 0..$degree);
+
+## The easiest way to build the coefficients is increasing order.
+for ($i=0; $i<$nTerms; $i++) {
+  $a[$n[$i]] = non_zero_random(-8,8,1);
+}
+## The polynomial macro expects coefficients in decreasing order.
+@a = reverse(@a);
+
+# Create the polynomial
+$gstr = GenPolyTeX(~~@a, 'x'=>$x);
+
+$A = random(1,10);
+$isNeg = random(0,1);
+@sign = ('+', '-');
+
+$gstr = $gstr . $sign[$isNeg] . "$A e^{$x}";
+
+$fstr = GenPolyString(~~@a, 'x'=>$x, 'antiD'=>1);
+$f = FormulaUpToConstant($fstr . "$sign[$isNeg] $A*e^$x");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Find the indefinite integral.
+
+$BR $BR
+\( \displaystyle \int $gstr \, d$x = \) \{ans_rule(40)\}
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $f->cmp );
+
+COMMENT("The variable of integration is randomly chosen.");
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

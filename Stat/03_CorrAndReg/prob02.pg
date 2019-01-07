@@ -1,0 +1,53 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+
+#Context("Numeric");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"(b) Which of the following is a reasonable interpretation of the correlation coefficient calculated in (a) above?",
+"The correlation between the two sets of quiz scores is positive and moderately strong."
+);
+$mc1->extra(
+"Students who had done well on the first quiz have always done well on the second quiz.",
+"About 80% of the variability in the data is explained by the correlation between the two sets of quiz scores.",
+);
+$mc1->makeLast("All of the above.");
+
+$corr = Compute("0.799")->with(tolType=>'absolute', tolerance=>'0.005');
+
+#TEXT(beginproblem());
+#Context()->texStrings;
+
+BEGIN_TEXT
+
+Presented below are data on two quiz scores for a sample of seven students.
+$BR$BR
+
+\( \displaystyle
+\begin{tabular}{l|ccccccc}
+Quiz 1 & \ 8 & 6 & 6 & 4 & 10 & 7 & 9\\
+\hline
+Quiz 2 & \ 7 & 6 & 7 & 5 &  7 & 7 & 8\\
+\end{tabular}
+\)
+$BR$BR
+
+(a) Use your calculator's built-in function to compute the Pearson correlation coefficient between the two sets of quiz scores.
+$BR$BR
+
+The correlation coefficient is: \{ans_rule(8)\} (Carry 3 decimal digits.)
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \}
+
+END_TEXT
+
+#Context()->normalStrings;
+
+ANS( $corr->cmp() );
+ANS( radio_cmp( $mc1->correct_ans() ) );
+
+ENDDOCUMENT();

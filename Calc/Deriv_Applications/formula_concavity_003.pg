@@ -1,0 +1,113 @@
+# DESCRIPTION
+#   Given the algebraic formula for a function (cubic polynomial),
+#   identify where the function is concave up or concave down.
+#   Also, identify all of the points of inflection.
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('function','derivative', 'concavity', 'inflection points')
+## Date('8/23/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl",
+  "parserUtils.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+$sgn = non_zero_random(-1,1);
+$a = (3, 4, 6, 12)[random(0,3)];
+$b = random(-4,4);
+$c = random(-9,9);
+$d = random(-9,9);
+$k = random(1,4) * random(0,1);
+
+##  Coefficients of the polynomial
+@p = ([$sgn*$a, 12], [-$sgn*$a*$b, 3], [$sgn*$a*($b**2-$k**2), 2], $c, $d);
+
+$fStr = GenPolyString(~~@p);
+$func = Compute($fStr)->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+$f2d = $func->D()->D();
+
+@superCritPts = ($b-$k, $b+$k);
+
+Context("Interval");
+
+$outerIntervals = List(Interval("(-INF, $superCritPts[0])"), Interval("($superCritPts[1], INF)"));
+if ($k > 0) {
+    $innerIntervals = Interval("($superCritPts[0], $superCritPts[1])");
+    $inflPts = List(@superCritPts);
+} else {
+    $innerIntervals = String("NONE");
+    $inflPts = List("NONE");
+}
+
+if ($sgn > 0) {
+    $ccuIntervals = $outerIntervals;
+    $ccdIntervals = $innerIntervals;
+} else {
+    $ccuIntervals = $innerIntervals;
+    $ccdIntervals = $outerIntervals;
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Determine the concavity of the function \(f(x) = $func\).
+
+$PAR
+Compute \(f''(x)\) = \{ ans_rule(15) \}
+
+$PAR
+List the intervals where \(f\) is concave up and where it is concave down (comma-separated).  Type $BBOLD NONE $EBOLD if there are no such intervals.
+$BBLOCKQUOTE
+Intervals where concave-up: \{ ans_rule(30) \}
+$BR
+Intervals where concave-down: \{ ans_rule(30) \}
+$EBLOCKQUOTE
+
+List the inflection points (\(x\)-values, comma-separated).  Type $BBOLD NONE $EBOLD if there are none.
+$BBLOCKQUOTE
+Inflection points: \{ ans_rule(30) \}
+$EBLOCKQUOTE
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $f2d->cmp );
+
+ANS( $ccuIntervals->cmp );
+ANS( $ccdIntervals->cmp );
+
+ANS( $inflPts->cmp );
+
+COMMENT("Two inflection points; three intervals of concavity.");
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

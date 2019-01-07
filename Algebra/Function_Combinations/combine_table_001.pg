@@ -1,0 +1,132 @@
+## DESCRIPTION
+##   Given two functions defined by tables,
+#    the student writes down the composition.
+## ENDDESCRIPTION
+
+## KEYWORDS('algebra','composition')
+## Tagged by dbw 7/10/10
+
+## DBsubject('Algebra')
+## DBchapter('Functions')
+## DBsection('Composition')
+## Date('9/1/09')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# ####
+#  We will define two functions f : D -> R and g : D -> R
+#  using a table so that we can compute combinations.
+# ####
+
+# Domain.
+$xMin = random(-6,2);
+@domain = map($_+$xMin, 0..6);
+$nPts = @domain;
+
+# Find the point in the domain that will be used.
+$k = random(1,$nPts) - 1;
+
+@xvals = map("$SPACE $_ $SPACE", @domain);
+for ($k=0; $k<$nPts; $k++) {
+    $fv[$k] = random(-6,6);
+    $gv[$k] = random(-6,6);
+}
+@fvals = map("$SPACE $_ $SPACE", @fv);
+@gvals = map("$SPACE $_ $SPACE", @gv);
+
+# Choose points that will be in the tested domain and put in order.
+# Efficiency not important: Use selection sort
+$numPts = 3;
+@testPts = NchooseK($nPts, 3);
+for ($i=0; $i<$numPts; $i++) {
+    $min = $testPts[$i];
+    $minI = $i;
+    for ($j=$i+1; $j<$numPts; $j++) {
+        if ($testPts[$j] < $min) {
+            $min = $testPts[$j];
+            $minI = $j;
+        }
+    }
+    if ($minI > $i) {
+        $testPts[$minI] = $testPts[$i];
+        $testPts[$i] = $min;
+    }
+}
+@xTest = map( "$SPACE $domain[$_] $SPACE", @testPts );
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+The table below gives the values of \(f(x)\) and \(g(x)\)
+for specific values of \(x\).
+$BCENTER
+\{ begintable($nPts+1) \}
+\{ row( "$SPACE \(x\) $SPACE", @xvals) \}
+\{ row( "$SPACE \(f(x)\) $SPACE", @fvals) \}
+\{ row( "$SPACE \(g(x)\) $SPACE", @gvals) \}
+\{ endtable() \}
+$ECENTER
+Use this table to fill in the following table.
+
+
+$PAR
+$BCENTER
+\{ begintable($numPts+1) \}
+\{ row( "$SPACE \(x\) $SPACE", @xTest) \}
+\{ row( "$SPACE \((f+g)(x)\) $SPACE", ans_rule(6), ans_rule(6), ans_rule(6)) \}
+\{ row( "$SPACE \((f-g)(x)\) $SPACE", ans_rule(6), ans_rule(6), ans_rule(6)) \}
+\{ row( "$SPACE \((fg)(x)\) $SPACE", ans_rule(6), ans_rule(6), ans_rule(6)) \}
+\{ row( "$SPACE \((f \div g)(x)\) $SPACE", ans_rule(6), ans_rule(6), ans_rule(6)) \}
+\{ endtable() \}
+$BR
+Type $BBOLD DNE $EBOLD for any value that does not exist.
+$ECENTER
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answer checking
+
+$showPartialCorrectAnswers = 0;
+for ($k = 0; $k<$numPts; $k++) {
+    ANS(Real($fv[$testPts[$k]] + $gv[$testPts[$k]])->cmp);
+}
+for ($k = 0; $k<$numPts; $k++) {
+    ANS(Real($fv[$testPts[$k]] - $gv[$testPts[$k]])->cmp);
+}
+for ($k = 0; $k<$numPts; $k++) {
+    ANS(Real($fv[$testPts[$k]] * $gv[$testPts[$k]])->cmp);
+}
+for ($k = 0; $k<$numPts; $k++) {
+    if ($gv[$testPts[$k]] != 0) {
+        ANS(Real($fv[$testPts[$k]] / $gv[$testPts[$k]])->cmp);
+    } else {
+        ANS(String("DNE")->cmp);
+    }
+}
+
+###################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

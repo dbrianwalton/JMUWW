@@ -1,0 +1,74 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','antiderivative', 'indefinite integral', 'substitution')
+## Tagged by dbw 8/8/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('8/8/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+#$A = non_zero_random(-10,10);
+$A = 1;
+$k = non_zero_random(-1,1) * random(2,9);
+
+$core = Compute("e^($k*x)")->reduce();
+$dcore = $core->D();
+
+Context()->variables->set(x=>{limits => [-1/$k, 1/$k]});
+
+$fprime = Compute("$A*e^($k*x)")->reduce();
+$f = FormulaUpToConstant("$A*e^($k*x)/($k)")->reduce();
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR The derivative of \($core\) is:
+$BR
+\( \displaystyle \frac{d}{dx}[$core] = \) \{ans_rule(25)\}.
+
+$PAR Determine the following indefinite integral:
+$BR
+
+
+$PAR
+\(\displaystyle \int $fprime \, dx = \) \{ ans_rule(40) \}
+$BR
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $dcore->cmp );
+ANS( $f->cmp );
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

@@ -1,0 +1,62 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'logarithm', 'chain rule')
+## Tagged by dbw 7/27/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('7/25/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$k = non_zero_random(1,5);
+do {
+  $n = non_zero_random(1,5);
+} while ($n == $k);
+$c = non_zero_random(-10,10);
+
+$func = Compute("ln(x^$k*(x+$c)^$n)")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+$ans = Compute("$k/x + $n/(x+$c)")->reduce();
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Find the derivative of \(\displaystyle f(x) = $func\).
+$BR $BR
+\(f'(x) = \) \{ ans_rule(30) \}
+$BR $BR
+Note: Practice using the properties of the logarithm.
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $ans->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

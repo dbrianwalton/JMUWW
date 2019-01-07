@@ -1,0 +1,117 @@
+## DESCRIPTION
+## Solving an inequality of the form |ax-c| > d or |ax-c| >= d.
+## ENDDESCRIPTION
+
+## KEYWORDS('algebra','inequality','absolute value')
+## Tagged by dbw 6/4/12
+
+## DBsubject('Algebra')
+## DBchapter('Equations and Inequalities')
+## DBsection('Absolute Value')
+## Date('9/1/09')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+
+###################################
+# Setup
+###################################
+Context("Interval");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Choose the slope of the linear function
+$a = non_zero_random(-9,9,1);
+$aAbs = abs($a);
+
+# Choose the y-intercept of the linear function
+$c = non_zero_random(-15,15,1);
+
+# Choose the target y-value
+$d = random(1,10,1);
+
+# Decide if open or closed intervals.
+$isClosed = random(0,1,1);
+
+$lP = ("(","[")[$isClosed];
+$rP = (")", "]")[$isClosed];
+
+$lt = ("<", "\le")[$isClosed];
+$gt = (">", "\ge")[$isClosed];
+$ltWord = ("less than", "less than or equal to")[$isClosed];
+
+if ($a < 0) {
+  $pos_neg = "negative";
+  $describe = "switch order";
+  $newIneqL = $gt;
+  $newIneqR = $lt;
+  $leftV = $c+$d;
+  $rightV = $c-$d; 
+} else {
+  $pos_neg = "positive";
+  $describe = "stay the same";
+  $newIneqL = $lt;
+  $newIneqR = $gt;
+  $leftV = $c-$d;
+  $rightV = $c+$d; 
+}
+
+$fcn = Compute("$a x-$c")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+$answer = Interval("(-INF,$c/$a-$d/$aAbs" . $rP . "U" .
+                  $lP . "$c/$a+$d/$aAbs,INF)");
+$answerStr = "(-\infty," . FractionTeX([$leftV,$a]) . $rP . "\cup" .
+		$lP . FractionTeX([$rightV,$a]) . ",\infty)";
+
+###################################
+# Display the problem
+###################################
+TEXT(beginproblem);
+Context()->texStrings;
+BEGIN_TEXT
+Solve the inequality \(|$fcn| $gt $d\).  Express your answer in interval notation.
+$PAR
+Solution Set: \{ ans_rule(20) \}
+END_TEXT
+Context()->normalStrings;
+
+
+###################################
+# Answer checking
+###################################
+ANS( $answer->cmp );
+
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+${PAR}${BBOLD}Solution:${EBOLD}
+${PAR}The inequality \(|$fcn| $gt $d\) can be replaced by the compound statement
+\[$fcn $gt $d \quad \hbox{or} \quad $fcn $lt -$d.\]  
+Adding \($c\) to all terms yields
+\[$a x $gt \{$c+$d\} \quad \hbox{or} \quad $a x $lt \{$c-$d\}.\]  
+Because \($a\) is $pos_neg, when we divide all terms by \($a\), the inequalities will ${describe} to
+obtain 
+\[x $newIneqR \{FractionTeX([$c+$d,$a])\} \quad \hbox{or} \quad 
+x $newIneqL \{FractionTeX([$c-$d,$a])\}.\]
+In interval notation, this is written as \($answerStr\).
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Randomly decide if end-point is included.  Solution provided.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

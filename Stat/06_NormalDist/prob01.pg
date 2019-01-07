@@ -1,0 +1,28 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$zscore = Compute("1.275"  )->with(tolType=>'absolute', tolerance=>'0.006');
+$prob   = Compute("0.10115")->with(tolType=>'absolute', tolerance=>'0.0015');
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+The price of mid-grade gasoline (in cents per gallon) is best characterized as having a normal distribution with mean \(\mu = 272\) and standard deviation \(\sigma = 11\). Find the probability that the mid-grade gasoline at a randomly selected gas station is priced higher than 286 cents? (Carry 2 decimal digits for the z-score and 4 decimal digits for the probability.)
+$BR$BR
+
+\( P(X > 286) = P(Z > \) \{ ans_rule(8) \} \( ) = \) \{ ans_rule(8) \}
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $zscore->cmp() );
+ANS( $prob->cmp() );
+
+ENDDOCUMENT();

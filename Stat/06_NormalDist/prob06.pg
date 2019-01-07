@@ -1,0 +1,38 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$zscore = Compute("1.50"  )->with(tolType=>'absolute', tolerance=>'0.001' );
+$prob   = Compute("0.0668")->with(tolType=>'absolute', tolerance=>'0.0001');
+$wt     = Compute("49.98" )->with(tolType=>'absolute', tolerance=>'0.001' );
+
+TEXT(beginproblem());
+Context()->texStrings;
+
+BEGIN_TEXT
+
+The measurement error for a household scale has a normal distribution with mean \(\mu = 0.00\) pound and standard deviation \(\sigma = 0.02\). An object known to weigh exactly 50.00 pounds will be repeatedly weighed using this scale. Note that the distribution of the scale readings will be normal with \(\mu = 50.00\) and \(\sigma = 0.02\).
+$BR$BR
+
+(a) What proportion of the time will the scale reading be higher than 50.03 pounds? (Carry 2 decimal digits for the z-score and 4 decimal digits for the probability.)
+$BR$BR
+
+\( P(X > 50.03) = P(Z > \) \{ans_rule(8)\} \( ) = \) \{ans_rule(8)\}
+$BR$BR
+
+(b) Twenty percent of the time the scale reading will be less than \(x\) pounds. Find the value of \(x\). (Carry 2 decimal digits.)
+$BR$BR
+
+Answer: \{ans_rule(8)\}
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $zscore->cmp() );
+ANS( $prob->cmp() );
+ANS( $wt->cmp() );
+
+ENDDOCUMENT();

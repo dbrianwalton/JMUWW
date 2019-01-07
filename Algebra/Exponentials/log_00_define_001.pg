@@ -1,0 +1,65 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('logarithm','definition')
+## Tagged by dbw 7/20/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('7/20/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl",
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$base = (2, 3, 4, 5)[random(0,3)];
+$pow = non_zero_random(-5,5);
+
+if ($pow < 0) {
+    $rpow = abs($pow);
+    $rvalue = $base**$rpow;
+    $valueS = "\frac{1}{$rvalue}";
+    $value = Formula("1/$rvalue");
+} else {
+    $rvalue = $base**$pow;
+    $valueS = "$rvalue";
+    $value = Formula("$rvalue");
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Express the equation \($base^{$pow} = $valueS\) as the corresponding logarithmic equation \(\log_b(A) = C\).
+$BR $BR
+\(\log_b\)(\{ ans_rule(5) \}) = \{ans_rule(5)\} where \(b=\)\{ans_rule(5)\}.
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $value->cmp );
+ANS( Real($pow)->cmp );
+ANS( Real($base)->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

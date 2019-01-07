@@ -1,0 +1,130 @@
+## DESCRIPTION
+## Finding the equation of a parallel line
+## ENDDESCRIPTION
+
+## KEYWORDS('equation', 'parallel', 'slope', 'line')
+## Tagged by DBW
+
+## DBsubject('Algebra')
+## DBchapter('Linear Functions')
+## DBsection('Equations for Lines')
+## Date('6/14/12')
+## Author('D. B. Walton')
+## Institution('JMU')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+#
+# First comes some stuff that appears at the beginning of every problem
+#
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+###################################
+# Setup the Problem.
+###################################
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Coefficients of the general equation of original line 
+$A = non_zero_random(-5,5,1);
+$B = non_zero_random(-5,5,1);
+
+# Find the coordinates of the point
+$a = random(-5,5,1);
+$b = random(-5,5,1);
+
+# Choose a line that does NOT go through the point
+$C = $A*$a+$B*$b+non_zero_random(-4,4,1);
+
+# In the following, most strings are generated for the
+# presentation of the solution.
+
+# Compute the slope
+$slope = -$A/$B;
+$slopeStr = FractionTeX([-$A,$B]);
+
+# When solving Ax+By=C for y=(-A/B)x+(C/B)
+@p = ([-$A,$B], [$C,$B]);
+$origFcn = GenPolyTeX(~~@p, "inFrac"=>0);
+
+# The following strings are for point-slope form y-b=m(x-a).
+$xStr = GenPolyString([1,-$a]);
+$yStr = GenPolyString([1,-$b], "x"=>"y");
+
+# And then for y=m(x-a)+b
+$ansStr = GenPolyTeX([[-$A,$B], $b], "x"=>"($xStr)", "inFrac"=>0);
+
+# Define the function y=f(x)
+$fcn = Compute("$slope*(x-$a)+$b");
+
+# Use MathObjects to define the general equation of the original line
+Context("Numeric");
+Context()->variables->are(x=>'Real', y=>'Real');
+$origLineLeft = Formula("$A*x+$B*y")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+###################################
+# Display the Problem.
+###################################
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Find an equation for the line that goes through the point \(($a,$b)\) 
+and is parallel to the line satisfying \($origLineLeft=$C\).
+
+$PAR
+What is the slope?
+$BR
+Slope: \{ans_rule(15)\}
+
+$PAR
+Now, write the actual formula for \(y\) as a function of \(x\).
+$BR
+\(y\) = \{ ans_rule(30) \}
+  
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Check the Answers.
+###################################
+
+ANS( Real($slope)->cmp );
+
+ANS( Formula("$slope*(x-$a)+$b")->cmp );
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+Two lines are parallel if they have the same slope.  
+The slope of the original line can be found by rewriting 
+the equation \($origLineLeft=$C\) in slope-intercept form.
+This gives \(y=$origFcn\), which reveals the slope \(m=$slopeStr\).
+The parallel line can be written in point-slope form
+\($yStr = $slopeStr($xStr)\).
+Solving for \(y\), we have \(y=$ansStr\).
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Solution provided. Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+

@@ -1,0 +1,89 @@
+## DESCRIPTION
+## Simplify an expression involving exponents.
+## ENDDESCRIPTION
+
+## KEYWORDS('exponents','simplify')
+## Tagged by dbw 6/27/12
+
+## DBsubject('Algebra')
+## DBchapter('Basic Algebra')
+## DBsection('Exponents and Radicals')
+## Date('6/27/12')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextLimitedNumeric.pl",
+  "problemRandomize.pl",
+);
+
+
+###################################
+# Setup
+##############################################
+Context("LimitedNumeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$rawBase = random(2,4);
+$basePow = random(2,3);
+$base = $rawBase**$basePow;
+$pow1 = non_zero_random(-5,5);
+$pow2 = $pow1;
+while ($pow1+$pow2 ==0 || $pow1 == $pow2) {
+    $pow2 = non_zero_random(-5,5);
+}
+$sumC = $pow1+$pow2;
+
+$c = Real(($pow1+$pow2)*$basePow);
+
+###################################
+# Display the Problem
+###################################
+TEXT(beginproblem);
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Simplify the expression \($base^{$pow1} \cdot $base^{$pow2}\) to the form \($rawBase^{c}\).  Enter the simplified value of \(c\) below.
+
+$BR $BR
+\(  c = \) \{ ans_rule(15) \}
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Check the Answers
+###################################
+$showPartialCorrectAnswers = 1;
+
+ANS( $c->cmp );
+
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+First, rewrite \($base^{$pow1} \cdot $base^{$pow2} = $base^{$sumC}\).
+Second, we rewrite \($base=$rawBase^{$basePow}\) to get
+\($base^{$sumC}=($rawBase^{$basePow})^{$sumC}\).
+Finally, when a base to a power is itself raised to a power, this is equal to
+the original base raised to the product of the powers, \( (b^x)^y=b^{xy} \),
+so that \(($rawBase^{$basePow})^{$sumC} = $rawBase^{$c}\).
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Solution provided. Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

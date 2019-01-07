@@ -1,0 +1,107 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','antiderivative')
+## Tagged by dbw 8/2/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('8/2/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "PGchoicemacros.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+@fcnLabel = ('f', 'g');
+$which = 0;
+
+$nTerms = 3;
+$maxDegree = 7;
+
+@n = NchooseK($maxDegree+1,$nTerms);
+@n = num_sort(@n);
+@n = reverse(@n);
+
+$degree = max(@n);
+@an = map(0, 0..$degree);
+@ad = map(0, 0..$degree);
+
+@bn = map(0, 0..$degree-1);
+@bd = map(0, 0..$degree-1);
+
+## The easiest way to build the coefficients is increasing order.
+for ($i=0; $i<$nTerms; $i++) {
+  $an[$n[$i]] = non_zero_random(-8,8,1);
+  $ad[$n[$i]] = random(1,8);
+
+  if ($n[$i]>0) {
+    $bn[$n[$i]-1] = $n[$i]*$an[$n[$i]];
+    $bd[$n[$i]-1] = $ad[$n[$i]];
+  }
+}
+## The polynomial macro expects coefficients in decreasing order.
+@a = map( [$an[$degree-$_], $ad[$degree-$_]], 0..$degree );
+@b = map( [$bn[$degree-1-$_], $bd[$degree-1-$_]], 0..$degree-1 );
+
+$fstr = GenPolyTeX(~~@a);
+$gstr = GenPolyTeX(~~@b);
+
+$f = Compute(GenPolyString(~~@a));
+$g = Compute(GenPolyString(~~@b));
+
+@fcnList = ($f, $g);
+@fcnStr = ($fstr, $gstr);
+
+@tfList = ('True', 'False');
+$popup = PopUp(["?", @tfList], $tfList[1-$which]);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Suppose \(f(x)\) is an antiderivative of \(g(x)\).
+
+$PAR
+If you are told \($fcnLabel[1-$which](x) = $fcnStr[1-$which]\),
+then a valid formula for \($fcnLabel[$which]\) would be given by
+$BR \($fcnLabel[$which](x) = \) \{ ans_rule(40) \}.
+
+$PAR
+True/False \{$popup->menu\}: The formula given for \($fcnLabel[$which]\) is unique.
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $fcnList[$which]->cmp( upToConstant=>1-$which ) );
+ANS( $popup->cmp );
+
+COMMENT("This problem always gives the formula for g.");
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

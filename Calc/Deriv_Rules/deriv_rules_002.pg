@@ -1,0 +1,129 @@
+# DESCRIPTION
+#   Understand that the derivative is a function that provides the slope or
+#   or instantaneous rate of change of a function.
+#    f(x) = ax^k+bx^-m (power plus neg. power)
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('derivative','differentiation')
+## Date('5/31/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "answerHints.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+Context()->variables->are(x=>'Real');
+
+@rules = ("Constant Rule", "Power Rule", "Constant Multiple Rule", "Sum Rule");
+$constR = 0;
+$powerR = 1;
+$constMultR = 2;
+$sumR = 3;
+
+do {
+    $a = non_zero_random(-5,5,1);
+} while (abs($a) == 1);
+$k = random(2, 8, 1);
+
+do {
+    $b = non_zero_random(-5,5,1);
+} while (abs($b) == 1);
+$m = random(2, 8, 1);
+
+$expr = Compute("$a*x^$k+$b/(x^$m)")->reduce('(-x)-y'=>0, '(-x)+y' => 0);
+
+$popupA = PopUp(["?", @rules], $rules[$powerR]);
+$popupB = PopUp(["?", @rules], $rules[$constMultR]);
+$popupC = PopUp(["?", @rules], $rules[$powerR]);
+$popupD = PopUp(["?", @rules], $rules[$constMultR]);
+$popupE = PopUp(["?", @rules], $rules[$sumR]);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute the derivative of \(f(x) = $expr\) step-by-step using rules of differentiation.
+At each step, indicate which rule of differentiation you used.
+$BR (Repeat this problem for additional practice.)
+
+$PAR
+The derivative of \(x^{$k}\) is \{ ans_rule(15) \} using \{ $popupA->menu() \}
+$BR
+The derivative of \($a x^{$k}\) is \{ ans_rule(15) \} using \{ $popupB->menu() \}
+$BR
+The derivative of \(\displaystyle \frac{1}{x^$m}\) is \{ ans_rule(15) \} using \{ $popupC->menu() \}
+$BR
+The derivative of \(\displaystyle \frac{$b}{x^$m}\) is \{ ans_rule(15) \} using \{ $popupD->menu() \}
+$BR
+The derivative of \($expr\) is \{ ans_rule(15) \} using \{ $popupE->menu() \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+$ansA = Compute("$k * x^($k-1)");
+ANS( $ansA->cmp );
+ANS( $popupA->cmp );
+
+$ansB = Compute("$a*$ansA");
+ANS( $ansB->cmp );
+ANS( $popupB->cmp );
+
+$ansC = Compute("-$m/ x^($m+1)");
+ANS( $ansC->cmp()->withPostFilter(AnswerHints(
+        sub {
+            my ($correct, $student, $ans) = @_;
+            my $wrong = Compute("1/($m*x^($m-1))");
+            return ($student == $wrong);
+        } => "Do not differentiate in denominator.  Rewrite using powers.",
+        sub {
+            my ($correct, $student, $ans) = @_;
+            my $wrong1 = Compute("-$m/x^($m-1)");
+            my $wrong2 = Compute("$m/x^($m-1)");
+            my $wrong3 = Compute("$m/x^($m+1)");
+            return ($student == $wrong1 || $student == $wrong2);
+        } => "You are close.  Double check what happens to the power.",
+        sub {
+            my ($correct, $student, $ans) = @_;
+            my $wrong = Compute("$m/x^($m+1)");
+            return ($student == $wrong);
+        } => "You are very close.",
+    )) );
+ANS( $popupC->cmp );
+
+$ansD = Compute("$b*$ansC");
+ANS( $ansD->cmp );
+ANS( $popupD->cmp );
+
+$ansE = Compute($ansB+$ansD);
+ANS( $ansE->cmp );
+ANS( $popupE->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

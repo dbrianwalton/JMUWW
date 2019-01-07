@@ -1,0 +1,112 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','antiderivative', 'indefinite integral')
+## Tagged by dbw 8/3/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('8/3/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "PGjmu_poly.pl",
+  "parserFormulaUpToConstant.pl",
+  "answerHints.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+@vars = ('t', 'x', 'u', 'z');
+$nvars = 4;
+
+$x = $vars[random(0,$nvars-1)];
+Context()->variables->are($x=>'Real');
+
+$n = random(2,5,1);
+$lastTerm = random(-5, -3);
+$numTerms = $n - $lastTerm + 1;
+
+@p = map {0} 1..$numTerms;
+
+# The first and last terms and the x^-1 term must be nonzero.
+# But we want to skip other terms.
+if ($numTerms > 9) {
+    $useTerm = 3;
+} elsif ($numTerms > 7) {
+    $useTerm = 2;
+} else {
+    $useTerm = 1;
+}
+@mixTerms = NchooseK($numTerms-2, $useTerm);
+@mixTerms = map { $_+1 } @mixTerms;
+
+# Now we tack on the first, last, and x^-1 term
+# Note that the x^-1 term may be duplicated in this list, but this should not create a problem.
+# It will simply reassign the random coefficients for that one term.
+# However, it is possible to have one fewer term than originally planned.
+@mixTerms = (0, $numTerms-1, $n+1, @mixTerms);
+
+for ($k=0; $k<$useTerm+2; $k++) {
+    $p[$mixTerms[$k]] = non_zero_random(-8,8,1);
+}
+
+# Generate the integrand.
+$fprstr = GenPolyTeX(~~@p, 'k'=>$lastTerm, 'x'=>$x);
+
+# Generate the antiderivative.
+$fstr = GenPolyString(~~@p, 'k'=>$lastTerm, 'x'=>$x, 'antiD'=>1);
+
+# Generate the slightly wrong answer (forgetting absolute values)
+$fNoAbsStr = $fstr;
+$fNoAbsStr =~ s/|//g;
+
+$f = FormulaUpToConstant($fstr);
+$fNoAbs = FormulaUpToConstant($fNoAbsStr);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute the following indefinite integral.
+
+$PAR
+\(\displaystyle \int $fprstr \, d$x = \) \{ ans_rule(40) \}
+$BR
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+$f->{limits} = [-1,1];
+$fNoAbs->{limits} = [0,1];
+
+ANS( $f->cmp()->withPostFilter( AnswerHints(
+        $fNoAbs => "Remember the absolute value.",
+    )) );
+
+
+COMMENT("The variable of integration is randomly chosen.");
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

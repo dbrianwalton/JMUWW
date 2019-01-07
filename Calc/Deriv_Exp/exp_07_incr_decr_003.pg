@@ -1,0 +1,96 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'exponential', 'increasing', 'decreasing')
+## Tagged by dbw 7/26/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('7/26/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+## Determine the rate of exponential.
+$k = non_zero_random(-8,8);
+
+## Determine the power of x.  Need to know if even (q=0) or odd (q=1).
+$p = random(1,2);
+$q = random(0,1);
+$n = 2*$p+$q;
+
+$A = non_zero_random(-10,10);
+
+$func = Compute("$A*x^$n*e^($k*x)")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+Context("Interval");
+$rstr = FractionString([-$n,$k]);
+@c = ($k>0) ? ($rstr, 0) : (0, $rstr);
+
+if ($q==0) {
+    $outerIntervals = Compute("(-INF, $c[0]),($c[1],INF)");
+    $innerIntervals = List(Compute("($c[0],$c[1])"));
+} else {
+    $outerIntervals = List(Compute("($c[1],INF)"));
+    $innerIntervals = List(Compute("(-INF,$c[1])"));
+}
+
+if ($A*$k < 0) {
+    $decrInterval = $outerIntervals;
+    $incrInterval = $innerIntervals;
+} else {
+    $incrInterval = $outerIntervals;
+    $decrInterval = $innerIntervals;
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Determine the intervals where the function \(f(x) = $func\)
+is increasing and where it is decreasing.
+
+$BBLOCKQUOTE
+$BR
+\(f\) is increasing on: \{ ans_rule(30) \}
+$BR $BR
+\(f\) is decreasing on: \{ ans_rule(30) \}
+$BR
+$EBLOCKQUOTE
+
+$PAR
+List open intervals separated by commas.  Type ${BBOLD}NONE${EBOLD} if there are no such intervals. Type ${BBOLD}INF${EBOLD} for \(\infty\).
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $incrInterval->cmp );
+ANS( $decrInterval->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

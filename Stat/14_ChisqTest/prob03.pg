@@ -1,0 +1,106 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+
+#Context("Numeric");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"Step 1: Which of the following is the correct alternative hypothesis?",
+"Relative proportions of male and female flies are heterogenous for the two species."
+);
+$mc1->extra(
+"Relative proportions of male and female flies are homogeneous for the two species."
+);
+
+$a = Compute("142.800")->with(tolType=>'absolute', tolerance=>'0.005');
+$b = Compute("137.200")->with(tolType=>'absolute', tolerance=>'0.005');
+$c = Compute("112.200")->with(tolType=>'absolute', tolerance=>'0.005');
+$d = Compute("107.800")->with(tolType=>'absolute', tolerance=>'0.005');
+
+$teststat = Compute("2.749")->with(tolType=>'absolute', tolerance=>'0.005');
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"Step 3: Approximate the p-value.",
+"\( 0.05 < p < 0.10 \)"
+);
+$mc2->extra(
+"\( 0.15 < p < 0.20 \)",
+"\( 0.10 < p < 0.20 \)"
+);
+
+$mc3=new_multiple_choice();
+$mc3->qa(
+"Step 4: Make a decision.",
+"Reject the null hypothesis."
+);
+$mc3->extra(
+"Fail to reject the null hypothesis."
+);
+
+#TEXT(beginproblem());
+#Context()->texStrings;
+
+BEGIN_TEXT
+
+Featured below are numbers of male and female flies for two species of citrus flies. At the significance level of 0.10, conduct a test to determine whether the relative proportions of male and female flies are homogeneous for the two species of flies.
+$BR$BR
+
+\( \displaystyle
+\begin{tabular}{lcc}
+\hline
+& \multicolumn{2}{c}{Sex}  \\
+\cline{2-3}
+Species &  Male  & Female  \\
+\hline
+A       &   152  &   128   \\
+B       &   103  &   117   \\
+\hline
+\hspace*{0.70in}&\hspace*{0.80in}&\hspace*{0.80in}
+\end{tabular}
+\)
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+Step 2: Calculate expected cell counts and the test statistic. (Carry 3 decimal digits.)
+$BR$BR
+
+(a) Expected cell counts (the four boxes below correspond to the four cells in the table):
+$BR$BR
+
+\{ ans_rule(8) \} \{ ans_rule(8) \}
+$BR$BR
+
+\{ ans_rule(8) \} \{ ans_rule(8) \}
+$BR$BR
+
+(b) Test statistic: \{ ans_rule(8) \}
+$BR$BR
+
+\{ $mc2->print_q() \} $BR
+\{ $mc2->print_a() \} $BR
+
+\{ $mc3->print_q() \} $BR
+\{ $mc3->print_a() \}
+
+END_TEXT
+
+#Context()->normalStrings;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+
+ANS( $a->cmp() );
+ANS( $b->cmp() );
+ANS( $c->cmp() );
+ANS( $d->cmp() );
+
+ANS( $teststat->cmp() );
+
+ANS( radio_cmp( $mc2->correct_ans() ) );
+
+ANS( radio_cmp( $mc3->correct_ans() ) );
+
+ENDDOCUMENT();

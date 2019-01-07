@@ -1,0 +1,48 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$a = Compute("3.879" )->with(tolType=>'absolute', tolerance=>'0.005' );
+$b = Compute("0.182" )->with(tolType=>'absolute', tolerance=>'0.005' );
+$r = Compute("0.234" )->with(tolType=>'absolute', tolerance=>'0.005' );
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+Presented below are stress levels on a 6-point scale (1 = 'not stressful at all'; 6 = 'very stressful') indicated by six students at the beginning and in the middle of a semester.
+$BR$BR
+
+\( \displaystyle
+    \begin{tabular}{l|ccccccc}
+    Beginning & \ 3 & 2 & 2 & 4 & 1 & 3 \\
+    \hline
+    Middle    & \ 5 & 5 & 3 & 4 & 4 & 5 \\
+    \end{tabular}
+\)
+$BR$BR
+
+(a) Use your calculator's built-in function to obtain the least-squares regression equation for predicting the stress level in the middle of the semester \((y)\) from the stress level at the beginning of the semester \((x)\).
+$BR$BR
+
+\( \hat{y} = \) \{ans_rule(8)\} \( + \) \{ans_rule(8)\} \( x \) (Carry 3 decimal digits.)
+$BR$BR
+
+(b) Use your calculator's built-in function to compute the Pearson correlation coefficient between the two sets of stress levels.
+$BR$BR
+
+\( r = \) \{ans_rule(8)\} (Carry 3 decimal digits.)
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $a->cmp() );
+ANS( $b->cmp() );
+ANS( $r->cmp() );
+
+ENDDOCUMENT();

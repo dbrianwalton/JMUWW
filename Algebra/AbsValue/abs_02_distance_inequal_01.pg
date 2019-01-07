@@ -1,0 +1,98 @@
+## DESCRIPTION
+## Interpret an absolute value inequality as statement about distance.
+## ENDDESCRIPTION
+
+## KEYWORDS('algebra','inequality','absolute value','distance')
+## Tagged by dbw 6/4/12
+
+## DBsubject('Algebra')
+## DBchapter('Equations and Inequalities')
+## DBsection('Absolute Value')
+## Date('9/1/09')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "problemRandomize.pl"
+);
+
+###################################
+# Setup
+###################################
+Context("Interval");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Start with center and distance.
+$c = random(-15,15,0.5);
+$d = random(0.5,10,0.5);
+
+$ineqType = random(0,3,1);
+$isClosed = $ineqType % 2;
+$lP = ("(","[")[$isClosed];
+$rP = (")", "]")[$isClosed];
+@ineqList = ("<", "<=", ">", ">=");
+
+$popup = PopUp(["?", @ineqList], $ineqList[$ineqType]);
+$ltgt = ("<", "\le", ">", "\ge")[$ineqType];
+$wordIneq = ("less than", "less than or equal to", "greater than", "greater than or equal to")[$ineqType];
+
+# Determine the interval.
+$a = $c-$d;
+$b = $c+$d;
+
+if ($ineqType >= 2) {
+    $testInt = Interval("(-INF,$a $rP U $lP $b,INF)");
+}
+else {
+    $testInt = Interval("$lP $a,$b $rP");
+};
+
+###################################
+# Display the problem
+###################################
+TEXT(beginproblem);
+Context()->texStrings;
+BEGIN_TEXT
+Rewrite the statement \(x \in $testInt\) as a distance inequality of the form 
+\(|x-c| \lesseqgtr \delta\).  (Choose the appropriate inequality below.)
+
+$PAR
+\(|x - \)\{ ans_rule(5) \}\(|\) \{ $popup->menu() \} \{ ans_rule(5) \}
+END_TEXT
+Context()->normalStrings;
+
+
+###################################
+# Answer checking
+###################################
+ANS( Compute("$c")->cmp, $popup->cmp, Compute("$d")->cmp );
+
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+The endpoints $a and $b are equidistant from their midpoint, \(c=\frac{$a+$b}{2}=$c\).
+The distance from $c to $a and from $c to $b is \(\delta=|$a-$c|=|$b-$c|=$d\).
+The set of interest corresponds to those points whose distance from $c is
+$wordIneq $d, so we write \(|x-$c| $ltgt $d\).
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Solution provided.');
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

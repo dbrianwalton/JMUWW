@@ -1,0 +1,71 @@
+# DESCRIPTION
+#   Evaluate a limit that is of transcendental indeterminate form.
+#   This will require using L'Hopital's rule or recognition of derivative.
+#   f(x) = [b^x-b^a]/(x-a)
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('limit','indeterminate')
+## Date('5/19/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGpolynomialmacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+$b = random(2,5);
+$a = non_zero_random(-3,3,1);
+
+if ($a > 0) {
+    $K = $b**$a;
+    $expr = "\frac{$b^{x}-$K}{x-$a}";
+} else {
+    $c = abs($a);
+    $K = $b**$c;
+    $expr = "\frac{$b^{x}-\frac{1}{$K}}{x+$c}";
+}
+
+$limit = Compute("$b^$a*ln($b)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute the limit
+$BR
+\(\displaystyle \lim_{x \to $a} $expr \) = \{ ans_rule(10) \}
+
+$PAR
+Type $BBOLD DNE $EBOLD if the limit does not exist and $BBOLD INF $EBOLD for \(\infty\).
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $limit->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

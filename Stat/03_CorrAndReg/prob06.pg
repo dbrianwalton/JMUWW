@@ -1,0 +1,30 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+
+$mc=new_multiple_choice();
+$mc->qa(
+"Determine the slope of the fitted regression line.",
+"\(-0.6\)"
+);
+$mc->extra(
+"\(-0.9\)",
+"\(-0.1\)",
+"\(-0.15\)"
+);
+
+BEGIN_TEXT
+
+The sample mean of \(Y\) is three times as large as the sample mean of \(X\). The sample standard deviation of \(Y\) is twice as large as the sample standard deviation of \(X\). The correlation between \(X\) and \(Y\) is \(-0.3\).
+$BR$BR
+
+\{ $mc->print_q() \} $BR
+\{ $mc->print_a() \}
+
+END_TEXT
+
+$showPartialCorrectAnswers = 0;
+
+ANS( radio_cmp( $mc->correct_ans() ) );
+
+ENDDOCUMENT();

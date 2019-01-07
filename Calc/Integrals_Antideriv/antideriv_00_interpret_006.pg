@@ -1,0 +1,104 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','antiderivative')
+## Tagged by dbw 8/3/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('8/3/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+@fcnLabel = ('f', 'g');
+$which = random(0,1);
+
+# Define the coefficients
+
+$An = non_zero_random(-10,10);
+$Ad = random(1,10);
+
+$m = random(2, 5);
+$b = non_zero_random(-10,10);
+
+$k = random(3,10);
+
+if ($which == 0) {
+    # which == 0 means given g
+    ($Bn, $Bd) = ( non_zero_random(-10,10), 1 );
+    ($An, $Ad) = ( $Bn, $Bd*$m*$k );
+} else {
+    # which == 1 means given f
+    ($An, $Ad) = ( non_zero_random(-10,10), 1 );
+    ($Bn, $Bd) = ( $An*$m*$k, $Ad );
+}
+($An, $Ad) = FractionReduce($An, $Ad);
+($Bn, $Bd) = FractionReduce($Bn, $Bd);
+
+$innerCore = Compute("$m*x+$b")->reduce();
+
+$fstr = FractionTeX([$An, $Ad]) . "(" . $innerCore->TeX() . sprintf(")^{%d}", $k);
+$gstr = FractionTeX([$Bn, $Bd]) . "(" . $innerCore->TeX() . sprintf(")^{%d}", $k-1);
+
+$f = Compute("($An/$Ad)*($m*x+$b)^$k");
+$g = Compute("($Bn/$Bd)*($m*x+$b)^($k-1)");
+
+@fcnList = ($f, $g);
+@fcnStr = ($fstr, $gstr);
+
+@tfList = ('True', 'False');
+$popup = PopUp(["?", @tfList], $tfList[1-$which]);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Suppose \(f(x)\) is an antiderivative of \(g(x)\).
+
+$PAR
+If you are told \($fcnLabel[1-$which](x) = $fcnStr[1-$which]\),
+then a valid formula for \($fcnLabel[$which]\) would be given by
+$BR \($fcnLabel[$which](x) = \) \{ ans_rule(40) \}.
+
+$PAR
+True/False \{$popup->menu\}: The formula given for \($fcnLabel[$which]\) is unique.
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $fcnList[$which]->cmp( upToConstant=>1-$which ) );
+ANS( $popup->cmp );
+
+COMMENT("This problem randomly decides if the formula for f or g will be given. " .
+        "Requires elementary substitution when g is given."
+);
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

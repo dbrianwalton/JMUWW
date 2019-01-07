@@ -1,0 +1,137 @@
+# DESCRIPTION
+#   Apply the definition of the derivative to find the derivative function.
+#   y = ax^2+bx+c (quadratic)
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('derivative','limit')
+## Date('5/27/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserDifferenceQuotient.pl",
+  "answerHints.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+
+$a = 1;
+$b = random(-8, 8, 1);
+$c = random(-12, 12, 1);
+
+$expr = Compute("$a*x^2+$b*x+$c")->reduce('(-x)+y'=>0, '(-x)-y'=>0);
+
+Context("Numeric");
+Context()->variables->are(c=>'Real', h=>'Real');
+$exprAb = Compute("$a*c^2+$b*c+$c")->reduce('(-x)+y'=>0, '(-x)-y'=>0);
+$exprAa = $exprAb->substitute(c=>"c+h");
+$exprB = Compute($exprAa - $exprAb);
+$exprC = DifferenceQuotient("2*$a*c + $a*h + $b", "h");
+
+$wrongC1 = DifferenceQuotient("2*$a*c+$a*h^2+$b*h","h");
+$wrongC2 = DifferenceQuotient("2*$a*c+$a*h^2+$b","h");
+$wrongC3 = DifferenceQuotient("2*$a*c*h+$a*h^2+$b","h");
+
+$exprD = Compute("2*$a*c+$b");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute the derivative of \(y = $expr\) at an unspecified point \(c\) from the definition in a step-by-step manner.
+$BR (Repeat this problem for additional practice.)
+
+$PAR
+Step 1a.  Compute \(y(c+h)\) = \{ ans_rule(30) \}
+$BR
+Step 1b.  Compute \(y(c)\) = \{ ans_rule(30) \}
+
+$PAR
+Step 2.  Compute \(y(c+h) - y(c)\) = \{ ans_rule(30) \}
+
+$PAR
+Step 3.  Compute and simplify \(\displaystyle \frac{y(c+h) - y(c)}{h}\) = \{ ans_rule(30) \}
+
+$PAR
+Step 4.  Compute \(\displaystyle \left.\frac{dy}{dx}\right|_{c} = \lim_{h \to 0} \frac{y(c+h) - y(c)}{h}\) = \{ ans_rule(30) \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $exprAa->cmp()->withPostFilter(AnswerHints(
+        sub {
+            my ($correct, $student, $ans) = @_;
+            my $wrong = Compute("$exprAb+h");
+            return ($correct != $student) && ($student == $wrong);
+        } => "Do not just add h to y(c).",
+        sub {
+            my ($correct, $student, $ans) = @_;
+            my $wrong = Compute("$a(c^2+h^2)+$b(c+h)+$c");
+            return ($student == $wrong);
+        } => "Incorrect expansion of (c+h)^2.",
+        sub {
+            my ($correct, $student, $ans) = @_;
+            my $wrong1 = Compute("$a(c+h)^2+$b*c-$b*h+$c");
+            my $wrong2 = Compute("$a(c+h)^2+$b*c+h+$c");
+            my $wrong3 = Compute("$a*c^2 + 2*c*h+h^2+$b*(c+h)+$c");
+            return ($correct != $student) && ($student == $wrong1 || $student == $wrong2 || $student == $wrong3);
+        } => "Distribute multiplication by coefficients (signs).",
+    )) );
+ANS( $exprAb->cmp );
+ANS( $exprB->cmp()->withPostFilter(AnswerHints(
+        sub {
+            my ($correct, $student, $ans) = @_;
+            my $wrong = Compute("$a*h^2+$b*h");
+            return ($student == $wrong);
+        } => "Incorrect expansion of (c+h)^2.",
+        sub {
+            my ($correct, $student, $ans) = @_;
+            my $wrong1 = Compute("-2*$a*c*h-$a*h^2+$b*h");
+            my $wrong2 = Compute("2*$a*c*h+$a*h^2-$b*h");
+            return ($correct != $student) && ($student == $wrong1 || $student == $wrong2);
+        } => "Distribute multiplication by coefficients (signs).",
+    )) );
+ANS( $exprC->cmp );
+# Error with context I can not yet resolve.
+#ANS( $exprC->cmp()->withPostFilter(AnswerHints(
+#        sub {
+#            my ($correct, $student, $ans) = @_;
+#            return ($student == $wrongC1) || ($student == $wrongC2) || ($student == $wrongC3);
+#        } => "You must factor before canceling h.",
+#    )) );
+ANS( $exprD->cmp()->withPostFilter(AnswerHints(
+        sub {
+            my ($correct, $student, $ans) = @_;
+            my $wrong1 = Compute("2*$a*c");
+            my $wrong2 = Compute("$b");
+            return ($student != $correct) && (($student == $wrong1) || ($student == $wrong2));
+        } => "Recheck your simplification from Step 3.",
+    )) );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

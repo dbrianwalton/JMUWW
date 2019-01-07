@@ -1,0 +1,70 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'algebraic function')
+## Tagged by dbw 9/1/09
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('1/13/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "parserPopUp.pl",
+  "parserMultiAnswer.pl",
+  "problemRandomize.pl",
+  "contextLimitedPowers.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+##############################################
+Context("Numeric");
+Context()->variables->are(x=>"Real");
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$b = random(2,4,1);
+$k = non_zero_random(-3,3);
+$c = non_zero_random(-3,3);
+$line = Compute("$k*x+$c")->reduce('(-x)-y'=>0);
+
+$rate = Real("$k*ln($b)");
+$initial = Real("$b^$c");
+$f = Compute("$initial * e^[$k*ln($b)*x]");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Rewrite the function \(f(x) = $b^{$line}\) in the form
+\(f(x) = A \cdot e^{kx}\).
+$BR $BR
+\(f(x) = \) \{ ans_rule(35) \}
+$BR $BR
+where \(A = \) \{ ans_rule(5)\}
+and \(k = \) \{ ans_rule(15)\}.
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $f->cmp );
+ANS( $initial->cmp );
+ANS( $rate->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

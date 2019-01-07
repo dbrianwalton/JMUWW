@@ -1,0 +1,66 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','antiderivative', 'indefinite integral')
+## Tagged by dbw 9/1/09
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('1/13/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$k = non_zero_random(-9,9,1);
+$A = non_zero_random(-10,10,1);
+
+$c = random(-9,9,1);
+
+$fprime = Formula("$A*e^($k*x)")->reduce();
+$fbase = Formula("($A/$k)*e^($k*x)");
+$fzero = $fbase->eval(x=>0);
+
+$f = Formula("$fbase - $fzero + $c");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Find a function \(f(x)\) with \(f'(x) = $fprime\) and \(f(0) = $c\).
+
+$PAR
+\(f(x) = \) \{ ans_rule(40) \}
+$BR
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $f->cmp );
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

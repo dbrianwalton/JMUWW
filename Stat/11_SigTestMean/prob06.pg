@@ -1,0 +1,72 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+
+#Context("Numeric");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"Step 1: Formulate the null and alternative hypotheses.",
+"\( H_0\!: \mu = 69.5 \) vs. \( H_a\!: \mu \neq 69.5 \)"
+);
+$mc1->extra(
+"\( H_0\!: \mu = 69.5 \) vs. \( H_a\!: \mu > 69.5 \)",
+"\( H_0\!: \mu = 69.5 \) vs. \( H_a\!: \mu < 69.5 \)"
+);
+
+$teststat = Compute("1.7855")->with(tolType=>'absolute', tolerance=>'0.0006');
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"Step 3: A computer gave a p-value of 0.0868 for this test. What decision should you make?",
+"Reject the null hypothesis."
+);
+$mc2->extra(
+"Fail to reject the null hypothesis."
+);
+
+$mc3=new_multiple_choice();
+$mc3->qa(
+"Step 4: Which of the following is the most reasonable interpretation of the decision that you have made?",
+"The mean height of all female college basketball players is significantly greater than 69.5 inches."
+);
+$mc3->extra(
+"The mean height of all female college basketball players is significantly different from 69.5 inches.",
+"The mean height of all female college basketball players is equal to 69.5 inches.",
+"There is insufficient evidence to conclude that the mean height of all female college basketball players is significantly different from 69.5 inches."
+);
+
+#TEXT(beginproblem());
+#Context()->texStrings;
+
+BEGIN_TEXT
+
+According to a basketball coach, the mean height of all female college basketball players is 69.5 inches. A random sample of 25 such players produced a mean height of 70.25 inches with a standard deviation of 2.1 inches. Assuming the heights of all female college basketball players are normally distributed, test at the 10% significance level whether the mean height of all female college basketball players is different from 69.5 inches.
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+Step 2: Calculate the test statistic.
+$BR$BR
+
+\( \displaystyle t = \frac{\bar{x} - \mu_0}{s/\sqrt{n}} = \) \{ ans_rule(8) \} (Carry 3 decimal digits.)
+$BR$BR
+
+\{ $mc2->print_q() \} $BR
+\{ $mc2->print_a() \} $BR
+
+\{ $mc3->print_q() \} $BR
+\{ $mc3->print_a() \}
+
+
+END_TEXT
+
+#Context()->normalStrings;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( $teststat->cmp() );
+ANS( radio_cmp( $mc2->correct_ans() ) );
+ANS( radio_cmp( $mc3->correct_ans() ) );
+
+ENDDOCUMENT();

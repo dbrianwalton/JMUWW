@@ -1,0 +1,76 @@
+# DESCRIPTION
+#   Apply rules of differentiation involving products of simple polynomials. 
+#   Specifically:  f(x) = (mx+b)(kx+c).
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('derivative','differentiation', 'product rule')
+## Date('6/2/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "answerHints.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+@varList = ('s', 't', 'x', 'u');
+$vk = random(0,3,1);
+$x = $varList[$vk];
+
+Context()->variables->are($x=>'Real');
+
+$m = non_zero_random(-5,5,1);
+$k = non_zero_random(-5,5,1);
+$b = non_zero_random(-8,8,1);
+$c = non_zero_random(-8,8,1);
+
+$expr = Compute("($m*$x+$b)*($k*$x+$c)")->reduce('(-x)-y' => 0, '(-x)+y' => 0, 'x^(-1)' => 0);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute the derivative of \(f($x) = $expr\).
+$BR (Repeat this problem for additional practice.)
+
+$PAR
+\(f'($x) = \) \{ ans_rule(25) \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+$ansA = $expr->D();
+ANS( $ansA->cmp->withPostFilter(AnswerHints(
+        sub {
+            my ($correct, $student, $ans) = @_;
+            my $wrong = Compute("$m*$k");
+            return ($student == $wrong);
+        } => "Do not just multiply derivatives of factors.",
+    )) );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

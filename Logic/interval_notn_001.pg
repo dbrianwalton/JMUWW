@@ -1,0 +1,80 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('algebra','inequalities')
+## Tagged by dbw 9/1/09
+
+## DBsubject('Algebra')
+## DBchapter('Equations and Inequalities')
+## DBsection('Linear Inequalities')
+## Date('9/1/09')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",            # Union College utilities
+  "MathObjects.pl",
+  "alignedChoice.pl",      # for aligned answer blanks
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Interval");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+@leftMode = (0, 0, 1, 1);
+@rightMode = (0, 1, 0, 1);
+@order = NchooseK(4,4);
+
+BEGIN_TEXT
+Express the following inequality using interval notation.
+$PAR
+$BBLOCKQUOTE
+END_TEXT
+
+for $i (@order) {
+$a = random(-10,5,1);
+$width = random(1,8,1);
+$b = $a+$width;
+
+@symbol = ("<", $LE);
+@leftInt = ("(", "[");
+@rightInt = (")", "]");
+$intervalAns = Interval($leftInt[$leftMode[$i]] . "$a,$b" . $rightInt[$rightMode[$i]]);
+
+###################################
+# Main text
+
+BEGIN_TEXT
+$PAR
+The inequality \(\{ "$a " . $symbol[$leftMode[$i]] . " x " . $symbol[$rightMode[$i]] . "$b" \}\)
+is equivalent to \(x \in \) \{ ans_rule( 15 ) \}.
+END_TEXT
+
+###################################
+# Answer checking
+
+$showPartialCorrectAnswers = 1;
+ANS($intervalAns->cmp);
+};
+
+BEGIN_TEXT
+$EBLOCKQUOTE
+END_TEXT
+
+###################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

@@ -1,0 +1,149 @@
+# DESCRIPTION
+#   Evaluate a limit of a piecewise linear function at the break point.
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('limit','piecewise function')
+## Date('7/31/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+# Define where the function will break.
+$c = random(-5,5,1);
+
+# Decide if equality is on left, on right or neither.
+$qEq = random(-1,1,1);
+
+# Decide if limit should exist.
+$lEq = random(0,1);
+
+# Use two simple linear formulas
+$mLeft = random(-4,4,1);
+$mRight = random(-4,4,1);
+
+$dValue = random(-6,6,1);
+if ($qEq == -1) {
+    $dLeft = $dValue;
+    if ($lEq == 1) {
+        $dRight = $dValue;
+    } else {
+        $dRight = $dValue + non_zero_random(-4,4);
+    }
+} elsif ($qEq == 1) {
+    $dRight = $dValue;
+    if ($lEq == 1) {
+        $dLeft = $dValue;
+    } else {
+        $dLeft = $dValue + non_zero_random(-4,4);
+    }
+} else {
+    $dLeft = random(-6,6);
+    if ($lEq == 1) {
+        $dRight = $dLeft;
+    } else {
+        $dRight = $dLeft + non_zero_random(-4,4);
+    }
+}
+
+$bLeft = $dLeft - $mLeft*$c;
+$bRight = $dRight - $mRight*$c;
+
+$fLeft = Compute("$mLeft*x+$bLeft")->reduce( '(-x)-y'=>0, '(-x)+y'=>0 );
+$fRight = Compute("$mRight*x+$bRight")->reduce('(-x)-y'=>0, '(-x)+y'=>0 );
+
+$value = Real($dValue);
+$leftLimit = Real($dLeft);
+$rightLimit = Real($dRight);
+if ($lEq == 1) {
+    $limit = $leftLimit;
+} else {
+    $limit = String('DNE');
+}
+
+$leftIneq = "\lt";
+$rightIneq = "\gt";
+if ($qEq == -1) {
+    $leftIneq = "\le";
+} elsif ($qEq == 1) {
+    $rightIneq = "\ge";
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR The function \(f(x)\) is defined piecewise using the formula
+$BR
+END_TEXT
+if ($qEq == 0) {
+    BEGIN_TEXT
+    \( \displaystyle
+    f(x) = \begin{cases}
+        $fLeft, & x $leftIneq $c \\
+        $dValue, & x = $c \\
+        $fRight, & x $rightIneq $c.
+    \end{cases}
+    \)
+    END_TEXT
+} else {
+    BEGIN_TEXT
+    \( \displaystyle
+    f(x) = \begin{cases}
+        $fLeft, & x $leftIneq $c \\
+        $fRight, & x $rightIneq $c.
+    \end{cases}
+    \)
+    END_TEXT
+}
+
+BEGIN_TEXT
+$PAR Compute the following:
+$BR $BR
+\(f($c) \) = \{ ans_rule(10) \}
+$BR $BR
+\(\displaystyle \lim_{x \to $c^-} f(x) \) = \{ ans_rule(10) \}
+$BR $BR
+\(\displaystyle \lim_{x \to $c^+} f(x) \) = \{ ans_rule(10) \}
+$BR $BR
+\(\displaystyle \lim_{x \to $c} f(x) \) = \{ ans_rule(10) \}
+
+$PAR
+Type $BBOLD DNE $EBOLD if the value does not exist and $BBOLD INF $EBOLD for \(\infty\).
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $value->cmp );
+ANS( $leftLimit->cmp );
+ANS( $rightLimit->cmp );
+ANS( $limit->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

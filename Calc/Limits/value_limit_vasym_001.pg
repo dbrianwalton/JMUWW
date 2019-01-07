@@ -1,0 +1,87 @@
+# DESCRIPTION
+#   Evaluate a limit that is of algebraic indeterminate form.
+#   The rational function is constructed to have an infinite
+#   discontinuity at a random point x=a.
+#   f(x) = (x-b)/(x-a)
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('limit','vertical asymptote')
+## Date('10/25/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGpolynomialmacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem. [x-b]/[x-a]
+##########
+$a = random(-10,10,1);
+do {
+    $b = random(-10,10,1);
+} while ($a==$b);
+
+@numer = (1, -$b);
+@denom = (1, -$a);
+
+$nstr = PolyString(~~@numer);
+$dstr = PolyString(~~@denom);
+
+$expr = Compute("($nstr)/($dstr)")->reduce('(-x)+y'=>0, '(-x)-y'=>0);
+if ($a < $b) {
+    $leftLimit = Compute("INF");
+    $rightLimit = Compute("-INF");
+} else {
+    $leftLimit = Compute("-INF");
+    $rightLimit = Compute("+INF");
+}
+$limit = Compute("DNE");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute the limit
+$BR
+\(\displaystyle \lim_{x \to $a} $expr \) = \{ ans_rule(10) \}
+
+$PAR For reference, also provide the left and right limits.
+$BR
+\(\displaystyle \lim_{x \to $a^-} $expr \) = \{ ans_rule(10) \}
+$BR $BR
+\(\displaystyle \lim_{x \to $a^+} $expr \) = \{ ans_rule(10) \}
+
+$PAR
+Type $BBOLD DNE $EBOLD if the limit does not exist and $BBOLD INF $EBOLD for \(\infty\).
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $limit->cmp );
+ANS( $leftLimit->cmp );
+ANS( $rightLimit->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

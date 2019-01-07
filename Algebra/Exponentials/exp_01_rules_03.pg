@@ -1,0 +1,105 @@
+## DESCRIPTION
+## Simplify an expression involving a product of powers raised to power.
+## ENDDESCRIPTION
+
+## KEYWORDS('exponents','simplify')
+## Tagged by dbw 6/27/12
+
+## DBsubject('Algebra')
+## DBchapter('Basic Algebra')
+## DBsection('Exponents and Radicals')
+## Date('6/27/12')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGjmu_poly.pl",
+  "contextLimitedNumeric.pl",
+  "problemRandomize.pl",
+);
+
+
+###################################
+# Setup the problem
+###################################
+Context("Numeric");
+Context()->variables()->are('x'=>'Real','y'=>'Real');
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$a1= non_zero_random(-1,1)*random(2,5);
+$p1 = non_zero_random(-4,4);
+$p2 = non_zero_random(-4,4);
+
+$p3 = non_zero_random(-1,1)*random(2,4);
+$p3base = abs($p3);
+
+$exp1 = Formula("$a1*x^($p1)*y^($p2)")->reduce();
+
+$leadCoeff = ($a1)**$p3base;
+if ($p3 < 0) {
+  $leadCoeff = FractionTeX([1, $leadCoeff]);
+}
+
+Context("LimitedNumeric-Fraction");
+$A = Real(($a1)**$p3);
+$b = Real($p1*$p3);
+$c = Real($p2*$p3);
+
+###################################
+# Display the Problem
+###################################
+TEXT(beginproblem);
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Simplify the expression \(($exp1)^{$p3}\) to the form \(A x^{b} y^{c}\).  
+
+$PAR Enter the simplified value of \(A\), \(b\) and \(c\) below.
+
+$BR $BR
+\(  A = \) \{ ans_rule(15) \} $BR
+\(  b = \) \{ ans_rule(15) \} $BR
+\(  c = \) \{ ans_rule(15) \}
+END_TEXT
+
+Context()->normalStrings;
+
+###################################
+# Check the Answers
+###################################
+$showPartialCorrectAnswers = 1;
+
+ANS( $A->cmp );
+ANS( $b->cmp );
+ANS( $c->cmp );
+
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+A product raised to a power is equal to the product of each factor raised
+to that same power, \((abc)^x = a^x b^x c^x\).
+So \(($exp1)^{$p3} = ($a1)^{$p3} (x^{$p1})^{$p3} (y^{$p2})^{$p3}\).
+We now use the property that a base to a power all raised to another power 
+is equal to the base raised to the product of the powers, \((b^x)^y=b^{xy}\).
+So \(($exp1)^{$p3} = $leadCoeff x^{$b} y^{$c}\).
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Solution provided. Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

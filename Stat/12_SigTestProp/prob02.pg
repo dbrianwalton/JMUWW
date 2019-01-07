@@ -1,0 +1,64 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+
+#Context("Numeric");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"Step 1: Formulate the null and alternative hypotheses.",
+"\( H_0\!: p = 0.80 \) vs. \( H_a\!: p < 0.80 \)"
+);
+$mc1->extra(
+"\( H_0\!: p = 0.80 \) vs. \( H_a\!: p > 0.80 \)",
+"\( H_0\!: p = 0.80 \) vs. \( H_a\!: p \neq 0.80 \)"
+);
+
+$teststat = Compute("1.435")->with(tolType=>'absolute', tolerance=>'0.006');
+$pvalue   = Compute("0.07565")->with(tolType=>'absolute', tolerance=>'0.001');
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"Step 4: Make a decision.",
+"Fail to reject the null hypothesis."
+);
+$mc2->extra(
+"Reject the null hypothesis."
+);
+
+#TEXT(beginproblem());
+#Context()->texStrings;
+
+BEGIN_TEXT
+
+According to a survey conducted with 132 adults by a sociology student, 99 indicated that they were satisfied with their jobs. Conduct a test of hypotheses to determine whether less than 80% of the people are satisfied with their jobs. Use a significance level of 0.01.
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+Step 2: Calculate the test statistic.
+$BR$BR
+
+\( \displaystyle z = \frac{\hat{p} - p_0}{\sqrt{p_0(1 - p_0)/n}} = \) \{ ans_rule(8) \} (Carry 2 decimal digits.)
+$BR$BR
+
+Step 3: Calculate the p-value.
+$BR$BR
+
+p-value = \{ ans_rule(8) \} (Carry 4 decimal digits.)
+$BR$BR
+
+\{ $mc2->print_q() \} $BR
+\{ $mc2->print_a() \}
+
+END_TEXT
+
+#Context()->normalStrings;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( $teststat->cmp() );
+ANS( $pvalue->cmp() );
+ANS( radio_cmp( $mc2->correct_ans() ) );
+
+ENDDOCUMENT();

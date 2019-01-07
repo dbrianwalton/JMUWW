@@ -1,0 +1,70 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+
+#Context("Numeric");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"Step 1: Formulate the null and alternative hypotheses.",
+"\( H_0\!: \mu = 14.0 \) vs. \( H_a\!: \mu > 14.0 \)"
+);
+$mc1->extra(
+"\( H_0\!: \mu = 14.0 \) vs. \( H_a\!: \mu < 14.0 \)",
+"\( H_0\!: \mu = 14.0 \) vs. \( H_a\!: \mu \neq 14.0 \)"
+);
+
+$teststat = Compute("2.2225")->with(tolType=>'absolute', tolerance=>'0.0006');
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"Step 3: Approximate the p-value.",
+"\( 0.01 < p < 0.025 \)"
+);
+$mc2->extra(
+"\( 0.02 < p < 0.05 \)",
+"\( 0.005 < p < 0.01 \)"
+);
+
+$mc3=new_multiple_choice();
+$mc3->qa(
+"Step 4: Make a decision.",
+"Fail to reject the null hypothesis."
+);
+$mc3->extra(
+"Reject the null hypothesis."
+);
+
+#TEXT(beginproblem());
+#Context()->texStrings;
+
+BEGIN_TEXT
+
+It is of interest to determine whether the mean height of a particular species of a flower is taller than 14.0 inches. A random sample of 100 flowers showed a mean of 14.2 inches with a standard deviation of 0.9. Conduct a test of interest, allowing a Type I error rate of .01.
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+Step 2: Calculate the test statistic.
+$BR$BR
+
+\( \displaystyle t = \frac{\bar{x} - \mu_0}{s/\sqrt{n}} = \) \{ ans_rule(8) \} (Carry 3 decimal digits.)
+$BR$BR
+
+\{ $mc2->print_q() \} $BR
+\{ $mc2->print_a() \} $BR
+
+\{ $mc3->print_q() \} $BR
+\{ $mc3->print_a() \}
+
+END_TEXT
+
+#Context()->normalStrings;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( $teststat->cmp() );
+ANS( radio_cmp( $mc2->correct_ans() ) );
+ANS( radio_cmp( $mc3->correct_ans() ) );
+
+ENDDOCUMENT();

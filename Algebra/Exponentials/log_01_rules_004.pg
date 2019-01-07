@@ -1,0 +1,80 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('logarithm','rules')
+## Tagged by dbw 7/20/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('7/20/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "problemRandomize.pl",
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+Context()->variables()->are(a=>'Real', b=>'Real');
+
+$cA = non_zero_random(-5,5);
+$cB = non_zero_random(-5,5);
+
+$expr = Formula("$cA ln(a) + $cB ln(b)")->reduce('(-x)-y'=>0);
+
+## The following work is so that the solution appears as an appropriate fraction
+## instead of as just a product of terms, possibly negative powers.
+## The easier approach, but with not as nice output:
+# $ans = Formula("a^($cA) * b^($cB)");
+##
+$numer = "1";
+$denom = "1";
+if ($cA < 0) {
+   $rcA = abs($cA);
+   $denom = Formula("$denom * a^($rcA)");
+} else {
+   $numer = Formula("$numer * a^($cA)");
+}
+if ($cB < 0) {
+   $rcB = abs($cB);
+   $denom = Formula("$denom * b^($rcB)");
+} else {
+   $numer = Formula("$numer * b^($cB)");
+}
+$ans = Formula("$numer/$denom")->reduce();
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Use the properties of logarithms to rewrite the following expression as the logarithm of a single formula.
+
+$PAR
+\($expr\) = \(\ln\big(\)\{ ans_rule(15) \}\(\big)\)
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $ans->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

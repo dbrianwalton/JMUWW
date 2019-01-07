@@ -1,0 +1,94 @@
+## DESCRIPTION
+##  Calculus
+## ENDDESCRIPTION
+
+## KEYWORDS('Calculus','Limit', "Definition")
+## Tagged by dbw
+
+## DBsubject('Calculus')
+## DBchapter('Limits and Derivatives')
+## DBsection('Definition of Limit')
+## Date('')
+## Author('')
+## Institution('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.   f(x) = mx+b, m!=0
+##########
+# Create simple linear function.
+$c = random(-6,6);
+$m = non_zero_random(-8,8);
+$b = random(-8,8);
+
+$fFcn = Compute("$m*x+$b")->reduce('(-x)+y'=>0, '(-x)-y'=>0);
+
+$limit = $fFcn->eval(x=>$c);
+$fRewrite = Compute("abs($fFcn - $limit)");
+
+$factor = Formula("abs($m)");
+$factorBnd = Compute("abs($m)");
+
+Context("Numeric");
+Context()->variables->are(eps=>'Real');
+$delta = Compute("eps/$factorBnd");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute the limit of the function \(\displaystyle f(x) = $fFcn\):
+$BR
+(a) \(\displaystyle L = \lim_{x \to $c} f(x) \) = \{ ans_rule(10) \}
+
+$PAR
+When considering the formal definition of the limit, we compute the expression \(|f(x)-L|\):
+$BR
+(b) \( |f(x) - L| = \) \{ ans_rule(25) \}.
+
+$PAR
+By factoring, this can be written as a multiple of \( |x-$c| \).  What is the multiple?
+$BR 
+(c) \( |f(x) - L| = \) \{ ans_rule(15) \} \( \cdot |x - $c| \).
+$BR
+$BBOLD Note: $EBOLD For absolute value, you can either use the function $BBOLD abs( )$EBOLD or vertical bars $BBOLD | | $EBOLD.
+
+$PAR
+Based on your work above, what choice of delta (\(\delta\)) would make the
+implication below true for $BITALIC any $EITALIC value \(\epsilon>0\)?
+$BR
+\(  0<|x-$c|<\delta \Rightarrow |f(x)-L|<\epsilon\)
+$BR
+(d) \( \delta = \) \{ans_rule(10)\}.
+$BR
+$BBOLD Note:$EBOLD Type $BBOLD eps $EBOLD for the variable epsilon (\(\epsilon\)).
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $limit->cmp );
+ANS( $fRewrite->cmp );
+ANS( $factor->cmp );
+ANS( $delta->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

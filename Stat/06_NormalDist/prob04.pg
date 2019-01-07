@@ -1,0 +1,38 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$zscore = Compute("-0.575" )->with(tolType=>'absolute', tolerance=>'0.006');
+$prob   = Compute("0.71735")->with(tolType=>'absolute', tolerance=>'0.003');
+$height = Compute("67.6375")->with(tolType=>'absolute', tolerance=>'0.003');
+
+TEXT(beginproblem());
+Context()->texStrings;
+
+BEGIN_TEXT
+
+It is estimated that heights of adult men are normally distributed with a mean of 70.0 inches and a standard deviation of 3.5. In one state, the law requires a person to be 68.0 inches or taller to become a fire fighter.
+$BR$BR
+
+(a) What proportion of adult men will meet this height requirement for becoming a fire fighter in this state? (Carry 2 decimal digits for the z-score and 4 decimal digits for the probability.)
+$BR$BR
+
+\( P(X \geq 68.0) = P(Z \geq \) \{ans_rule(8)\} \( ) = \) \{ans_rule(8)\}
+$BR$BR
+
+(b) A person who was denied to become a fire fighter learned that his height was at the 25th percentile. What was his actual height? (Carry 2 decimal digits.)
+$BR$BR
+
+Answer: \{ans_rule(8)\} inches.
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $zscore->cmp() );
+ANS( $prob->cmp() );
+ANS( $height->cmp() );
+
+ENDDOCUMENT();

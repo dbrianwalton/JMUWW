@@ -1,0 +1,45 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"1. There is a major methodological shortcoming in this experiment. What is it?",
+"Participants were not assigned to the treatment groups through randomization."
+);
+$mc1->extra(
+"There must be another treatment group receiving a currently used antidepressant for a comparison purpose.",
+"The researcher must conduct a pretest to establish a baseline measure."
+);
+$mc1->makeLast("All of the above.");
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"2. The design of this experiment is single-blind. What is necessary for it to be double-blind?",
+"Both the participants and those who have contact with the participants must be unaware of which treatments are given to which groups."
+);
+$mc2->extra(
+"The participants must be blindfolded during the experiment so that they do not see what drugs they are taking.",
+"Those who have contact with the participants must be blindfolded so that they do not induce a response bias."
+);
+$mc2->makeLast("None of the above.");
+
+BEGIN_TEXT
+
+Eighty clinically depressed individuals voluntarily signed up for an experiment in which the efficacy of a new antidepressant was investigated. The researcher divided the 80 participants into two groups. In so doing, she selected the first 40 on the sign-up list and assigned them to the experimental group and the last 40 to the placebo group. After two weeks of the treatments, the researcher measured the levels of depression for the two groups of participants.
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+\{ $mc2->print_q() \} $BR
+\{ $mc2->print_a() \}
+
+END_TEXT
+
+$showPartialCorrectAnswers = 0;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( radio_cmp( $mc2->correct_ans() ) );
+
+ENDDOCUMENT();

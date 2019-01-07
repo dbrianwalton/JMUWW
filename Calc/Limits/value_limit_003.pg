@@ -1,0 +1,72 @@
+# DESCRIPTION
+#   Evaluate a limit that is of algebraic indeterminate form.
+#   The rational function is constructed to have a removable
+#   discontinuity at a random point x=a.
+#   f(x) = [x-a] / [(x-a)(x+b)]
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('limit','indeterminate')
+## Date('5/19/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGpolynomialmacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem. [x-a]/[(x-a)(x+b)]
+##########
+$a = random(-10,10,1);
+do {
+    $b = random(-10,10,1);
+} while ($a+$b == 0);
+
+@numer = (1, -$a);
+@denom = (1, $b-$a, -$a*$b);
+
+$nstr = PolyString(~~@numer);
+$dstr = PolyString(~~@denom);
+
+$expr = Compute("($nstr)/($dstr)")->reduce('(-x)+y'=>0, '(-x)-y'=>0);
+$limit = Compute("1/($a+$b)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute the limit
+$BR
+\(\displaystyle \lim_{x \to $a} $expr \) = \{ ans_rule(10) \}
+
+$PAR
+Type $BBOLD DNE $EBOLD if the limit does not exist and $BBOLD INF $EBOLD for \(\infty\).
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $limit->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

@@ -1,0 +1,106 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+
+#Context("Numeric");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"Step 1: Which of the following is the correct null hypothesis?",
+"Gender and major subject are independent."
+);
+$mc1->extra(
+"Gender and major subject are not independent."
+);
+
+$a = Compute("25.300")->with(tolType=>'absolute', tolerance=>'0.005');
+$b = Compute("29.700")->with(tolType=>'absolute', tolerance=>'0.005');
+$c = Compute("20.700")->with(tolType=>'absolute', tolerance=>'0.005');
+$d = Compute("24.300")->with(tolType=>'absolute', tolerance=>'0.005');
+
+$teststat = Compute("2.227")->with(tolType=>'absolute', tolerance=>'0.005');
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"Step 3: Approximate the p-value.",
+"\( 0.10 < p < 0.15 \)"
+);
+$mc2->extra(
+"\( 0.20 < p < 0.30 \)",
+"\( 0.05 < p < 0.10 \)"
+);
+
+$mc3=new_multiple_choice();
+$mc3->qa(
+"Step 4: Make a decision.",
+"Fail to reject the null hypothesis."
+);
+$mc3->extra(
+"Reject the null hypothesis."
+);
+
+#TEXT(beginproblem());
+#Context()->texStrings;
+
+BEGIN_TEXT
+
+Randomly selected 100 college students were cross-classified according to their gender and whether they major in art subjects or science subjects. The results are shown below. At the significance level of 0.05, conduct a test to determine whether gender and major subject are independent.
+$BR$BR
+
+\( \displaystyle
+\begin{tabular}{lcc}
+\hline
+& \multicolumn{2}{c}{Subject} \\
+\cline{2-3}
+Gender &  Art  & Science \\
+\hline
+Female &   29  &   26    \\
+Male   &   17  &   28    \\
+\hline
+\hspace*{0.70in}&\hspace*{0.60in}&\hspace*{0.60in}
+\end{tabular}
+\)
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+Step 2: Calculate expected cell counts and the test statistic. (Carry 3 decimal digits.)
+$BR$BR
+
+(a) Expected cell counts (the four boxes below correspond to the four cells in the table):
+$BR$BR
+
+\{ ans_rule(8) \} \{ ans_rule(8) \}
+$BR$BR
+
+\{ ans_rule(8) \} \{ ans_rule(8) \}
+$BR$BR
+
+(b) Test statistic: \{ ans_rule(8) \}
+$BR$BR
+
+\{ $mc2->print_q() \} $BR
+\{ $mc2->print_a() \} $BR
+
+\{ $mc3->print_q() \} $BR
+\{ $mc3->print_a() \}
+
+END_TEXT
+
+#Context()->normalStrings;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+
+ANS( $a->cmp() );
+ANS( $b->cmp() );
+ANS( $c->cmp() );
+ANS( $d->cmp() );
+
+ANS( $teststat->cmp() );
+
+ANS( radio_cmp( $mc2->correct_ans() ) );
+
+ANS( radio_cmp( $mc3->correct_ans() ) );
+
+ENDDOCUMENT();

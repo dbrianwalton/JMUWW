@@ -1,0 +1,30 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+
+$mc=new_multiple_choice();
+$mc->qa(
+"Which of the following is false?",
+"The margin of error is \(1/\sqrt{1000} = 3.2\) percent."
+);
+$mc->extra(
+"There is a potential sampling/selection bias.",
+"There is a potential non-response bias.",
+"The margin of error is \(1/\sqrt{482} = 4.6\) percent."
+);
+
+BEGIN_TEXT
+
+A telephone survey was conducted to estimate the proportion of the people who purchase common items (e.g., clothes, shoes, gifts) regularly over the Internet. One thousand (1,000) people were randomly selected from the Wisconsin telephone directories and were contacted. Four hundred eighty-two (482) chose to participate in the survey. Of those who participated in the survey, 27% said that they shopped regularly over the Internet.
+$BR$BR
+
+\{ $mc->print_q() \} $BR
+\{ $mc->print_a() \}
+
+END_TEXT
+
+$showPartialCorrectAnswers = 0;
+
+ANS( radio_cmp( $mc->correct_ans() ) );
+
+ENDDOCUMENT();

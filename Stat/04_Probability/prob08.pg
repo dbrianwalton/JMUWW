@@ -1,0 +1,60 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$a = Compute("0.501")->with(tolType=>'absolute', tolerance=>'0.002');
+$b = Compute("0.582")->with(tolType=>'absolute', tolerance=>'0.002');
+$c = Compute("0.020")->with(tolType=>'absolute', tolerance=>'0.002');
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+The following table cross-classifies a total of 1943 students at a college according to their gender and financial-support status.
+$BR$BR
+
+\( \displaystyle
+\begin{tabular}{lccc}
+\hline
+       & \multicolumn{3}{c}{Financial-support status}\\
+\cline{2-4}
+Gender & Self-supported & Parent-supported & Via financial aid \\
+\hline
+Female & 155 & 221 & 657 \\
+Male   & 118 & 138 & 654 \\
+\hline
+\hspace*{0.75in} & \hspace*{1.20in} & \hspace*{1.20in} & \hspace*{1.20in}
+\end{tabular}
+\)
+$BR$BR
+
+(a) If a student is selected at random from this college, what is the probability that the student will be female, given that the student receives financial aid?
+$BR$BR
+
+Solution: \( \displaystyle \frac{657}{657 + 654} = \) \{ans_rule(8)\} (Carry 3 decimal digits.)
+$BR$BR
+
+(b) If a student is selected at random, what is the probability that the student will be male, parent-supported, or both?
+$BR$BR
+
+Solution: \( \displaystyle \frac{221 + 118 + 138 + 654}{1943} = \) \{ans_rule(8)\} (Carry 3 decimal digits.)
+$BR$BR
+
+(c) If two students are selected independently, what is the probability that both of them will be self-supported?
+$BR$BR
+
+Solution: \( \displaystyle P(\mbox{self-supported}) = \frac{155 + 118}{1943} = 0.1405 \). Therefore, \( (0.1405)^2 = \) \{ans_rule(8)\} (Carry 3 decimal digits.)
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $a->cmp() );
+ANS( $b->cmp() );
+ANS( $c->cmp() );
+
+ENDDOCUMENT();

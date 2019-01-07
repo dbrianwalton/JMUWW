@@ -1,0 +1,82 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'algebraic function')
+## Tagged by dbw 9/1/09
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('1/13/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "parserPopUp.pl",
+  "parserMultiAnswer.pl",
+  "problemRandomize.pl",
+  "contextLimitedPowers.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+##############################################
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Find a random base, allow it to be a fraction.
+$bn = random(1,12);
+do {$bd = random(1,12);} while ($bn==$bd);
+# Reduce the fraction of the base.
+@primes = (2, 3, 5);
+foreach $p (@primes) {
+    while ($bn%$p == 0 && $bd%$p == 0) {
+        $bn = $bn / $p;
+        $bd = $bd / $p;
+    }
+}
+
+$t = random(3,8);
+
+$A = non_zero_random(-9,9) * $bd;
+$B = $A*$bn/$bd;
+
+if ($bd==1) {
+    $f = Compute("$A*e^[1/$t*ln($bn)*x]");
+} else {
+    $f = Compute("$A*e^(1/$t*ln($bn/$bd)*x)");
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR The function \(f(x)\) is an exponential function satisfying \(f(0) = $A\) and \(f($t)=$B\). 
+
+$PAR Express \(f(x)\) in terms of \(e\), namely \(f(x) = A e^{kx}\).
+$BR $BR
+\(  f(x) = \) \{ ans_rule(30) \}
+$BR $BR
+where \(A = \) \{ ans_rule(5) \} and \(k =\) \{ans_rule(15)\}.
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $f->cmp );
+ANS( Real($A)->cmp );
+ANS( Formula("ln($bn/$bd)/$t")->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

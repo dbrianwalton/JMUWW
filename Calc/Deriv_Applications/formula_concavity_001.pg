@@ -1,0 +1,101 @@
+# DESCRIPTION
+#   Given the algebraic formula for a function (quadratic polynomial),
+#   identify where the function is concave up or concave down.
+#   Also, identify all of the points of inflection.
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('function','derivative', 'concavity', 'inflection points')
+## Date('8/23/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl",
+  "parserUtils.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+$a = non_zero_random(-5,5);
+$b = random(-9,9);
+$c = random(-9,9);
+
+$func = Compute("$a*x^2 + $b*x + $c")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+$f2d = Formula("2*$a");
+
+Context("Interval");
+
+$outerIntervals = List(Interval("(-INF, INF)"));
+$innerIntervals = List("NONE");
+$inflPts = List("NONE");
+
+if ($a > 0) {
+    $ccuIntervals = $outerIntervals;
+    $ccdIntervals = $innerIntervals;
+} else {
+    $ccuIntervals = $innerIntervals;
+    $ccdIntervals = $outerIntervals;
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Determine the concavity of the function \(f(x) = $func\).
+
+$PAR
+Compute \(f''(x)\) = \{ ans_rule(10) \}
+
+$PAR
+List the intervals where \(f\) is concave up and where it is concave down (comma-separated).  Type $BBOLD NONE $EBOLD if there are no such intervals.
+$BR
+$BBLOCKQUOTE
+Intervals where concave-up: \{ ans_rule(30) \}
+$BR
+Intervals where concave-down: \{ ans_rule(30) \}
+$EBLOCKQUOTE
+$BR
+List the inflection points (\(x\)-values, comma-separated).  Type $BBOLD NONE $EBOLD if there are none.
+$BR
+$BBLOCKQUOTE
+Inflection points: \{ ans_rule(30) \}
+$EBLOCKQUOTE
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+
+ANS( $f2d->cmp );
+
+ANS( $ccuIntervals->cmp );
+ANS( $ccdIntervals->cmp );
+
+ANS( $inflPts->cmp );
+
+COMMENT("No inflection points; one interval of concavity.");
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

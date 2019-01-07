@@ -1,0 +1,123 @@
+## DESCRIPTION
+## Find the equation of a line passing through two points, integer slope.
+## ENDDESCRIPTION
+
+## KEYWORDS('equation', 'slope', 'line')
+## Tagged by DBW 6/12/12
+
+## DBsubject('Algebra')
+## DBchapter('Linear Functions')
+## DBsection('Equations for Lines')
+## Date('6/12/12')
+## Author('D. B. Walton')
+## Institution('JMU')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+#
+# First comes some stuff that appears at the beginning of every problem
+#
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+###################################
+# Setup the Problem
+###################################
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$a1 = random(-5,5,1);
+$b1 = random(-10,10,1);
+
+$m = random(-5,5);
+
+$a2 = $a1 + non_zero_random(-5,5,1);
+$b2 = $b1 + $m*($a2-$a1);
+
+$slope = Compute("$m");
+$fcn = Compute("$m*(x-$a1)+$b1")->reduce('(-x)-y'=>0);
+
+# Prepare some strings for the solution.
+@p = (1, -$b1);
+$yStr = GenPolyString(~~@p, "x"=>"y");
+
+@p = (1,-$a1);
+$xStr = GenPolyString(~~@p);
+
+###################################
+# Display the Problem
+###################################
+TEXT(beginproblem);
+Context()->texStrings;
+BEGIN_TEXT
+  In this problem, you will find the equation of the line passing through the points
+  \(P_1 = ($a1,$b1)\) and \(P_2 = ($a2,$b2)\).
+  
+  $PAR
+  First, find the slope of the line passing through \(P_1\) and \(P_2\).
+  
+  $PAR
+  Slope: \{ans_rule(10)\}
+$PAR
+$PAR
+  Based on this slope, write \(y\) as a function of \(x\) in point-slope form 
+  with \(P_1\) as your point:  \(y-b = m(x-a)\)
+  $PAR $PAR
+  where m=\{ans_rule(10)\}, a=\{ans_rule(5)\}, and b=\{ans_rule(5)\}.
+
+$PAR $PAR
+Now, write the actual formula for \(y\) as a function of \(x\).
+  
+  $PAR
+  \(y\) = \{ ans_rule(20) \}
+  
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Check the Answer
+###################################
+ANS( $slope->cmp );
+
+ANS( $slope->cmp );
+ANS( Real($a1)->cmp );
+ANS( Real($b1)->cmp );
+
+ANS( $fcn->cmp );
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+The slope is defined as the rate of change, \(\frac{\Delta y}{\Delta x} = \frac{y_2-y_1}{x_2-x_1}\).
+Using the points \(P_1 = (x_1,y_1) = ($a1,$b1)\) and \(P_2 = (x_2,y_2) = ($a2,$b2)\), we find a slope \(\frac{\Delta y}{\Delta x} = \frac{$b2-$b1}{$a2-$a1} = $m\).
+
+$PAR
+The point-slope equation of a line \(y-b=m(x-a)\) has symbols \(m\) for slope, and \((a,b)\) for the point.  
+So for our problem, using \(P_1=($a1,$b1)\), we have \(m=$m\), and \((a,b)=($a1,$b1)\).
+The equation for the line is \($yStr = $m($xStr)\).
+
+$PAR
+If we solve for \(y\) by adding \($b1\) to both sides of the equation, we find
+\(y=$fcn\).
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Slope is guaranteed to be integer. Solution provided.  Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.

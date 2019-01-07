@@ -1,0 +1,61 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','antiderivative', 'indefinite integral')
+## Tagged by dbw 9/1/09
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('1/13/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$n = random(1,9,1);
+$A = non_zero_random(-10,10,1);
+
+$fprime = Compute("$A*x^$n")->reduce();
+$f = FormulaUpToConstant("($A/($n+1))*x^($n+1)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute the following indefinite integral.
+
+$PAR
+\(\displaystyle \int $fprime \, dx = \) \{ ans_rule(40) \}
+$BR
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $f->cmp );
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

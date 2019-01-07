@@ -1,0 +1,83 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('algebra','inequalities')
+## Tagged by dbw 9/1/09
+
+## DBsubject('Algebra')
+## DBchapter('Equations and Inequalities')
+## DBsection('Linear Inequalities')
+## Date('9/1/09')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "PGunion.pl",            # Union College utilities
+  "MathObjects.pl",
+  "alignedChoice.pl",      # for aligned answer blanks
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Interval");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+@order = NchooseK(4,3);
+@orderString = ("greater than", "greater than or equal to", "less than", "less than or equal to");
+@endMode = ("(", "[", ")", "]");
+
+BEGIN_TEXT
+Translate the description of each set into interval notation.
+$PAR
+$BBLOCKQUOTE
+END_TEXT
+
+for $i (@order) {
+$a = random(-10,10,1);
+
+if ($i < 2) {
+	$intervalAns = Interval($endMode[$i] . "$a,INF)");
+}
+else {
+	$intervalAns = Interval("(-INF,$a" . $endMode[$i]);
+}
+
+###################################
+# Main text
+
+BEGIN_TEXT
+$PAR
+The set of all real numbers $orderString[$i] $a
+is equivalent to the interval \{ ans_rule( 15 ) \}.
+END_TEXT
+
+###################################
+# Answer checking
+
+$showPartialCorrectAnswers = 1;
+ANS($intervalAns->cmp);
+
+};
+
+BEGIN_TEXT
+$EBLOCKQUOTE
+$PAR
+Type $BBOLD INF $EBOLD for \(\infty\).
+END_TEXT
+
+###################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

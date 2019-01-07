@@ -1,0 +1,90 @@
+## DESCRIPTION
+## Solve a simple exponential equation
+## ENDDESCRIPTION
+
+## KEYWORDS('exponential', 'equation', 'solve')
+## Tagged by dbw 7/18/11
+
+## DBsubject('Algebra')
+## DBchapter('Exponential and Logarithmic Functions')
+## DBsection('Exponential and Logarithmic Equations')
+## Date('7/18/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl",
+);
+
+
+###################################
+# Setup
+###################################
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$b = random(2,5,1);
+$x = random(-4,4,1);
+
+$cVal = $b**abs($x);
+if ($x < 0) {
+    $c = "\frac{1}{$cVal}";
+} else {
+    $c = "$cVal";
+}
+
+$xVal = Real($x);
+
+###################################
+# Display the Problem
+###################################
+TEXT(beginproblem);
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Solve the equation \($b^x = $c\) to find \(x\).
+$BR $BR
+\(  x = \) \{ ans_rule(10) \}
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Check the Answers
+###################################
+$showPartialCorrectAnswers = 1;
+
+ANS( $xVal->cmp );
+
+###################################
+# Solution
+###################################
+@powList = map($b**$_, 0..3);
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+To solve this equation, we need to express \($c\) as a power of $b.
+The first few non-negative powers are 
+\($b^0=$powList[0]\), \($b^1=$powList[1]\), \($b^2=$powList[2]\), 
+and \($b^3=$powList[3]\).
+\{ $x < 0 
+   ? "Since \($c\) is a reciprocal of $cVal, "
+   : "So " \}
+the desired power is \(x=$x\).
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('The base is 2..5, and the value of x is -4..4.  Solution provided.  Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

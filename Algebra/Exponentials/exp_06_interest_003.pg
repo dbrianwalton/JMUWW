@@ -1,0 +1,95 @@
+## DESCRIPTION
+## Compound interest models
+## ENDDESCRIPTION
+
+## KEYWORDS('exponential', 'interest', 'present value')
+## Tagged by dbw 7/25/11
+
+## DBsubject('Algebra')
+## DBchapter('Exponential and Logarithmic Functions')
+## DBsection('Applications of Exponential and Logarithmic Functions')
+## Date('8/06/12')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('Introductory Calculus')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl",
+);
+
+###################################
+# Setup
+###################################
+Context("Numeric");
+Context()->variables->are(t=>'Real', 'P'=>'Real');
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$intRate = random(0.5, 3, 0.25);
+$decRate = 0.01*$intRate;
+$lambda = 1+$decRate;
+
+$endBalance = (1, 2, 4, 5, 8, 10, 15, 20, 25, 40, 50)[random(0,10)] * 1000;
+
+$year = random(5,20,5);
+
+$value = Formula("P*(1+$decRate)^(t)");
+$present = Real(sprintf("%.2f", $endBalance/(1+$decRate)**$year));
+
+###################################
+# Display the Problem
+###################################
+TEXT(beginproblem);
+Context()->texStrings;
+BEGIN_TEXT
+$PAR A city is selling a municipal bond that pays annual interest at a rate of $intRate%, compounded annually.  The bond will have a final value of ${DOLLAR}$endBalance after $year years.  What is the present value of the bond (i.e., the initial bond value)?
+
+$PAR If \(P\) is the present value of the bond (initial bond value), the equation for the future bond value \(B(t)\) (in dollars) in terms of \(t\) (years) and \(P\) (present value) is given by $BR $BR
+\(B(t)\) = \{ ans_rule(25) \}
+$BR $BR
+Since \(B($year) = $endBalance\), we can solve for \(P\) to find $BR $BR
+\(P\) = \{ ans_rule(15) \} (dollars)
+
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Check the Answers
+###################################
+$showPartialCorrectAnswers = 1;
+
+ANS( $value->cmp );
+ANS( $present->cmp );
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+After one year's interest is paid, the new balance is the old balance times
+\((1+$decRate)=$lambda\).
+So with a present value of \(P\), after \(t\) years of interest payments
+the new balance will be
+\[ B(t) = P \cdot $lambda^t. \]
+To find the present value knowing that \(B($year)=$endBalance\),
+we solve the equation
+\[ $endBalance = P \cdot $lambda^{$year} \]
+to get \(P=$present\).
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Solution provided. Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

@@ -1,0 +1,71 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"1. Numbers of door dents for a sample of 20 cars.",
+"Discrete."
+);
+$mc1->extra(
+"Continuous.",
+);
+$mc1->makeLast("Insufficient information to determine.");
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"2. Hourly wages (in dollars) for 15 part-time jobs.",
+"Discrete."
+);
+$mc2->extra(
+"Continuous.",
+);
+$mc2->makeLast("Insufficient information to determine.");
+
+$mc3=new_multiple_choice();
+$mc3->qa(
+"3. Lengths (in centimeters) of five lizards.",
+"Continuous."
+);
+$mc3->extra(
+"Discrete.",
+);
+$mc3->makeLast("Insufficient information to determine.");
+
+$mc4=new_multiple_choice();
+$mc4->qa(
+"4. Precipitations (in millimeters) for 30 cities.",
+"Continuous."
+);
+$mc4->extra(
+"Discrete.",
+);
+$mc4->makeLast("Insufficient information to determine.");
+
+BEGIN_TEXT
+
+For each of the following, determine whether the data are discrete type or continuous.
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+\{ $mc2->print_q() \} $BR
+\{ $mc2->print_a() \} $BR
+
+\{ $mc3->print_q() \} $BR
+\{ $mc3->print_a() \} $BR
+
+\{ $mc4->print_q() \} $BR
+\{ $mc4->print_a() \}
+
+END_TEXT
+
+$showPartialCorrectAnswers = 0;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( radio_cmp( $mc2->correct_ans() ) );
+ANS( radio_cmp( $mc3->correct_ans() ) );
+ANS( radio_cmp( $mc4->correct_ans() ) );
+
+ENDDOCUMENT();

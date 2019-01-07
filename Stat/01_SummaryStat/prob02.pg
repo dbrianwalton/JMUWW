@@ -1,0 +1,48 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+Context()->flags->set(tolerance=>0.01, tolType=>"absolute");
+
+$median = Compute("1.000")->with(tolType=>'absolute', tolerance=>'0.005' );
+$mean   = Compute("1.571")->with(tolType=>'absolute', tolerance=>'0.005' );
+$var    = Compute("2.286")->with(tolType=>'absolute', tolerance=>'0.005' );
+$stdev  = Compute("1.512")->with(tolType=>'absolute', tolerance=>'0.005' );
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+Featured below are numbers of tooth fillings for a sample of seven children.
+$BR$BR
+
+\( X\!: \langle 1, 0, 3, 2, 0, 1, 4 \rangle \)
+$BR$BR
+
+Note that \( \sum x = 11 \) and \( \sum x^2 = 31 \). Compute the following summary statistics. (Carry 3 decimal digits.)
+$BR$BR
+
+(a) Sample median: \( \displaystyle m = \) \{ ans_rule(8) \}
+$BR$BR
+
+(b) Sample mean: \( \displaystyle \bar{x} = \frac{\sum x}{n} = \) \{ ans_rule(8) \}
+$BR$BR
+
+(c) Sample variance: \( \displaystyle s^2 = \frac{\sum(x - \bar{x})^2}{n - 1} = \frac{\sum x^2 - (\sum x)^2/n}{n - 1} = \) \{ ans_rule(8) \}
+$BR$BR
+
+(d)Sample standard deviation: \( \displaystyle s = +\sqrt{s^2} = \) \{ ans_rule(8) \}
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $median->cmp() );
+ANS( $mean->cmp() );
+ANS( $var->cmp() );
+ANS( $stdev->cmp() );
+
+ENDDOCUMENT();

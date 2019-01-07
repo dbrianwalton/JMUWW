@@ -1,0 +1,48 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$prob   = Compute("0.0436")->with(tolType=>'absolute', tolerance=>'0.0001');
+$octane = Compute("89.12" )->with(tolType=>'absolute', tolerance=>'0.001' );
+
+TEXT(beginproblem());
+Context()->texStrings;
+
+BEGIN_TEXT
+
+The octane level of a mid-grade gasoline has a normal distribution with a mean of 89.21 and a standard deviation of 0.17. Suppose that many samples of this gasoline will be taken and their octane levels measured.
+$BR$BR$BR
+
+Question #1: What proportion of the the samples will have octane levels higher than 89.50?
+$BR$BR
+
+Solution: Let \(X\) denote the octane level, which is normal with \(\mu = 89.21\) and \(\sigma = 0.17\). We need to find the probability that \(X\) is greater than 89.50.
+$BR$BR
+
+\( \displaystyle P(X > 89.50) = P\Big( \frac{X - \mu}{\sigma} > \frac{89.50 - 89.21}{0.17} \Big) \)
+$BR$BR
+
+\( \approx P(Z > 1.71) = 1 - P(Z \leq 1.71) = 1 - 0.9564 = \) \{ans_rule(8)\} (Carry 4 decimal digits.)
+$BR$BR$BR
+
+Question #2: Above what value of octane level will you find 69.5% of the samples?
+$BR$BR
+
+Solution: First, we need to find a \(z\)-score such that 30.5% of the area under the normal curve is found below that value. In other words, we are looking at a \(z\)-score that gives cumulative probability 0.3050. This number is \(z = -0.51\).
+$BR$BR
+
+Next, we need to convert this \(z\)-score into \(x\). Recall \( \displaystyle z = \frac{x - \mu}{\sigma} \). Solving this for \(x\) gives \( x = \mu + z \sigma \).
+$BR$BR
+
+Therefore, the final answer is \( x = 89.21 + (-0.51)(0.17) = \) \{ans_rule(8)\} (Carry 2 decimal digits.)
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $prob->cmp() );
+ANS( $octane->cmp() );
+
+ENDDOCUMENT();

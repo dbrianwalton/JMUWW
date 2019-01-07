@@ -1,0 +1,127 @@
+## DESCRIPTION
+##  Calculus
+## ENDDESCRIPTION
+
+## KEYWORDS('Calculus','Limit', "Definition")
+## Tagged by dbw
+
+## DBsubject('Calculus')
+## DBchapter('Limits and Derivatives')
+## DBsection('Definition of Limit')
+## Date('')
+## Author('')
+## Institution('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PG.pl",
+  "PGstandard.pl",
+  "PGinfo.pl",
+  "MathObjects.pl",
+  "contextString.pl",
+  "parserMultiAnswer.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+Context()->strings->add(INDET=>{});
+
+$cVal = random(-5, 5, 0.1);
+
+$fgBase = non_zero_random(-5,5,0.2);
+$fMult = non_zero_random(-4,4);
+$gMult = non_zero_random(-4,4);
+$fLim = $fgBase * $fMult;
+$gLim = $fgBase * $gMult;
+
+$isZeroDenom = random(0,1);
+$isZeroNumer = random(0,1);
+
+if ($isZeroDenom == 1) {
+    $hLim = 0;
+} else {
+    $hLim = non_zero_random(-4, 4);
+}
+
+#####
+## Now find the coefficients involved in the formulas.
+#####
+$k1 = non_zero_random(-5,5);
+$k1abs = abs($k1);
+$k1op = ("-", "+")[$k1 == $k1abs];
+
+if ($isZeroNumer == 1) {
+    $k2 = -$fMult;
+} else {
+    do {
+    $k2 = non_zero_random(-6,6);
+    } while ($k2 == -$fMult);
+}
+$k2abs = abs($k2);
+$k2op = ("-", "+")[$k2 == $k2abs];
+
+do {
+    $m = non_zero_random(-4,4);
+    $mabs = abs($m);
+} while ($mabs == 1);
+$mop = ("-", "+")[$m == $mabs];
+
+$b = non_zero_random(-10,10);
+$babs = abs($b);
+$bop = ("-", "+")[$b == $babs];
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Given the following limits,
+\[ \lim_{x \to $cVal} f(x) = $fLim, \qquad \lim_{x \to $cVal} g(x) = $gLim, \qquad \lim_{x \to $cVal} h(x) = $hLim, \]
+compute the following limits, if possible.
+
+$PAR
+\(\displaystyle \lim_{x \to $cVal} $k1 f(x) $mop $mabs x $bop $babs = \) \{ ans_rule(10) \} 
+$BR
+$BR
+\(\displaystyle \lim_{x \to $cVal} f(x) $k1op $k1abs g(x) = \) \{ ans_rule(10) \} 
+$BR
+$BR
+\(\displaystyle \lim_{x \to $cVal} \frac{$gMult f(x) $k2op $k2abs g(x)}{h(x)} = \) \{ ans_rule(10) \} 
+$BR
+$BR
+$BBOLD Note: $EBOLD Type $BBOLD DNE $EBOLD for a limit that definitely does not exist (including infinite limits) and 
+$BBOLD INDET $EBOLD for a limit that is indeterminate (based on the given information, it is unclear if it exists).
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+$lim1 = Compute("$k1*$fLim+$m*$cVal + $b");
+$lim2 = Compute("$fLim + $k1*$gLim");
+if ($isZeroDenom) {
+    if ($isZeroNumer) {
+        $lim3 = Compute("INDET");
+    } else {
+        $lim3 = Compute("DNE");
+    }
+} else {
+    $lim3 = Compute("($gMult*$fLim + $k2*$gLim)/$hLim");
+}
+
+ANS( $lim1->cmp );
+ANS( $lim2->cmp );
+ANS( $lim3->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

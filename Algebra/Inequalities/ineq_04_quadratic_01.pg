@@ -1,0 +1,130 @@
+## DESCRIPTION
+## Solving an inequality that involves a quadratic polynomial with integer roots.
+## ENDDESCRIPTION
+
+## KEYWORDS('algebra','inequality','quadratic')
+## Tagged by dbw 9/1/09
+
+## DBsubject('Algebra')
+## DBchapter('Equations and Inequalities')
+## DBsection('Nonlinear Inequalities')
+## Date('9/1/09')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+###################################
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Choose the random roots for the quadratic.
+# Do not allow repeats.
+@p = map( $_-9, NchooseK(19,2));
+
+# Put them in order.
+$a = min(@p);
+$b = max(@p);
+
+# Decide if the quadratic is positive or negative.
+$leadCoef = non_zero_random(-1,1);
+
+$ineqType = random(0,3,1);
+$isClosed = $ineqType % 2;
+$wantSign = ($ineqType - $isClosed)-1;
+
+@leftCap = ("(","[");
+@rightCap = (")", "]");
+@ineq = ("<", "\le", ">", "\ge");
+$ltgt = $ineq[$ineqType];
+
+$c0 = $a*$b*$leadCoef;
+$c1 = $leadCoef*($a+$b);
+$c2 = $leadCoef;
+$fcn = Compute("$c2*x^2-$c1*x+$c0")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+$factorFcn = Compute("$leadCoef*(x-$a)*(x-$b)")->reduce();
+
+Context("Interval");
+
+@testIntervals = (
+    Interval("(-INF,$a)"),
+    Interval("($a,$b)"),
+    Interval("($b,INF)")
+);
+@ineqWord = (
+    "less than", 
+    "less than or equal to", 
+    "greater than", 
+    "greater than or equal to"
+);
+
+$outerInt = Compute("(-inf,$a $rightCap[$isClosed] U $leftCap[$isClosed] $b,inf)");
+$innerInt = Compute("$leftCap[$isClosed] $a,$b $rightCap[$isClosed]");
+
+
+if ($leadCoef*$wantSign > 0) {
+    $solnInterval = $outerInt;
+} else {
+    $solnInterval = $innerInt;
+}
+
+###################################
+# Display the Problem
+###################################
+Context()->texStrings;
+BEGIN_TEXT
+Solve the inequality \($fcn $ltgt 0\).
+Express your answer in interval notation.
+$PAR
+Solution Set: \{ ans_rule(20) \}
+END_TEXT
+Context()->normalStrings;
+
+
+###################################
+# Answer checking
+###################################
+
+ANS( $solnInterval->cmp );
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+Because the inequality is ultimately just about whether the function \(f(x)=$fcn\) is positive or negative, we need to factor \(f(x)\) to determine points where the sign changes and find \($fcn=$factorFcn\).
+The roots are at \(x=$a\) and \(x=$b\).
+The sign of \(f(x)\) on each of the intervals \($testIntervals[0]\), \($testIntervals[1]\), and \($testIntervals[2]\) can be found by testing single points in each interval.
+We find that 
+\(f(x) $ineq[1+$leadCoef] 0\) on \($testIntervals[0]\),
+\(f(x) $ineq[1-$leadCoef] 0\) on \($testIntervals[1]\), and
+\(f(x) $ineq[1+$leadCoef] 0\) on \($testIntervals[2]\).
+The inequality is looking for where \(f(x) $ltgt 0\), so the solution set is the union of all intervals where \(f(x)\) is $ineqWord[$ineqType] zero.  
+So the solution set is \($solnInterval\).
+
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Quadratic always factors. Random inequality. Solution provided. Rerandomized.');
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

@@ -1,0 +1,100 @@
+# DESCRIPTION
+#   Apply the rules of differentiation to functions without formulas.a
+#    h(x) = b f(x) + c g(x) (linear combination of f and g)
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('derivative','differentiation')
+## Date('6/1/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+Context()->variables->are(x=>'Real');
+
+$a = random(-10,10,1);
+$fa = non_zero_random(-10,10,1);
+$fpa = non_zero_random(-5,5,1);
+$ga = non_zero_random(-10,10,1);
+$gpa = non_zero_random(-5,5,1);
+
+$b = non_zero_random(-5,5,1);
+$bm = abs($b);
+$c = non_zero_random(-5,5,1);
+$cm = abs($c);
+
+if ($b<0) {
+    $sgnB = "-";
+} else {
+    $sgnB = "";
+}
+if ($bm == 1) {
+    $coefB = "";
+} else {
+    $coefB = "$bm";
+} 
+
+if ($c < 0) {
+    $sgnC = "-";
+} else {
+    $sgnC = "+";
+}
+if ($cm == 1) {
+    $coefC = "";
+} else {
+    $coefC = "$cm";
+}
+
+$expr = $sgnB . $coefB . "f(x)" . $sgnC . $coefC . "g(x)"; 
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Suppose that \(f($a) = $fa\) and \(f'($a) = $fpa\), and also that \(g($a)=$ga\) and \(g'($a)=$gpa\).
+$BR (Repeat this problem for additional practice.)
+
+$PAR
+If \(h(x) =  $expr\), then 
+$BR
+\(h($a) = \) \{ ans_rule(15) \}.
+$BR
+\(h'($a) = \) \{ ans_rule(15) \}.
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+$ansA = Real("$b*$fa+$c*$ga");
+ANS( $ansA->cmp );
+
+$ansB = Real("$b*$fpa+$c*$gpa");
+ANS($ansB->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

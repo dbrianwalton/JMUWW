@@ -1,0 +1,81 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'exponential')
+## Tagged by dbw 7/25/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('7/25/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$f = ('f', 'g', 'h')[random(0,2)];
+$x = ('x', 't', 'u')[random(0,2)];
+Context()->variables->are($x=>'Real');
+
+@coef = (1,1);
+$coef[random(0,1)] = random(1,10);
+
+$order = random(0,1);
+$A = random(1,10,1);
+$k = random(1,10);
+$n = random(1,4);
+
+if ($order == 0) {
+   $func = Compute("($coef[0]*$x^$n)/($coef[1]*e^($k*$x))")->reduce();
+   $dstr = GenMonString([$coef[0]*$n, $coef[1]], $n-1, 'x'=>$x) . 
+        "* e^(-$k*$x)" .
+        GenMonString([-$k*$coef[0], $coef[1]], $n, 'x'=>$x, 'leadFlag'=>1) 
+        . "* e^(-$k*$x)";
+   $deriv = Compute($dstr);
+} else {
+   $func = Compute("($coef[0]*e^($k*$x))/($coef[1]*$x^$n)")->reduce();
+   $dstr = GenMonString([$k*$coef[0], $coef[1]], -$n, 'x'=>$x) . 
+        "* e^($k*$x)" .
+        GenMonString([-$n*$coef[0], $coef[1]], -$n-1, 'x'=>$x, 'leadFlag'=>1) 
+        . "* e^($k*$x)";
+   $deriv = Compute($dstr);
+}
+#$deriv = $func->D();
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Find the derivative of \(\displaystyle $f($x) = $func\).
+$BR $BR
+\($f'($x) = \) \{ ans_rule(30) \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $deriv->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

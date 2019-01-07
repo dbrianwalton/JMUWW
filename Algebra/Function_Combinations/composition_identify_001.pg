@@ -1,0 +1,99 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('algebra','composition')
+## Tagged by dbw 7/10/10
+
+## DBsubject('Algebra')
+## DBchapter('Functions')
+## DBsection('Composition')
+## Date('9/1/09')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserMultiAnswer.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# This is a composition of an integer power function with a linear function
+$k = non_zero_random(-1,1,1) * random(2,5,1);
+
+$m = random(1,9,1);
+$b = random(-9,9,1);
+
+$inF = Compute("$m*x+$b")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+$outF = Compute("x^($k)")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+$expr = $outF->substitute(x => $inF);
+
+$multipart = MultiAnswer($outF, $inF)->with(
+    singleResult => 1,
+    checker => sub {
+        my ( $correct, $student, $self ) = @_;
+        my ( $f1stu, $f2stu ) = @{$student};
+        my ( $f1, $f2 ) = @{$correct};
+        
+        if (ref($f1st) == Value::Real) {
+            $self->setMessage(1, "Composition with a constant is constant.");
+            $f1stu = Formula($f1stu);
+        }
+        $fFinal = $f1->substitute(x => $f2);
+        $sFinal = $f1stu->substitute(x => $f2stu);
+        $id = Formula("x");
+        if ($id == $f1stu) {
+            $self->setMessage(1, "Do not use the identity function.");
+            return 0; 
+        } elsif ($id == $f2stu) {
+            $self->setMessage(2, "Do not use the identity function.");
+            return 0; 
+        } else {
+            if ($fFinal == $sFinal) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    }
+);
+
+BEGIN_TEXT
+Find functions \(g(x)\) and \(h(x)\) so that \(f(x) = \{$expr->TeX()\}\)
+can be written as \(f = g \circ h\).
+
+$PAR
+\(g(x) = \)\{ $multipart->ans_rule(20) \}
+$BR
+and
+$BR
+\(h(x) = \) \{ $multipart->ans_rule(20) \}.
+$BR
+Do not use \(g(x)=x\) or \(h(x)=x\).
+END_TEXT
+
+###################################
+# Answer checking
+
+$showPartialCorrectAnswers = 0;
+ANS($multipart->cmp);
+
+###################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

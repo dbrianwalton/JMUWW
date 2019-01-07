@@ -1,0 +1,103 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','antiderivative', 'indefinite integral', 'substitution')
+## Tagged by dbw 8/8/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('8/8/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "PGjmu_poly.pl",
+  "answerHints.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+Context()->variables->are(x => 'Real');
+$A = non_zero_random(-10,10);
+
+$b = random(1,10);
+
+$u = Compute("$b-x")->reduce();
+$integrandX = Compute("$A*x*sqrt($u)")->reduce();
+
+## So integrand is -A(b-u)sqrt(u)=Au^(3/2)-Abu^(1/2)
+
+($An,$Ad) = FractionReduce($A*2, 5);
+($Bn,$Bd) = FractionReduce(-$A*$b*2, 3);
+$integralX = FormulaUpToConstant("$An*($u)^(5/2)/$Ad + $Bn*($u)^(3/2)/$Bd");
+
+$du = Compute("-1");
+
+Context("Numeric");
+Context()->variables->are(x => 'Real', u => 'Real');
+
+$integrandU = Compute("$A*(u-$b)*u^(1/2)")->reduce();
+$incompleteSubst = Compute("-$A*x*sqrt(u)");
+$integralU = FormulaUpToConstant("$An*(u)^(5/2)/$Ad + $Bn*(u)^(3/2)/$Bd");
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Use the method of substitution to find \(\displaystyle \int $integrandX \, dx\).
+
+$PAR
+${BBOLD}Step 1:${EBOLD} Identify \(u\) (inner function of composition):
+$BR \(u\) = \{ ans_rule(15) \}
+
+$PAR
+${BBOLD}Step 2:${EBOLD} Find \(du = u' \, dx\) (differential):
+$BR \(du\) = \{ ans_rule(8) \} \( \cdot dx \)
+
+$PAR
+${BBOLD}Step 3:${EBOLD} Rewrite the integral in terms of \(u\):
+$BR \(\displaystyle \int $integrandX \, dx = \int\) \{ ans_rule(20) \} \( du \)
+
+$PAR
+${BBOLD}Step 4:${EBOLD} Evaluate the integral above in terms of \(u\):
+$BR \(\displaystyle \int \hbox{(above)} \, du \) = \{ ans_rule(30) \}
+
+$PAR
+${BBOLD}Step 5:${EBOLD} Replace \(u\) by the formula of the inner function:
+$BR \(\displaystyle \int $integrandX \, dx \) = \{ ans_rule(30) \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $u->cmp );
+ANS( $du->cmp );
+ANS( $integrandU->cmp()->withPostFilter(AnswerHints( 
+    $incompleteSubst => "Almost. Rewrite any remaining 'x' in terms of 'u'.",
+  ))
+);
+ANS( $integralU->cmp );
+ANS( $integralX->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

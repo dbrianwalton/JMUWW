@@ -1,0 +1,71 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+
+#Context("Numeric");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"(a) The correlation coefficient between smoking status and number of caffeinated drinks consumed was \(r = 0.626\). Which of the following is an incorrect interpretation of the this value?",
+"Smoking appears to encourage people to consume caffeinatetd drinks."
+);
+$mc1->extra(
+"The relationship between smoking status and number of caffeinated drinks consumed is positive.",
+"There is a suggestion that the more caffeinated drinks a person consumes, the more likely that s/he is a regular smoker.",
+);
+$mc1->makeLast("None of the above.");
+
+$yint    = Compute("2.999" )->with(tolType=>'absolute', tolerance=>'0.002');
+$slope   = Compute("2.999" )->with(tolType=>'absolute', tolerance=>'0.002');
+$coefdet = Compute("0.3915")->with(tolType=>'absolute', tolerance=>'0.0006');
+
+#TEXT(beginproblem());
+#Context()->texStrings;
+
+BEGIN_TEXT
+
+A sample of seven students were interviewed. The questions included (i) whether or not they regularly smoke and (ii) how many caffeinated drinks they would consume in typical week. The smoking-status variable was coded so that 0 = nonsmoker and 1 = regular smoker.
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+(b) The table below shows the summary statistics for the data.
+$BR$BR
+
+\( \displaystyle
+\begin{tabular}{lcc}
+\hline
+        & Mean & St dev \\
+\hline
+Smoking & 0.429 & 0.535 \\
+\hline
+Drinks  & 4.286 & 2.563 \\
+\hline
+\hspace*{0.70in}&\hspace*{0.60in}&\hspace*{0.60in}
+\end{tabular}
+\)
+$BR$BR
+
+Compute the least-squares regression equation for predicting the number of caffeinated drinks consumed from smoking status.
+$BR$BR
+
+Answer: \( \hat{y} = \) \{ans_rule(8)\} \( + \) \{ans_rule(8)\} \( x \) (Carry 3 decimal digits.)
+$BR$BR
+
+(c) What proportion of the variability in the response variable (number of caffeinated drinks consumed) is accounted for the regression model in (b)?
+$BR$BR
+
+Answer: \( r^2 = \) \{ans_rule(8)\} (Carry 3 decimal digits.)
+
+END_TEXT
+
+#Context()->normalStrings;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+
+ANS( $yint->cmp() );
+ANS( $slope->cmp() );
+ANS( $coefdet->cmp() );
+
+ENDDOCUMENT();

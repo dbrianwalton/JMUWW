@@ -1,0 +1,90 @@
+## DESCRIPTION
+##   Given two functions, the student writes down the composition.
+## ENDDESCRIPTION
+
+## KEYWORDS('algebra','composition')
+## Tagged by dbw 7/10/10
+
+## DBsubject('Algebra')
+## DBchapter('Functions')
+## DBsection('Composition')
+## Date('9/1/09')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "PGpolynomialmacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# ####
+#  We will define two functions f : D -> D and g : D -> D
+#  using a table so that we can compute composition.
+# ####
+
+# Domain.
+@domain = -3..3;
+$nPts = @domain;
+
+# Find the point in the domain that will be used.
+$k1 = random(0,$nPts-1);
+$k2 = random(0,$nPts-1);
+
+@xvals = map("$SPACE $_ $SPACE", @domain);
+@fvals = NchooseK($nPts, $nPts);
+@gvals = NchooseK($nPts, $nPts);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+The table below gives the values of \(f(x)\) and \(g(x)\)
+for specific values of \(x\).
+$BCENTER
+\{ begintable($nPts+1) \}
+\{ row( "$SPACE \(x\) $SPACE", @xvals) \}
+\{ row( "$SPACE \(f(x)\) $SPACE", @xvals[@fvals]) \}
+\{ row( "$SPACE \(g(x)\) $SPACE", @xvals[@gvals]) \}
+\{ endtable() \}
+$ECENTER
+Use this table to answer the following questions.
+
+
+$PAR
+What value of \(x\) makes the statement \(f \circ g(x) = $domain[$fvals[$gvals[$k1]]]\) true?
+\(x =\) \{ ans_rule(5) \}
+$BR
+$BR
+What value of \(x\) makes the statement \(g \circ f(x) = $domain[$gvals[$fvals[$k2]]]\) true?
+\(x =\) \{ ans_rule(5) \}
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answer checking
+
+$showPartialCorrectAnswers = 0;
+ANS(Real($domain[$k1])->cmp);
+ANS(Real($domain[$k2])->cmp);
+
+###################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

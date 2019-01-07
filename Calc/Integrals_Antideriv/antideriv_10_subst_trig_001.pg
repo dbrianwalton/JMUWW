@@ -1,0 +1,71 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','antiderivative', 'indefinite integral')
+## Tagged by dbw 9/1/09
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('1/13/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$k = random(1,6,1);
+
+@fcn = ("sin($k*x)", "cos($k*x)", "tan($k*x)");
+@fpr = ("cos($k*x)", "-sin($k*x)", "sec($k*x)**2");
+
+$i = random(0,2,1);
+
+$u = Formula("$fcn[$i]($k*x)")->reduce();
+
+$n = random(3, 9, 1);
+$A = non_zero_random(-10,10,1);
+
+$fprime = Formula("$A*($fcn[$i])^$n*$fpr[$i]")->reduce();
+$f = FormulaUpToConstant("($A/($k*($n+1))) * ($fcn[$i])^($n+1)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute the following indefinite integral.
+
+$PAR
+\(\displaystyle \int $fprime \, dx = \) \{ ans_rule(40) \}
+$BR
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $f->cmp(limits=>[0,pi/(4*$k)]) );
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

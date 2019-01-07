@@ -1,0 +1,116 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','exponential', 'logistic model')
+## Tagged by dbw 8/2/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('8/2/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "weightedGrader.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+##############################################
+
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+Context()->variables->are(t=>'Real', B=>'Real', k=>'Real');
+
+########################
+# Create the random nature of the problem
+########################
+
+@factorList = (2, 2, 2, 3, 3, 3, 5, 5);
+$numFactors = random(2,3);
+
+@factors = @factorList[NchooseK(8,$numFactors)];
+
+$maxNumber = 500;
+for ($i=0; $i<$numFactors; $i++) {
+    $maxNumber *= $factors[$i];
+}
+
+@workFactors = @factors[NchooseK($numFactors,2)];
+
+# Number who first learn the news -- want to be exact factor of total.
+$initNumber = 100*$workFactors[0];
+$B = $maxNumber/$initNumber - 1;
+
+# After some time, we want to achieve a larger, but still exact factor of total.
+$nextTime = random(2,4);
+$nextNumber = $initNumber * $workFactors[1];
+$nextB = $maxNumber/$nextNumber - 1;
+
+# This helps us find k.
+$k = -ln($nextB/$B)/$nextTime;
+
+$rawModel = Compute("$maxNumber/(1+B*e^(-k*t))");
+
+Context("Numeric");
+Context()->variables->are(t=>'Real');
+Context()->flags->set(
+  tolerance=>0.0025,
+  tolType=>"relative"
+);
+
+$trueModel = Compute("$maxNumber/(1+$B*e^(-$k*t))");
+
+# Now choose a third time when we wish to predict number.
+$elapsed = $nextTime + random(4,8);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR The spread of exciting news on a college campus is modeled by
+\[f(t) = $rawModel\]
+where \(f(t)\) gives the number of college students who have heard the
+news within \(t\) hours of when the news initially breaks.
+
+$PAR Suppose that $initNumber students learned the news immediately as it broke.  
+Within $nextTime hours, there were $nextNumber students who had learned the news.
+
+$PAR Determine each of the following:  
+$BR - What equation involving the unknowns \(B\) and \(k\) is determined by \(f(0)=$initNumber\) ?
+$BR $SPACE $SPACE \{ ans_rule(25) \} = $initNumber
+$BR - What equation involving the unknowns \(B\) and \(k\) is determined by \(f($nextTime)=$nextNumber\) ?
+$BR $SPACE $SPACE \{ ans_rule(25) \} = $nextNumber
+$BR - Solving these equations, what are the parameters \(B\) and \(k\) ?
+$BR $SPACE $SPACE \(B=\) \{ ans_rule(10) \} and \(k=\) \{ ans_rule(10) \}
+
+$BR $BR
+How many students have learned the news within $elapsed hours? \{ ans_rule(10) \}
+END_TEXT
+
+Context()->normalStrings;
+
+WEIGHTED_ANS( $rawModel->substitute(t=>0)->cmp, 0.5 );
+WEIGHTED_ANS( $rawModel->substitute(t=>$nextTime)->cmp, 0.5 );
+
+WEIGHTED_ANS( Real($B)->cmp, 0.5 );
+WEIGHTED_ANS( Real($k)->cmp, 0.5 );
+
+WEIGHTED_ANS( $trueModel->eval(t=>$elapsed)->cmp, 2 );
+
+COMMENT("The final answer is worth half of the problem.");
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

@@ -1,0 +1,65 @@
+# DESCRIPTION
+#   Evaluate a limit of a continuous function.
+#   f(x) = sqrt[x+(L-a)] where L>0
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('limit','indeterminate')
+## Date('5/19/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGpolynomialmacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+$a = random(-9,9,1);
+$L = random(1,9,1);
+
+@poly = (1, $L-$a);
+$pstr = PolyString(~~@poly);
+
+$expr = Compute("sqrt($pstr)")->reduce('(-x)+y'=>0, '(-x)-y'=>0);
+$limit = $expr->eval(x=>$a);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute the limit
+$BR
+\(\displaystyle \lim_{x \to $a} $expr \) = \{ ans_rule(10) \}
+
+$PAR
+Type $BBOLD DNE $EBOLD if the limit does not exist and $BBOLD INF $EBOLD for \(\infty\).
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $limit->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

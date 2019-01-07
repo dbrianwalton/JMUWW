@@ -1,0 +1,100 @@
+## DESCRIPTION
+##   Given a point on graph y=f(x), find the point on graph y=f(x+c)
+## ENDDESCRIPTION
+
+## KEYWORDS('translation','shift', 'graph')
+## Tagged by dbw 10/18/10
+
+## DBsubject('Algebra')
+## DBchapter('Functions')
+## DBsection('Transformations')
+## Date('10/18/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserFunction.pl",
+  "PGgraphmacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+$refreshCachedImages=1;
+
+# Choose a translation
+do {
+    $h = random(-4,4);
+    $k = random(-4,4);
+} while ($h==0 && $k==0);
+
+parserFunction("f(x)" => "abs(x**2-2*x)");
+$base = Formula("f(x)");
+$transform = Compute("f(x-$h)+$k")->reduce('(-x)+y'=>0);
+
+$graphOrig = init_graph(-5, -5, 5, 5,
+             'axes'=>[0,0], 
+             'grid'=>[10, 10],
+             'size'=>[300,300]
+         );
+add_functions($graphOrig, "$base for x in <-2,4>" .
+    " using color:blue and weight:2");
+$graphOrig->stamps( closed_circle(0, 0, 'red') );
+$graphOrig->stamps( closed_circle(1, 1, 'green') );
+$graphOrig->stamps( closed_circle(2, 0, 'blue') );
+
+$xMin = -2+$h;
+$xMax = 4+$h;
+$graphTransf = init_graph(-5+$h, -5+$k, 5+$h, 5+$k,
+             'axes'=>[0,0], 
+             'grid'=>[10, 10],
+             'size'=>[300,300]
+         );
+add_functions($graphTransf, "$transform for x in <$xMin,$xMax>" .
+    " using color:blue and weight:2");
+$graphTransf->stamps( closed_circle($h, $k, 'red') );
+$graphTransf->stamps( closed_circle(1+$h, 1+$k, 'green') );
+$graphTransf->stamps( closed_circle(2+$h, $k, 'blue') );
+
+Context()->texStrings;
+BEGIN_TEXT
+The graph of \(y=f(x)\) is given in the figure on the left.
+The graph of a translation is given in the figure on the right.
+(The points are colored to indicate how specific points are transformed.)
+$BR
+$BCENTER
+\{ image(insertGraph($graphOrig), width=>250, height=>250) \}
+\{ image(insertGraph($graphTransf), width=>250, height=>250) \}
+$BR
+(Click on the graphs to enlarge them.)
+$ECENTER
+
+$PAR
+What is the equation of the transformed graph?
+$BR
+\(y = \) \{ ans_rule(20) \}
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answer checking
+
+ANS($transform->cmp);
+
+###################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

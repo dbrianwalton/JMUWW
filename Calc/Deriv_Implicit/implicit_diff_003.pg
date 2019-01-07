@@ -1,0 +1,139 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'implicit differentiation')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('6/15/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "answerHints.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# List of valid variables.
+@varList = ("s", "t", "x", "y", "z", "u", "v", "w");
+$numVars = @varList;
+
+@vars = NchooseK($numVars,2);
+$xvar = $varList[min(@vars)];
+$yvar = $varList[max(@vars)];
+$yprime = "D$yvar";
+
+# Modify what it means to be a name to include primes.
+Context()->variables->{namePattern} = qr/[a-z][a-z0-9_]*'*/i;
+
+Context()->variables->are("$xvar"=>'Real', "$yvar"=>'Real', "$yprime"=>'Real');
+
+# Need sum of two monomials
+$d1 = random(1,2);
+$xd1 = random(0,$d1);
+$yd1 = $d1 - $xd1;
+$c1 = non_zero_random(-8,8);
+
+$d2 = $d1 + random(0,2);
+do {
+    $xd2 = random(0,$d2);
+    $yd2 = $d2 - $xd2;
+} while ($xd1==$xd2 && $yd1==$yd2);
+$c2 = non_zero_random(-8,8);
+
+$func = Compute("$c1*$xvar^$xd1*$yvar^$yd1 + $c2*$xvar^$xd2*$yvar^$yd2")->reduce('(-x)-y'=>0);
+
+$fp1 = "$c1*$xvar^($xd1-1)*$yvar^($yd1-1)*($xd1*$yvar + $yd1*$xvar*$yprime)";
+$fp2 = "$c2*$xvar^($xd2-1)*$yvar^($yd2-1)*($xd2*$yvar + $yd2*$xvar*$yprime)";
+$fprime = Compute("$fp1 + $fp2")->reduce();
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Assuming that \($yvar\) is a function of \($xvar\), compute
+$BR $BR
+\(\frac{d}{d$xvar}[$func] = \) \{ ans_rule(50) \}
+
+$PAR Type $BBOLD D$yvar $EBOLD to represent \(\displaystyle \frac{d$yvar}{d$xvar}\).
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $fprime->cmp()->withPostFilter( AnswerHints(
+        sub {
+            my ($correct, $student, $ans) = @_;
+            my @fpw1, @fpw2, $wrong;
+            my $productIssue = 0;
+
+
+            if ($xd1 > 0 && $yd1 > 0) {
+                $fpw1[0]= "$xd1*$yd1*$c1*$xvar^($xd1-1)*$yvar^($yd1-1)";
+                $fpw1[1] = "$xd1*$yd1*$c1*$xvar^($xd1-1)*$yvar^($yd1-1)*$yprime";
+            } else {
+                $fpw1[0] = "$c1*$xvar^($xd1-1)*$yvar^($yd1-1)*($xd1*$yvar + $yd1*$xvar)";
+                $fpw1[1] = "$c1*$xvar^($xd1-1)*$yvar^($yd1-1)*($xd1*$yvar + $yd1*$xvar*$yprime)";
+            }
+            if ($xd2 > 0 && $yd2 > 0) {
+                $fpw2[0] = "$xd2*$yd2*$c2*$xvar^($xd2-1)*$yvar^($yd2-1)";
+                $fpw2[1] = "$xd2*$yd2*$c2*$xvar^($xd2-1)*$yvar^($yd2-1)*$yprime";
+            } else {
+                $fpw2[0] = "$c2*$xvar^($xd2-1)*$yvar^($yd2-1)*($xd2*$yvar + $yd2*$xvar)";
+                $fpw2[1] = "$c2*$xvar^($xd2-1)*$yvar^($yd2-1)*($xd2*$yvar + $yd2*$xvar*$yprime)";
+            }
+
+            if ($xd1*$yd1 + $xd2*$yd2 > 0) {
+                my $i, $j;
+                for ($i=0; $i<=1; $i++) {
+                    for ($j=0; $j<=1; $j++) {
+                        $wrong = Compute("$fpw1[$i] + $fpw2[$j]");
+                        if ($student == $wrong) {
+                            $productIssue = 1;
+                        }
+                    }
+                }
+            }
+            return $productIssue;
+        } => "Watch out for products.",
+        sub {
+            my ($correct, $student, $ans) = @_;
+            my $fpw1 = "$c1*$xvar^($xd1-1)*$yvar^($yd1-1)*($xd1*$yvar + $yd1*$xvar)";
+            my $fpw2 = "$c2*$xvar^($xd2-1)*$yvar^($yd2-1)*($xd2*$yvar + $yd2*$xvar)";
+            my $wrong = Compute("$fpw1 + $fpw2");
+            return ($student == $wrong);
+        } => "$yvar is a function of $xvar.  You might need the chain rule.",
+        sub {
+            my ($correct, $student, $ans) = @_;
+            my $fpw1 = "$c1*$xvar^($xd1-1)*$yvar^($yd1-1)*($xd1*$yvar + $yd1*$xvar)";
+            my $fpc1 = "$c1*$xvar^($xd1-1)*$yvar^($yd1-1)*($xd1*$yvar + $yd1*$xvar*$yprime)";
+            my $fpw2 = "$c2*$xvar^($xd2-1)*$yvar^($yd2-1)*($xd2*$yvar + $yd2*$xvar)";
+            my $fpc2 = "$c2*$xvar^($xd2-1)*$yvar^($yd2-1)*($xd2*$yvar + $yd2*$xvar*$yprime)";
+            my $w1 = Compute("$fpc1 + $fpw2");
+            my $w2 = Compute("$fpw1 + $fpc2");
+            return ($student != $correct) && ($student == $w1 || $student == $w2);
+        } => "The chain rule is needed more than once.",
+    )) );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

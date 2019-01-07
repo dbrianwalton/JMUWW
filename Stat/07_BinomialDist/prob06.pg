@@ -1,0 +1,37 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$a = Compute("8.930")->with(tolType=>'absolute', tolerance=>'0.001');
+$b = Compute("2.685")->with(tolType=>'absolute', tolerance=>'0.006');
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+According to a survey, about 19% of all Americans are without health insurance. Assume that this estimate is reasonably accurate. Suppose that you select a random sample of 47 Americans.
+$BR$BR
+
+(a) Calculate the expected number of Americans without health insurance in the sample.
+$BR$BR
+
+Answer: \{ ans_rule(8) \} (Carry 2 decimal digits.)
+$BR$BR
+
+(b) Calculate the standard deviation of the number of Americans without health insurance in the sample.
+$BR$BR
+
+Answer: \{ ans_rule(8) \} (Carry 2 decimal digits.)
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $a->cmp() );
+ANS( $b->cmp() );
+
+ENDDOCUMENT();

@@ -1,0 +1,38 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$a = Compute( "1/52")->with(tolType=>'absolute', tolerance=>'0.0005');
+$b = Compute("16/52")->with(tolType=>'absolute', tolerance=>'0.0005');
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+Suppose that you draw one card at random from a standard deck of cards. The following events are defined.
+$BR$BR
+
+\(A\!:\) Selected card is a Spade. $BR
+\(B\!:\) Selected card is an Ace.
+$BR$BR
+
+Compute the following probabilities. Note that \(\cap\) means intersection and that \(\cup\) means union. You may enter your answers in fraction (e.g., '2/3' and '0.6667' are equivalent).
+$BR$BR
+
+(a) \( P(A \cap B) = \) \{ans_rule(8)\}
+$BR$BR
+
+(b) \( P(A \cup B) = \) \{ans_rule(8)\}
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $a->cmp() );
+ANS( $b->cmp() );
+
+ENDDOCUMENT();

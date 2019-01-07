@@ -1,0 +1,425 @@
+## DESCRIPTION
+##  Calculus
+## ENDDESCRIPTION
+
+## KEYWORDS('Calculus','Derivative', 'Rules')
+## Tagged by dbw
+
+## DBsubject('Calculus')
+## DBchapter('Limits and Derivatives')
+## DBsection('Rules of Differentiation')
+## Date('')
+## Author('')
+## Institution('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PG.pl",
+  "PGstandard.pl",
+  "PGinfo.pl",
+  "MathObjects.pl",
+  "contextString.pl",
+  "parserMultiAnswer.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+
+#####
+# Load from the last entry how many steps are required.
+#####
+if (defined $inputs_ref->{'numSteps'}) {
+    $numSteps = $inputs_ref->{'numSteps'};
+} else {
+    $numSteps = 10;
+}
+
+$INPUTSPACE = M3( qq! \\rule{${len}in}{.01in}!,
+qq!\begin{rawhtml}<INPUT TYPE = "TEXT" NAME="numSteps"
+VALUE="$numSteps">\end{rawhtml}!,
+qq!<INPUT TYPE = "TEXT" NAME="numSteps" VALUE="$numSteps">!
+);
+
+#####
+# Define the available rules
+#####
+@ruleList = (
+        "?",
+        "DEC", 
+        "DEI", 
+        "DEL", 
+        "DEP", 
+        "DCCM", 
+        "DCS", 
+        "DCD", 
+        "DCP", 
+        "DCQ"
+);
+
+Context("String");
+Context()->strings->add("?"=>{}, "DEC"=>{}, "DEI"=>{}, "DEL"=>{}, "DEP"=>{}, "DCCM"=>{}, 
+                                               "DCS"=>{}, "DCD"=>{}, "DCP"=>{}, "DCQ"=>{});
+$stringContext = Context();
+
+Context("Numeric");
+
+#####
+# Build the actual formula.  f(x) = polynomial
+#####
+$nDeg = random(3,5);
+
+$c[0] = non_zero_random(-5,5);
+$nTerms = 1;
+for ($i=1; $i<=$nDeg; $i++) {
+    $c[$i] = random(-8,8);
+    if ($nDeg - $i > 1 && $c[$i] != 0) {
+        $nTerms++;
+    }
+}
+$polyStr = GenPolyString(~~@c);
+$fFunction = Compute("$polyStr")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+$fDeriv = $fFunction->D();
+
+#####
+# Build the pseudo-answer to be used in the checker.
+#####
+@formulas = ();
+@derivs = ();
+
+$curStep = 0;
+$hasStart = 0;
+@answers = ();
+
+for ($i=0; $i<$nDeg; $i++) {
+    if ($curStep < $numSteps && $c[$i] != 0) {
+        $k= $nDeg - $i;
+        $km1 = $k-1;
+        $answers[5*$curStep+0] = Formula("x^$k");
+        $answers[5*$curStep+1] = Formula("$k*x^($km1)");
+        $answers[5*$curStep+2] = String($stringContext,"DEP");
+        $answers[5*$curStep+3] = Real($k);
+        $answers[5*$curStep+4] = Real(0);
+        $curStep++;
+        
+        $answers[5*$curStep+0] = Formula("$c[$i] * x^$k");
+        $answers[5*$curStep+1] = Formula("$c[$i] * $k*x^($km1)");
+        $answers[5*$curStep+2] = String($stringContext,"DCCM");
+        $answers[5*$curStep+3] = Real($c[$i]);
+        $answers[5*$curStep+4] = Real($curStep);
+        $curStep++;
+
+        if ($hasStart > 0) {
+            $newSum = $curSum + $ansBlank[0];
+            $newDSum = $curDSum + $ansBlank[1];
+            $answers[5*$curStep+0] = $newSum;
+            $answers[5*$curStep+1] = $newDSum;
+            $answers[5*$curStep+2] = String($stringContext,"DCS");
+            $answers[5*$curStep+3] = Real($curStep-2);
+            $answers[5*$curStep+4] = Real($curStep);
+            $curStep++;
+        } else {
+            $hasStart = 1;
+            $curSum = $answers[5*$curStep+0];
+            $curDSum = $answers[5*$curStep+1];
+        }
+    }
+}
+
+
+    
+for ($i=0; $i<$numSteps; $i++) {
+    if ($i<$curStep) {
+        $ansBlank[0] = $answers[5*$i+0];
+        $ansBlank[1] = $answers[5*$i+1];
+        $ansBlank[2] = $answers[5*$i+2];
+        $ansBlank[3] = $answers[5*$i+3];
+        $ansBlank[4] = Real($i);
+    } else {
+        $ansBlank[0] = $fFunction;
+        $ansBlank[1] = $fDeriv;
+        $ansBlank[2] = String($stringContext, "DCS");
+        $ansBlank[3] = Real(0);
+        $ansBlank[4] = Real($i);
+    }
+        $ansBlank[0] = $fFunction;
+        $ansBlank[1] = $fDeriv;
+        $ansBlank[2] = String($stringContext, "DCS");
+        $ansBlank[3] = Real(0);
+        $ansBlank[4] = Real($i);
+    $multians[$i] = MultiAnswer(@ansBlank)->with(
+        singleResult => 1,
+        row => $i,
+        allowBlankAnswers => 0,
+        checker => sub {
+            my ( $correct, $student, $self ) = @_;
+            my $i = ${$correct}[4];    
+            my $curRow = $i+1;
+            my $valid = 1;
+    
+            # To check the answers, we make sure each row is valid, then that the last row answers the question.
+            my $rule;
+        
+            $formulas[$i] = ${$student}[0];
+            $derivs[$i] = ${$student}[1];
+            $rule = ${$student}[2];
+            $fBlank = ${$student}[3];
+            $gBlank = ${$student}[4];
+
+            if ($rule == $ruleList[0]) {
+                $self->setMessage(0,"Must select a rule");
+
+            # Deriv of a constant
+            } elsif ($rule == $ruleList[1]) {
+                if ($fBlank != Real(0)) {
+                    $self->setMessage(0, "k should be 0 for Rule DEC.");
+                    $valid = 0;
+                } elsif ($formulas[$i] != $gBlank) {
+                    $self->setMessage(0, "b should match the formula constant.");
+                    $valid = 0;
+                } elsif ($derivs[$i] != Formula(0)) {
+                    $self->setMessage(0, "Incorrect derivative.");
+                    $valid = 0;
+                }
+
+            # Deriv of the identity
+            } elsif ($rule == $ruleList[2]) {
+                if ($fBlank != Real(1)) {
+                    $self->setMessage(0, "k should be 1 for Rule DEI.");
+                    $valid = 0;
+                } elsif ($gBlank != Real(0)) {
+                    $self->setMessage(0, "b should be 0 for Rule DEI.");
+                    $valid = 0;
+                } elsif ($formulas[$i] != Formula("x")) {
+                    $self->setMessage(0, "Invalid rule choice; DEI is only for h(x)=x.");
+                    $valid = 0;
+                } elsif ($derivs[$i] != Real(1)) {
+                    $self->setMessage(0, "Incorrect derivative.");
+                    $valid = 0;
+                }
+
+            # Deriv of a linear fcn
+            } elsif ($rule == $ruleList[3]) {
+                if ($fBlank == Real(1) && $gBlank == Real(0)) {
+                    $self->setMessage(0, "For just x, use DEI.");
+                }
+                if ($fBlank == Real(0)) {
+                    $self->setMessage(0, "For just constants, use DEC.");
+                }
+                if ($formulas[$i] != Formula("$fBlank*x+$gBlank")) {
+                    $self->setMessage(0, "Formula does not match h(x)=$fBlank x + $gBlank.");
+                    $valid = 0;
+                } elsif ($derivs[$i] != Formula($fBlank)) {
+                    $self->setMessage(0, "Incorrect derivative.");
+                    $valid = 0;
+                }
+
+            # Derivative of a power
+            } elsif ($rule == $ruleList[4]) {
+                if ($fBlank == Real(1) && $gBlank == Real(0)) {
+                    $self->setMessage(0, "For x^1, use DEI.");
+                }
+                if ($gBlank != Real(0)) {
+                    $self->setMessage(0, "b should be 0 for Rule DEP.");
+                } elsif ($formulas[$i] != Formula("x^$fBlank")) {
+                    $self->setMessage(0, "Formula does not match h(x)=x^$fBlank.");
+                    $valid = 0;
+                } elsif ($derivs[$i] != Formula("$fBlank*x^($fBlank-1)")) {
+                    $self->setMessage(0, "Incorrect derivative.");
+                    $valid = 0;
+                }
+
+            # Derivative of a constant multiple
+            } elsif ($rule == $ruleList[5]) {
+                if ($fBlank == Real(1)) {
+                    $self->setMessage(0, "Unnecessary step if k=1.");
+                }
+                if ($gBlank >= $curRow) {
+                    $self->setMessage(0, "Unjustified derivative -- row for g(x) must be earlier.");
+                    $valid = 0;
+                } elsif ($gBlank <= 0 || $gBlank != floor($gBlank) ) {
+                    $self->setMessage(0, "Invalid row number for g(x).");
+                    $valid = 0;
+                } elsif ($formulas[$i] != Compute("$fBlank * ($formulas[$gBlank-1])")) {
+                    $self->setMessage(0, "Formula does not match using rule.");
+                    $valid = 0;
+                } elsif ($derivs[$i] != Compute("$fBlank * ($derivs[$gBlank-1])")) {
+                    $self->setMessage(0, "Incorrect derivative.");
+                    $valid = 0;
+                }
+
+            # Derivative of a sum or difference
+            } elsif ($rule == $ruleList[6] || $rule == $ruleList[7]) {
+                my $op;
+                if ($rule == $ruleList[6]) {
+                    $op = "+";
+                } elsif ($rule == $ruleList[7]) {
+                    $op = "-";
+                }
+                
+                if ($fBlank > $curRow  ||  $gBlank > $curRow) {
+                    $self->setMessage(0, "Unjustified derivative -- rows must be prior to this one.");
+                    $valid = 0;
+                } elsif ($fBlank <= 0 || $fBlank != floor($fBlank)) {
+                    $self->setMessage(0, "Invalid row number for f(x).");
+                    $valid = 0;
+                } elsif ($gBlank <= 0 || $gBlank != floor($gBlank) ) {
+                    $self->setMessage(0, "Invalid row number for g(x).");
+                    $valid = 0;
+                } elsif ($formulas[$i] != Compute("($formulas[$fBlank-1])$op($formulas[$gBlank-1])")){
+                    $self->setMessage(0, "Formula does not match using rule.");
+                    $valid = 0;
+                } elsif ($derivs[$i] != Compute("($derivs[$fBlank-1])$op($derivs[$gBlank-1])")) {
+                    $self->setMessage(0, "Incorrect derivative from rule.");
+                    $valid = 0;
+                }
+
+            # Derivative of a product
+            } elsif ($rule == $ruleList[8]) {
+                if ($fBlank > $curRow  ||  $gBlank > $curRow) {
+                    $self->setMessage(0, "Unjustified derivative -- rows must be prior to this one.");
+                    $valid = 0;
+                } elsif ($fBlank <= 0 || $fBlank != floor($fBlank)) {
+                    $self->setMessage(0, "Invalid row number for f(x).");
+                    $valid = 0;
+                } elsif ($gBlank <= 0 || $gBlank != floor($gBlank) ) {
+                    $self->setMessage(0, "Invalid row number for g(x).");
+                    $valid = 0;
+                } elsif ( $formulas[$i] != $formulas[$fBlank-1] * $formulas[$gBlank-1] ) {
+                    $self->setMessage(0, "Formula does not match using rule.");
+                    $valid = 0;
+                } elsif ($derivs[$i] != $derivs[$fBlank-1]*$formulas[$gBlank-1] + $formulas[$fBlank-1]*$derivs[$gBlank-1]) {
+                    $self->setMessage(0, "Incorrect derivative from rule.");
+                    $valid = 0;
+                }
+
+            # Derivative of a quotient
+            } elsif ($rule == $ruleList[8]) {
+                if ($fBlank > $curRow  ||  $gBlank > $curRow) {
+                    $self->setMessage(0, "Unjustified derivative -- rows must be prior to this one.");
+                    $valid = 0;
+                } elsif ($fBlank <= 0 || $fBlank != floor($fBlank)) {
+                    $self->setMessage(0, "Invalid row number for f(x).");
+                    $valid = 0;
+                } elsif ($gBlank <= 0 || $gBlank != floor($gBlank) ) {
+                    $self->setMessage(0, "Invalid row number for g(x).");
+                    $valid = 0;
+                } elsif ( $formulas[$i] != $formulas[$fBlank-1] / $formulas[$gBlank-1] ) {
+                    $self->setMessage(0, "Formula does not match using rule.");
+                    $valid = 0;
+                } elsif ($derivs[$i] != Compute("[($derivs[$fBlank-1])*($formulas[$gBlank-1]) - ($formulas[$fBlank-1])*($derivs[$gBlank-1]))]".
+                                                                        "/($formulas[$gBlank-1])^2")) {
+                    $self->setMessage(0, "Incorrect derivative from rule.");
+                    $valid = 0;
+                }
+            }
+
+            if ($valid == 1  && $curRow == $numSteps &&
+                     ($formulas[$i] != $fFunction  ||  $derivs[$i] != $fDeriv)) {
+                $self->setMessage(0, "How'd I get here.");
+                if ($formulas[$i] != $fFunction) {
+                    $self->setMessage(0, "Last row should be formula in question.");
+                } elsif ($derivs[$i] != $fDeriv) {
+                    $self->setMessage(0, "Based on faulty earlier step.");
+                }
+                $valid = 0;
+            }
+            return $valid;
+        }
+    );
+}
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Evaluate the following derivative step-by-step:
+\[  \frac{d}{dx}[ $fFunction ] \]
+
+$PAR
+To do this, you will need to fill in the table below so that each row represents the result of
+a single differentiation rule.  Each rule must be completely determined by a rule and possible derivatives
+computed on earlier rows.  The last row must answer the original question.
+
+$PAR
+On each row, the first column \(h(x)\) represents the formula for which you can compute a derivative.
+The second column is the derivative of this formula, based on the rule you specify.
+The third column specifies which differentiation rule you use to compute that derivative (using the table below).
+The fourth and fifth columns characterize the formula for \(h(x)\) as either an elementary formula (rules DEC, DEI, DEL, DEP)
+or as a combination of earlier formulas (rules DCCM, DCS, DCD, DCP, DCQ).  For elementary formulas, the columns 
+represent values \(k\) or \(b\) that define the formula.  For the constant multiple rule (DCCM), the fourth column is the constant multiple \(k\) and the
+fifth column is the row where the earlier function \(g(x)\) was differentiated.  For all other combination rules, both columns refer to the rows
+of earlier differentiated functions \(f(x)\) and \(g(x)\) used to define the current formula \(h(x)\).
+
+$PAR
+Available rules:
+$BCENTER
+\{ begintable{4} \}
+\{ row("Rule", "Description", "Formula for \(h(x)\)", "Formula for \(h'(x)\)") \}
+\{ row("DEC", "Derivative of a Constant", "\(h(x) = b\) (use k=0)", "\(h'(x)=0\)") \}
+\{ row("DEI", "Derivative of Identity", "\(h(x) = x\) (use k=1, b=0)", "\(h'(x)=1\)") \}
+\{ row("DEL", "Derivative of Linear Function", "\(h(x) = kx + b\)", "\(h'(x)=k\)") \}
+\{ row("DEP", "Derivative of Integer Power", "\(h(x) = x^k\) (use b=0)", "\(h'(x)=kx^{k-1}\)") \}
+\{ row("DCCM", "Derivative of Constant Multiple", "\(h(x) = k \, g(x) \) ", "\(h'(x)=k \, g'(x)\)") \}
+\{ row("DCS", "Derivative of Sum", "\(h(x) = f(x)+g(x) \) ", "\(h'(x)=f'(x)+g'(x)\)") \}
+\{ row("DCD", "Derivative of Difference", "\(h(x) = f(x)-g(x) \) ", "\(h'(x)=f'(x)-g'(x)\)") \}
+\{ row("DCP", "Derivative of Product", "\(h(x) = f(x)g(x) \) ", "\(h'(x)=f'(x)g(x) + f(x) g'(x)\)") \}
+\{ row("DCQ", "Derivative of Quotient", "\(h(x) = \dfrac{f(x)}{g(x)} \) ", "\(h'(x)=\dfrac{g(x)f'(x) - f(x)g'(x)}{(g(x))^2}\)") \}
+\{ endtable() \}
+$ECENTER
+
+$PAR
+You can set the number of rows needed for your work with the following box.  Be sure to 
+remove any unused rows before your final submission.
+$BR
+Number of rows:  \{ $INPUTSPACE \} (Push Preview Answers to then update the table.)
+
+$PAR
+\[ \frac{d}{dx}[ $fFunction ] \]
+$BR
+$BCENTER
+\{ begintable(6) \}
+\{ row( "$SPACE Row $SPACE", "$SPACE \(h(x)\) $SPACE", "$SPACE \(\displaystyle \frac{d}{dx}[ h(x) ]\) $SPACE", "$SPACE Rule $SPACE", 
+             "$SPACE \(k\) or row of \(f(x)\) $SPACE", "$SPACE \(b\) or row of \(g(x)\)" )
+\}
+END_TEXT
+
+for ($i=0; $i < $numSteps; $i++) {
+    BEGIN_TEXT
+    \{
+      row( $i+1, $multians[$i]->ans_rule(25), $multians[$i]->ans_rule(25), 
+                          $multians[$i]->ans_rule(5), $multians[$i]->ans_rule(5), 
+                          $multians[$i]->ans_rule(5) )
+    \}
+    END_TEXT
+}
+
+BEGIN_TEXT
+\{ endtable() \}
+$ECENTER
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+install_problem_grader(~~&std_problem_grader);
+
+for ($i=0; $i<$numSteps; $i++) {
+    ANS( $multians[$i]->cmp );
+}
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

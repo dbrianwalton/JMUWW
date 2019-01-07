@@ -1,0 +1,56 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'logarithm')
+## Tagged by dbw 7/27/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('7/25/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$k = random(2,10);
+
+$func = Compute("ln($k*x)");
+$deriv = Compute("1/x");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Find the derivative of \(f(x) = $func\).
+$BR $BR
+\(f'(x) = \) \{ ans_rule(20) \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $deriv->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

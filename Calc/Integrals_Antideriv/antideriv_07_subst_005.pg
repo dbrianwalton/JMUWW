@@ -1,0 +1,66 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','antiderivative', 'indefinite integral', 'substitution')
+## Tagged by dbw 8/8/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('8/8/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserFormulaUpToConstant.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+Context()->variables->set(x=>{limits=>[0.5,2]});
+
+$A = non_zero_random(-10,10,1);
+$n = random(2,7);
+$u = Formula("ln(x)")->reduce();
+
+$fprime = Formula("$A*($u^$n)/x")->reduce();
+($Bn, $Bd) = FractionReduce($A, $n+1);
+$f = FormulaUpToConstant("$Bn * ($u)^($n+1) / $Bd");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute the following indefinite integral.
+
+$PAR
+\(\displaystyle \int $fprime \, dx = \) \{ ans_rule(40) \}
+$BR
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $f->cmp );
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

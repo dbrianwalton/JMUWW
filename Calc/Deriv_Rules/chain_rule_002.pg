@@ -1,0 +1,68 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'chain rule', 'algebraic function')
+## Tagged by dbw 9/1/09
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('1/13/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Product with composition.
+$compCode = random(0,2,1);
+
+# Need two basic functions
+$a1 = non_zero_random(2,5,1);
+$b1 = non_zero_random(-5,5,1);
+$c1 = random(-5,5,1);
+$p1 = random(3,6,1);
+
+
+
+$func = Compute("($a1*x^2+$b1*x+$c1)^$p1")->reduce('(-x)-y'=>0);
+
+$df = $func->D();
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute
+$BR
+\(\displaystyle \frac{d}{dx}[$func] = \) \{ ans_rule(40) \}
+$BR
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $df->cmp );
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

@@ -1,0 +1,55 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+Context()->flags->set(tolerance=>0.01, tolType=>"absolute");
+
+$minval = Compute("32")->with(tolType=>'absolute', tolerance=>'0.1' );
+$maxval = Compute("83")->with(tolType=>'absolute', tolerance=>'0.1' );
+$median = Compute("62")->with(tolType=>'absolute', tolerance=>'0.1' );
+$range  = Compute("51")->with(tolType=>'absolute', tolerance=>'0.1' );
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+A data set is presented in a stem-and-leaf plot below. The stem width (multiplier for the stem digits) is 10.
+$BR$BR
+
+\( \displaystyle
+    \begin{tabular}{r | l}
+    Stem & Leaf\\ \hline
+    3 & 2\\
+    4 & 67\\
+    5 & 0\\
+    6 & \\
+    7 & 449\\
+    8 & 3\\
+    \end{tabular}
+\)
+$BR$BR
+
+(a) Report the smallest value in the data: \{ ans_rule(8) \}
+$BR$BR
+
+(b) Report the largest value in the data: \{ ans_rule(8) \}
+$BR$BR
+
+(c) Calculate the median value for the data: \{ ans_rule(8) \}
+$BR$BR
+
+(d) Calculate the range for the data: \{ ans_rule(8) \}
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $minval->cmp() );
+ANS( $maxval->cmp() );
+ANS( $median->cmp() );
+ANS( $range->cmp() );
+
+ENDDOCUMENT();

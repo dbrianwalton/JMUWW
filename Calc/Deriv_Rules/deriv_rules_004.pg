@@ -1,0 +1,82 @@
+# DESCRIPTION
+#   Apply the rules of differentiation to functions without formulas.a
+#    h(x) = f(x) g(x) (product of f and g)
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('derivative','differentiation')
+## Date('6/1/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "answerHints.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+Context()->variables->are(x=>'Real');
+
+$a = random(-10,10,1);
+
+#  The following is in a loop so that an incorrect strategy cannot give the correct answer.
+do {
+    $fa = random(-10,10,1);
+    $fpa = random(-8,8,1);
+    $ga = random(-10,10,1);
+    $gpa = random(-8,8,1);
+} while ( ($fa*$gpa+$fpa*$ga) == $fpa*$gpa );
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Suppose that \(f($a) = $fa\) and \(f'($a) = $fpa\), and also that \(g($a)=$ga\) and \(g'($a)=$gpa\).
+$BR (Repeat this problem for additional practice.)
+
+$PAR
+If \(h(x) =  f(x) g(x)\), then 
+$BR
+\(h($a) = \) \{ ans_rule(15) \}.
+$BR
+\(h'($a) = \) \{ ans_rule(15) \}.
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+$ansA = Real("$fa*$ga");
+ANS( $ansA->cmp );
+
+$ansB = Real("$fa*$gpa+$fpa*$ga");
+ANS($ansB->cmp()->withPostFilter(AnswerHints(
+    sub {
+        my ($correct, $student, $ans) = @_;
+        my $wrong = $fpa*$gpa;
+        return ($student != $correct && $student == $wrong);
+    } => "Do NOT just multiply derivatives.",
+    )) );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

@@ -1,0 +1,71 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'algebraic function')
+## Tagged by dbw 9/1/09
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('1/13/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "parserPopUp.pl",
+  "parserMultiAnswer.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# List of valid variables.
+$base = non_zero_random(2,9,1);
+$rFlag = random(0,1,1);
+
+$A = random(-10,10,1);
+
+if ($rFlag == 0) {
+    $func = Compute("$A*$base^x");
+    $funcExpr = "$A \cdot $base^x";
+    $deriv = Compute("$A*$base^2*ln($base)");
+} else {
+    $func = Compute("$A*(1/$base)^x");
+    $funcExpr = "$A \cdot (\frac{1}{$base})^x";
+    $deriv = Compute("$A*(1/$base)^x*ln(1/$base)");
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Find the derivative.
+\[f(x) = $funcExpr\]
+$BR $BR
+\(f'(x) = \) \{ ans_rule(20) \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $deriv->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

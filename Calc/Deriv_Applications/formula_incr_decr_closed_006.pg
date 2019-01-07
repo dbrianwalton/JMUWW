@@ -1,0 +1,93 @@
+# DESCRIPTION
+# This problem gives the formula of a rational function
+# and asks the student to identify where it is
+# increasing and decreasing, using a list of intervals.
+#
+# WeBWorK problem written by Brian Walton (JMU) 
+# <waltondb (at) jmu(dot)edu>
+# ENDDESCRIPTION
+
+## DBsubject('Calculus')
+## DBchapter('Derivatives')
+## DBsection('Increasing')
+## KEYWORDS('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+## Author('Brian Walton')
+## Institution('JMU')
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl",
+);
+
+# make sure we're in the context we want
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Create a cubic with nice derivative.
+# f(x) = a/(mx+b)  OR  ax/(mx+b)
+# f'(x) = 3ax^2 + 2bx + c
+$a = non_zero_random(-8,8,1);
+$np = random(0,1);  # Decide if x in numerator
+
+$m = non_zero_random(-8,8);
+$b = non_zero_random(-9,9,1);
+
+# Define c as vertical asymptote
+$c = -$b/$m;
+
+$func = Compute("($a*x^($np))/($m*x+$b)")->reduce('(-x)-y'=>0);
+$deriv = $func->D();
+
+Context("Interval");
+
+if ($np == 0) {
+  $fp_num = -1*$a*$m;
+} else {
+  $fp_num = $a*$b;
+}
+
+$outerInt = List(Interval("(-INF,$c)"),Interval("($c,INF)"));
+$innerInt = List("NONE");
+
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+Find the first derivative of the function \(\displaystyle f(x) = $func\).
+$BR
+$BBLOCKQUOTE
+\(f'(x) = \) \{ ans_rule(35) \}
+$EBLOCKQUOTE
+
+
+$PAR
+Use the derivative to determine where \(f(x)\) is increasing or decreasing.  For each property, create a list of intervals that are as large as possible (perhaps including endpoints), separated by commas (not a union).  If the list is empty, type $BBOLD NONE $EBOLD.  Type $BBOLD INF $EBOLD for \(\infty\).
+$PAR
+\(f(x)\) is increasing on the intervals: \{ ans_rule(35) \}
+$BR
+\(f(x)\) is decreasing on the intervals: \{ ans_rule(35) \}
+END_TEXT
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $deriv->cmp() );
+
+if ($fp_num > 0) {
+    ANS( $outerInt->cmp );
+    ANS( $innerInt->cmp );
+} else {
+    ANS( $innerInt->cmp );
+    ANS( $outerInt->cmp );
+};
+
+ENDDOCUMENT();

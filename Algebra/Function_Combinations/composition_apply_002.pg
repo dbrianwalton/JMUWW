@@ -1,0 +1,73 @@
+## DESCRIPTION
+##   Given two functions, the student writes down the composition.
+## ENDDESCRIPTION
+
+## KEYWORDS('algebra','composition')
+## Tagged by dbw 7/10/10
+
+## DBsubject('Algebra')
+## DBchapter('Functions')
+## DBsection('Composition')
+## Date('9/1/09')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGpolynomialmacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# This is a composition of an quadratic with a simple function
+@c = ( random(1,4), random(-5,5), random(-5,5) );
+$quadStr = PolyString(~~@c);
+$f = Compute($quadStr)->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+$b = random(-5,5);
+$k = random(1,2);
+$g = Compute("x^$k+$b")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+$fcircg = $f->substitute(x => $g);
+$gcircf = $g->substitute(x => $f);
+
+Context()->texStrings;
+BEGIN_TEXT
+Suppose you are given the functions \(f(x) = $f\) and \(g(x) = $g\).
+
+$PAR
+Determine the expressions for
+$BR
+\(f \circ g(x) = f(g(x)) = \)\{ ans_rule(20) \}
+$BR
+and
+$BR
+\(g \circ f(x) = g(f(x)) = \)\{ ans_rule(20) \}.
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answer checking
+
+$showPartialCorrectAnswers = 0;
+ANS($fcircg->cmp);
+ANS($gcircf->cmp);
+
+###################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

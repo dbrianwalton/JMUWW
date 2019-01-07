@@ -1,0 +1,105 @@
+# DESCRIPTION
+# This problem gives the formula of a polynomial
+# and asks the student to identify where it is
+# increasing and decreasing, using a list of intervals.
+#
+# WeBWorK problem written by Brian Walton (JMU) 
+# <waltondb (at) jmu(dot)edu>
+# ENDDESCRIPTION
+
+## DBsubject('Calculus')
+## DBchapter('Derivatives')
+## DBsection('Increasing')
+## KEYWORDS('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+## Author('Brian Walton')
+## Institution('JMU')
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl",
+);
+
+# make sure we're in the context we want
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Create a cubic with nice derivative.
+# f(x) = ax^3 + bx^2 + cx + d
+# f'(x) = 3ax^2 + 2bx + c
+$a = random(1,2,1);
+$b = 3*random(-3,3,1);
+$d = random(-9,9,1);
+
+$preFunc = Compute("3*$a*x^2+2*$b*x");
+
+# Choose c so that basic point is a change point.
+$r1 = non_zero_random(-5,5,1);
+$c = -$preFunc->eval(x=>$r1);
+$r2 = -$r1-2*$b/(3*$a);
+if ($r1 > $r2) {
+    $rtmp = $r1;
+    $r1 = $r2;
+    $r2 = $rtmp;
+};
+
+$func = Compute("$a*x^3+$b*x^2+$c*x+$d")->reduce('(-x)-y'=>0);
+
+$deriv = $func->D();
+$deriv2 = $deriv->D();
+
+Context("Interval");
+
+if ($r1 == $r2) {
+    $innerInt = List("NONE");
+    $outerInt = List(Interval("(-INF,INF)"));
+} else {
+    $innerInt = List(Interval("[$r1,$r2]"));
+    $outerInt = List(Interval("(-INF,$r1]"),Interval("[$r2,INF)"));
+}
+
+$bo3 = $b/3;
+
+$leftInt = List(Interval("(-INF,-$bo3/$a]"));
+$rightInt = List(Interval("[-$bo3/$a,INF)"));
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+Find the first derivative of the function \(f(x) = $func\).
+$BR
+$BBLOCKQUOTE
+\(f'(x) = \) \{ ans_rule(35) \}
+$EBLOCKQUOTE
+
+
+$PAR
+Use the derivative to determine where \(f(x)\) is increasing or decreasing.  For each property, create a list of intervals that are as large as possible (perhaps including endpoints), separated by commas (not a union).  If the list is empty, type $BBOLD NONE $EBOLD.  Type $BBOLD INF $EBOLD for \(\infty\).
+$PAR
+\(f(x)\) is increasing on the intervals: \{ ans_rule(35) \}
+$BR
+\(f(x)\) is decreasing on the intervals: \{ ans_rule(35) \}
+END_TEXT
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $deriv->cmp() );
+
+if ($a > 0) {
+    ANS( $outerInt->cmp );
+    ANS( $innerInt->cmp );
+} else {
+    ANS( $innerInt->cmp );
+    ANS( $outerInt->cmp );
+};
+
+ENDDOCUMENT();

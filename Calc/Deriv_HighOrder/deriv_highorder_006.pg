@@ -1,0 +1,100 @@
+# DESCRIPTION
+#   Practice with higher order derivatives.
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('derivative','differentiation', 'higher order', 'second derivative')
+## Date('6/14/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+@vars = ('x', 't', 's', 'u', 'w', 'r');
+$nVars = @vars;
+
+@fcns = ('f', 'g', 'h', 'N', 'P', 'A');
+$nFcns = @fcns;
+
+$x = $vars[ random(0, $nVars-1) ];
+$f = $fcns[ random(0, $nFcns-1) ];
+
+Context()->variables->are($x=>'Real');
+
+# Construct a polynomial.
+$a = random(1,6);
+$b = non_zero_random(-9,9);
+do {
+    $c = random(1,6);
+    $d = non_zero_random(-9,9);
+} while (abs($a/$b - $c/$d) < 0.0001);
+
+$expr = Compute("($a*$x+$b)/($c*$x+$d)")->reduce('(-x)-y'=>0, '(-x)+y' => 0);
+
+# Choose the number of derivatives
+$n = 2;
+
+# Choose a method of notation.
+# # 1 - d^nf/dx^n
+# # 2 - f'''(x)
+# # 3 - d^n/dx^n[f(x)]
+$mode = random(1,4);
+if ($mode == 1) {
+    $dStr = "\frac{d^{$n}$f}{d$x^{$n}}";
+} elsif ($mode == 2) {
+    $prime = "'" x $n;
+    $dStr = "$f^{$prime}($x)";
+} else {
+    $dStr = "\frac{d^{$n}}{d$x^{$n}}[f($x)]";
+}
+Context()->texStrings;
+BEGIN_TEXT
+$PAR 
+The function \($f\) is defined by the equation \($f($x) = $expr\).
+
+$PAR
+Compute \(\displaystyle $dStr = \) \{ ans_rule(20)\}.
+$PAR
+There are many different notations for differentiation.  
+Repeat this problem to practice them.
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+$ans = $expr;
+for ($i=1; $i<=$n; $i++) {
+    $ans = $ans->D()->reduce();
+}
+ANS( $ans->cmp );
+
+COMMENT("Derivative notation and the names of the function and independent variable are randomly chosen.");
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

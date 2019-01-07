@@ -1,0 +1,71 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"1. Amount of rainfall (in millimeters).",
+"Continuous."
+);
+$mc1->extra(
+"Discrete.",
+);
+$mc1->makeLast("Insufficient information to determine.");
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"2. Number of students in a classroom.",
+"Discrete."
+);
+$mc2->extra(
+"Continuous.",
+);
+$mc2->makeLast("Insufficient information to determine.");
+
+$mc3=new_multiple_choice();
+$mc3->qa(
+"3. Salary of a state employee (in dollars).",
+"Discrete."
+);
+$mc3->extra(
+"Continuous.",
+);
+$mc3->makeLast("Insufficient information to determine.");
+
+$mc4=new_multiple_choice();
+$mc4->qa(
+"4. Last four digits of Social Security Number.",
+"Discrete."
+);
+$mc4->extra(
+"Continuous.",
+);
+$mc4->makeLast("Insufficient information to determine.");
+
+BEGIN_TEXT
+
+For each of the following numerical (quantitative) variables, determine whether it is of the discrete type or the continuous type.
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+\{ $mc2->print_q() \} $BR
+\{ $mc2->print_a() \} $BR
+
+\{ $mc3->print_q() \} $BR
+\{ $mc3->print_a() \} $BR
+
+\{ $mc4->print_q() \} $BR
+\{ $mc4->print_a() \}
+
+END_TEXT
+
+$showPartialCorrectAnswers = 0;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( radio_cmp( $mc2->correct_ans() ) );
+ANS( radio_cmp( $mc3->correct_ans() ) );
+ANS( radio_cmp( $mc4->correct_ans() ) );
+
+ENDDOCUMENT();

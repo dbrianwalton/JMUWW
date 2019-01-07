@@ -1,0 +1,45 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$a = Compute("0.6080")->with(tolType=>'absolute', tolerance=>'0.0005');
+$b = Compute("0.0013")->with(tolType=>'absolute', tolerance=>'0.0005');
+$c = Compute("0.0309")->with(tolType=>'absolute', tolerance=>'0.0005');
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+It is estimated that 30% of all adults have myopia (nearsightedness). Let us assume that this estimate is reasonably accurate. Consider a random sample of 20 adults taken from the respective population.
+$BR$BR
+
+(a) Compute the probability that 6 or fewer adults in the sample will have myopia.
+$BR$BR
+
+\( P(X \leq 6) = \) \{ ans_rule(8) \} (Carry 4 decimal digits.)
+$BR$BR
+
+(b) Compute the probability that more than 12 adults in the sample will have myopia.
+$BR$BR
+
+\( P(X > 12) = 1 - P(X \leq 12) = \) \{ ans_rule(8) \} (Carry 4 decimal digits.)
+$BR$BR
+
+(c) Compute the probability that exactly 10 adults in the sample will have myopia.
+$BR$BR
+
+\( P(X = 10) = P(X \leq 10) - P(X \leq 9) = \) \{ ans_rule(8) \} (Carry 4 decimal digits.)
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $a->cmp() );
+ANS( $b->cmp() );
+ANS( $c->cmp() );
+
+ENDDOCUMENT();

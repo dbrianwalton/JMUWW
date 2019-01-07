@@ -1,0 +1,175 @@
+## DESCRIPTION
+## Find parallel and perpendicular lines to a line given in general form
+## ENDDESCRIPTION
+
+## KEYWORDS('equation', 'parallel', 'perpendicular', 'slope', 'line')
+## Tagged by DBW
+
+## DBsubject('Algebra')
+## DBchapter('Linear Functions')
+## DBsection('Equations for Lines')
+## Date('6/15/12')
+## Author('D. B. Walton')
+## Institution('JMU')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+#
+# First comes some stuff that appears at the beginning of every problem
+#
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGjmu_poly.pl",
+  "weightedGrader.pl",
+  "problemRandomize.pl"
+);
+
+###################################
+# Setup the Problem
+###################################
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Select the coefficients of the original line in general form Ax+By=C
+$A = non_zero_random(-5,5,1);
+$B = non_zero_random(-5,5,1);
+
+# Select the random point that the parallel line passes through
+$a = random(-5,5,1);
+$b = random(-5,5,1);
+
+# Choose C so that the original line does NOT go through the point.
+$C = $A*$a+$B*$b+non_zero_random(-4,4,1);
+if ($C == 0) {
+    $C = non_zero_random(-6,6,1);
+};
+
+# Select the random point that the perpendicular line passes through
+# (It is okay if the point is on the original line.)
+$c = random(-9,9);
+$d = random(-9,9);
+
+# Determine the answers.
+$slope = Compute(FractionString([-$A,$B]));
+$perpslope = Compute(FractionString([$B,$A]));
+
+# Intercepts of original line.
+$yint = Compute(FractionString([$C,$B]));
+$xint = Compute(FractionString([$C,$A]));
+
+# Strings for Solution (equations of lines)
+$origLineStr = GenPolyTeX([ [-$A,$B], [$C,$B] ], 'inFrac'=>0);
+
+$yIntStr = FractionTeX([$C,$B]);
+$xIntStr = FractionTeX([$C,$A]);
+
+$slopeStr = FractionTeX([-$A,$B]);
+$perpSlopeStr = FractionTeX([$B,$A]);
+
+$parYStr = GenPolyTeX([1, -$b], 'x'=>'y');
+$parXStr = GenPolyTeX([1, -$a]);
+$parYFcnStr = GenPolyTeX([ [-$A,$B], $b ], "x"=>"($parXStr)", "inFrac"=>0);
+
+$perpYStr = GenPolyTeX([1, -$d], 'x'=>'y');
+$perpXStr = GenPolyTeX([1, -$c]);
+$perpYFcnStr = GenPolyTeX([ [$B,$A], $d ], "x"=>"($perpXStr)", "inFrac"=>0);
+
+Context()->variables->are(x=>'Real', y=>'Real');
+
+$origLineLeft = Formula("$A*x+$B*y")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+###################################
+# Display the Problem
+###################################
+TEXT(beginproblem());
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Consider the line \(L\) described by the equation \($origLineLeft=$C\).
+
+$PAR
+(a) The graph of \(L\) is a line with slope \(m\), \(y\)-intercept 
+at (0,\(b\)), and \(x\)-intercept at (\(a\),0).
+$BR $BR
+  slope: \(m=\)\{ans_rule(10)\}
+  $BR
+  \(y\)-intercept: \(b=\)\{ans_rule(10)\}
+  $BR
+  \(x\)-intercept: \(a=\)\{ans_rule(10)\}
+
+
+$PAR
+(b) An equation for the line parallel to \(L\) and passing 
+through the point \(($a,$b)\) expressed with \(y\) as a function of \(x\) is
+  $BR
+  $BR
+  \(y = \)\{ ans_rule(30) \}
+  $BR
+
+$PAR
+(c) An equation for the line perpendicular to \(L\) and passing 
+through the point \(($c,$d)\) expressed with \(y\) as a function of \(x\) is
+  $BR
+  $BR
+  \(y = \)\{ ans_rule(30) \}
+  $BR
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Check the Answers
+###################################
+
+WEIGHTED_ANS( $slope->cmp, 1 );
+WEIGHTED_ANS( $yint->cmp, 1 );
+WEIGHTED_ANS( $xint->cmp, 1 );
+
+WEIGHTED_ANS( Compute("$slope*(x-$a)+$b")->cmp, 3 );
+
+WEIGHTED_ANS( Compute("$perpslope*(x-$c)+$d")->cmp, 4 );
+
+###################################
+# Solution
+###################################
+
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+Taking the given equation of the original line \($origLineLeft=$C\), we
+solve for \(y\) and find \(y=$origLineStr\).  
+Based on this, we know the line \(L\) has slope \(m=$slopeStr\).  
+The \(y\)-intercept corresponds to \(x=0\), which gives \(y=b=$yIntStr\).  
+The \(x\)-intercept corresponds to \(y=0\), which gives \(x=a=$xIntStr\).
+
+$PAR
+Every line parallel to \(L\) must have the same slope \(m_\parallel=$slopeStr\).
+So the parallel line passing through the point \(($a,$b)\) must satisfy
+the point-slope equation \($parYStr = $slopeStr($parXStr)\).  
+Solving for \(y\) we find \(y=$parYFcnStr\).
+
+$PAR
+A line perpendicular to \(L\) has a slope \(m_\perp\) 
+so that \(m m_\perp = -1\), which means the slope would 
+be \(m_\perp=$perpSlopeStr\).
+So the perpendicular line passing through the point \(($c,$d)\) must satisfy
+the point-slope equation \($perpYStr = $perpSlopeStr($perpXStr)\).  
+Solving for \(y\) we find \(y=$perpYFcnStr\).
+
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Weights: (a) 30%, (b) 30%, (c) 40%.  Solution provided. Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.
+
+

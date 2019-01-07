@@ -1,0 +1,64 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl", "PGchoicemacros.pl");
+
+#Context("Numeric");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"Step 1: Formulate the null and alternative hypotheses.",
+"\( H_0\!: p = 0.35 \) vs. \( H_a\!: p > 0.35 \)"
+);
+$mc1->extra(
+"\( H_0\!: p = 0.35 \) vs. \( H_a\!: p < 0.35 \)",
+"\( H_0\!: p = 0.35 \) vs. \( H_a\!: p \neq 0.35 \)"
+);
+
+$teststat = Compute("2.095")->with(tolType=>'absolute', tolerance=>'0.006');
+$pvalue   = Compute("0.0181")->with(tolType=>'absolute', tolerance=>'0.0003');
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"Step 4: Make a decision.",
+"Reject the null hypothesis. The company should market the bar."
+);
+$mc2->extra(
+"Fail to reject the null hypothesis. The company should not market the bar."
+);
+
+#TEXT(beginproblem());
+#Context()->texStrings;
+
+BEGIN_TEXT
+
+A food company is planning to market a new type of protein bar. However, before marketing the bar, the company wants to find what percentage of people who will like it. The company's management has decided that it would market the bar only if more than 35% of people like it. The company's research department selected a random sample of 400 persons and asked them to taste the bar. Of these 400 persons, 160 said they liked it. Using a 2% significance level, can you conclude that the company should market the bar?
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+Step 2: Calculate the test statistic.
+$BR$BR
+
+\( \displaystyle z = \frac{\hat{p} - p_0}{\sqrt{p_0(1 - p_0)/n}} = \) \{ ans_rule(8) \} (Carry 2 decimal digits.)
+$BR$BR
+
+Step 3: Calculate the p-value.
+$BR$BR
+
+p-value = \{ ans_rule(8) \} (Carry 4 decimal digits.)
+$BR$BR
+
+\{ $mc2->print_q() \} $BR
+\{ $mc2->print_a() \}
+
+END_TEXT
+
+#Context()->normalStrings;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( $teststat->cmp() );
+ANS( $pvalue->cmp() );
+ANS( radio_cmp( $mc2->correct_ans() ) );
+
+ENDDOCUMENT();

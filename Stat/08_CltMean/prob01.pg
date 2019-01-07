@@ -1,0 +1,28 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$zscore = Compute("1.675" )->with(tolType=>'absolute', tolerance=>'0.006');
+$prob   = Compute("0.0470")->with(tolType=>'absolute', tolerance=>'0.001');
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+The waiting time until a customer is served at a fast food restaurant during lunch hours has a skewed distribution with a mean of 2.5 minutes and a standard deviation of 0.4 minute. Suppose that a random sample of 45 waiting times will be taken. Compute the probability that the mean waiting time for the sample will be greater than 2.6 minutes. (Carry 2 decimal digits for the z-score and 4 decimal digits for the probability.)
+$BR$BR
+
+\( P(\bar{X} > 2.6) = P(Z > \) \{ ans_rule(8) \} \( ) = \) \{ ans_rule(8) \}
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $zscore->cmp() );
+ANS( $prob->cmp() );
+
+ENDDOCUMENT();

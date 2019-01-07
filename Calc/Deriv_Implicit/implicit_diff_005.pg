@@ -1,0 +1,139 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'implicit differentiation')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('6/15/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "answerHints.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# List of variables.
+$xvar = "x";
+$yvar = "y";
+$yprime = "D$yvar";
+
+# Modify what it means to be a name to include primes.
+Context()->variables->{namePattern} = qr/[a-z][a-z0-9_]*'*/i;
+
+Context()->variables->are("$xvar"=>'Real', "$yvar"=>'Real', "$yprime"=>'Real');
+
+# Simple cubic in two variables + constant = 0, move random terms to each side.
+# Want four terms plus constant.
+@n = (1, 0, 0, 0);
+$n[3] = random(1,2);
+$n[2] = random(1,2);
+$n[1] = 4 - $n[3] - $n[2];
+
+# Determine how many and which terms go on left.
+$nLeft = random(2,4);
+@onLeft = (0, 0, 0, 0, 0);
+@leftTerms = NchooseK(5,$nLeft);
+foreach $left (@leftTerms) {
+    $onLeft[$left] = 1;
+}
+
+@terms1 = NchooseK(2,$n[1]);
+$cterms[1] = ~~@terms1;
+@terms2 = NchooseK(3,$n[2]);
+$cterms[2] = ~~@terms2;
+@terms3 = NchooseK(4,$n[3]);
+$cterms[3] = ~~@terms3;
+
+$exprL = $exprR = Compute(0);
+$dExprL = $dExprR = Compute(0);
+$nFactor = $dFactor = Compute(0);
+
+$whichTerm = 0;
+for ($d=3; $d>=1; $d--) {
+    @ct = @{$cterms[$d]};
+    for ($i=0; $i<$n[$d]; $i++) {
+        $c = non_zero_random(-5,5);
+        $k = $ct[$i];
+
+        $newTerm = Compute("$c*$xvar^($d-$k)*$yvar^$k");
+        $newDX = Compute("$c*($d-$k)*$xvar^($d-1-$k)*$yvar^($k)");
+        $newDY = Compute("$c*$k*$xvar^($d-$k)*$yvar^($k-1)");
+        if ($onLeft[$whichTerm] == 1) {
+            $exprL = $exprL + $newTerm;
+            $dExprL = $dExprL + $newDX + Compute("$newDY*$yprime");
+            $nFactor = $nFactor - $newDX;
+            $dFactor = $dFactor + $newDY;
+        } else {
+            $exprR = $exprR + $newTerm;
+            $dExprR = $dExprR + $newDX + Compute("$newDY*$yprime");
+            $nFactor = $nFactor + $newDX;
+            $dFactor = $dFactor - $newDY;
+        }
+        $whichTerm++;
+    }
+}
+
+$exprL = $exprL + Real(random(-5,5));
+$exprR = $exprR + Real(random(-5,5));
+
+$exprL = $exprL->reduce( '(-x)-y'=>0, '(-x)+y' => 0 );
+$exprR = $exprR->reduce( '(-x)-y'=>0, '(-x)+y' => 0 );
+$dExprL = $dExprL->reduce( '(-x)-y'=>0, '(-x)+y' => 0 );
+$dExprR = $dExprR->reduce( '(-x)-y'=>0, '(-x)+y' => 0 );
+
+$dydx = $nFactor / $dFactor;
+$dydx = $dydx->reduce( '(-x)-y'=>0, '(-x)+y' => 0 );
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR The following equation defines \($yvar\) as an implicit function of \($xvar\).
+\[ $exprL = $exprR \]
+
+$PAR
+Find the derivative \(\displaystyle \frac{d$yvar}{d$xvar}\) by implicit differentiation.
+$BR
+Computing the derivative of each side of the equation with respect to \($xvar\) produces the following equation:
+$BR
+\{ ans_rule(25) \} = \{ ans_rule(25) \} 
+$BR
+(Type $BBOLD D$yvar $EBOLD to represent \(d$yvar/d$xvar\).)
+
+$PAR
+Solving for \(\displaystyle \frac{d$yvar}{d$xvar}\) results in
+\(\displaystyle \frac{d$yvar}{d$xvar}\) = \{ ans_rule(30) \}
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $dExprL->cmp );
+ANS( $dExprR->cmp );
+ANS( $dydx->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

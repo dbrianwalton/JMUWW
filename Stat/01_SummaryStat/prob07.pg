@@ -1,0 +1,49 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+Context()->flags->set(tolerance=>0.01, tolType=>"absolute");
+
+$mean   = Compute("2.143" )->with(tolType=>'absolute', tolerance=>'0.005' );
+$stdev  = Compute("2.193" )->with(tolType=>'absolute', tolerance=>'0.005' );
+$zscore = Compute("-0.975")->with(tolType=>'absolute', tolerance=>'0.006' );
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+The following data show numbers of parking tickets received within the past six months for a sample of seven drivers.
+$BR$BR
+
+\( X\!: \langle 2, 6, 0, 1, 4, 0, 2 \rangle \)
+$BR$BR
+
+(a) Compute the sample mean.
+$BR$BR
+
+Answer: \{ ans_rule(8) \} (Carry 3 decimal digits.)
+$BR$BR
+
+(b) Compute the sample standard deviation.
+$BR$BR
+
+Answer: \{ ans_rule(8) \} (Carry 3 decimal digits.)
+$BR$BR
+
+(b) Compute the z-score for a driver who has received no parking ticket.
+$BR$BR
+
+Answer: \{ ans_rule(8) \} (Carry 2 decimal digits.)
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $mean->cmp() );
+ANS( $stdev->cmp() );
+ANS( $zscore->cmp() );
+
+ENDDOCUMENT();

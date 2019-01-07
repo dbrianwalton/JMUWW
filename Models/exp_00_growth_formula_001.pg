@@ -1,0 +1,103 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','exponential', 'growth')
+## Tagged by dbw 8/1/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('8/1/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "weightedGrader.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+Context()->variables->are(t=>'Real');
+install_weighted_grader();
+
+@Avals = (100, 150, 200, 250, 300, 400, 500, 750, 800, 1000, 1200, 1500);
+
+$A = $Avals[random(0,scalar(@Avals)-1)];
+$k = random(0.01, 0.4, 0.01);
+
+$nTimes = 4;
+@timeList = (5, 10, 15, 20, 25, 30, 35, 40, 45, 50);
+@times = (0, @timeList[NchooseK(scalar(@timeList), $nTimes-1)]);
+@times = num_sort(@times);
+
+$func = Compute("$A*e^($k*t)");
+
+@Q = (0)*$nTimes;
+@dQ = (0)*$nTimes;
+for ($i = 0; $i<$nTimes; $i++) {
+    $Q[$i] = $func->eval(t=>$times[$i]);
+    $dQ[$i] = $Q[$i] * $k;
+}
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Suppose that a quantity \(Q(t)\) can be modeled as \(\displaystyle Q(t) = $func\)
+where \(t\) represents time elapsed since the initial time.
+
+$PAR Interpret the formula for \(Q\) and identify the following attributes of this model:
+$BR
+- Growth constant: \{ ans_rule(10) \}
+$BR
+- Initial quantity: \{ ans_rule(10) \}
+
+$PAR Complete the following table:
+$BCENTER
+\{ begintable(5) \}
+\{ row( " $SPACE \(t\) $SPACE ", "$SPACE $times[0] $SPACE",
+        "$SPACE $times[1] $SPACE", "$SPACE $times[2] $SPACE",
+        "$SPACE $times[3] $SPACE"); \}
+\{ row( " $SPACE \(Q(t)\) $SPACE ", ans_rule(10), ans_rule(10),
+        ans_rule(10), ans_rule(10)); \}
+\{ row( " $SPACE \(dQ/dt\) $SPACE ", ans_rule(10), ans_rule(10),
+        ans_rule(10), ans_rule(10)); \}
+\{ endtable() \}
+$ECENTER
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+WEIGHTED_ANS( Real($k)->cmp, 1 );
+WEIGHTED_ANS( Real($A)->cmp, 1 );
+
+for ($i=0; $i<$nTimes; $i++) {
+    WEIGHTED_ANS( $Q[$i]->cmp, 0.25 );
+}
+
+for ($i=0; $i<$nTimes; $i++) {
+    WEIGHTED_ANS( $dQ[$i]->cmp, 0.25 );
+}
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

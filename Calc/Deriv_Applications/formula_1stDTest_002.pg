@@ -1,0 +1,132 @@
+# DESCRIPTION
+#   Given the algebraic formula for a function (cubic polynomial),
+#   identify all of the critical points and then apply the 1st derivative test.
+#   This problem introduces a non-extreme critical point.
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('function','derivative', 'first derivative test')
+## Date('8/18/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextString.pl",
+  "PGchoicemacros.pl",
+  "PGgraphmacros.pl",
+  "PGpolynomialmacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+# For the level of this problem, students are not assumed to know how to factor a cubic.
+#  So we need one of the roots to be x=0.  Either can be double root.
+# EITHER
+#   f'(x) = 4x^2(x-a) = 4x^3 - 4ax^2  (so a is multiple of 3 to keep simple)
+#   f(x) = x^4 - (4a/3) x^3 + C
+# OR
+#   f'(x) = 4x(x-a)^2 = 4x^3 - 8ax^2 + 4a^2 x (again want a multiple of 3)
+#   f(x) = x^4 - (8a/3) x^3 + 2a^2 x^2 + C
+
+$a = 3 * non_zero_random(-3,3);
+$sgn = non_zero_random(-1,1);
+
+$doubleAtZero = random(0,1);
+
+@signChar = ("-", "", "+");
+@classifyStr = ("MAX", "NOT", "MIN");
+if ($doubleAtZero == 1) {
+    $c1 = $sgn*4*$a/3;
+    $c2 = random(-9,9);
+    $func = Compute("$sgn*x^4 - $c1*x^3 + $c2")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+    if ($a<0) {
+        @critPts = ($a, 0);
+        @signs = ( $signChar[-$sgn+1], $signChar[$sgn+1], $signChar[$sgn+1] );
+        @classify = ( $classifyStr[$sgn+1], "NOT" );
+    } else {
+        @critPts = (0, $a);
+        @signs = ( $signChar[-$sgn+1], $signChar[-$sgn+1], $signChar[$sgn+1] );
+        @classify = ( "NOT", $classifyStr[$sgn+1]);
+    }
+} else {
+   $c1 = $sgn*8*$a/3;
+   $c2 = $sgn*2 * $a**2;
+   $c3 = random(-9,9);
+   $func = Compute("$sgn*x^4 - $c1*x^3 + $c2*x^2 + $c3")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+    if ($a<0) {
+        @critPts = ($a, 0);
+        @signs = ( $signChar[-$sgn+1], $signChar[-$sgn+1], $signChar[$sgn+1] );
+        @classify = ( "NOT", $classifyStr[$sgn+1] );
+    } else {
+        @critPts = (0, $a);
+        @signs = ( $signChar[-$sgn+1], $signChar[$sgn+1], $signChar[$sgn+1] );
+        @classify = ( $classifyStr[$sgn+1], "NOT" );
+    }
+}
+
+$critPtsAns = List(@critPts);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Identify all $BBOLD critical points $EBOLD of the function \(f(x) = $func\).
+List the \(x\)-values of these critical points as a comma-separated list in increasing order.
+$BR
+Critical points of \(f\): \{ ans_rule(30) \}
+
+$PAR
+List the sign of \(f'\) (either \(+\) or \(-\)) on each of the intervals separated by these critical points.
+Use a comma-separated list referring to intervals from left to right.
+$BR
+Signs of \(f'\): \{ ans_rule(30) \}
+
+$PAR
+For each of the critical points above (and in the same order), indicate if the First Derivative Test indicates
+that the critical point is a local maximum, a local minimum, not an extreme, or undetermined by creating a comma-separated list 
+using keywords $BBOLD MAX $EBOLD, $BBOLD MIN $EBOLD, $BBOLD NOT $EBOLD, or $BBOLD UND $EBOLD, respectively.
+$BR
+Classification of points: \{ ans_rule(40) \}
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+
+ANS( $critPtsAns->cmp(ordered=>1) );
+
+Context("String")->strings->add("+"=>{}, "-"=>{});
+Context()->operators->redefine(",", from=>"Numeric");
+ANS( List(@signs)->cmp(ordered=>1, entry_type=>"sign", showHints=>0) );
+
+Context("String")->strings->add("MAX"=>{}, "MIN"=>{}, "NOT"=>{}, "UND"=>{});
+Context()->operators->redefine(",", from=>"Numeric");
+ANS( List(@classify)->cmp(ordered=>1, entry_type=>"classification", showHints=>0) );
+
+COMMENT("There will be two critical points (x=0, x=a); one is a double root of f'; no sign change in f' around double root.");
+ 
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

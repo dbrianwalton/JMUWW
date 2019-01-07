@@ -1,0 +1,74 @@
+# DESCRIPTION
+#   Apply rules of differentiation involving products of simple polynomials. 
+#   Specifically:  f(x) = (linear) * (quadratic).
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('derivative','differentiation', 'product rule')
+## Date('6/2/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGjmu_poly.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+@varList = ('s', 't', 'x', 'u');
+$vk = random(0,3,1);
+$x = $varList[$vk];
+
+Context()->variables->are($x=>'Real');
+
+# Find the quadratic.
+@c = (non_zero_random(-2,2,1), random(-8,8,1), non_zero_random(-8,8,1));
+$quad = GenPolyString( ~~@c, "x"=>$x );
+
+# Define the 'generalized' polynomial
+@pc = (non_zero_random(1,5,1), 0, non_zero_random(-5,5,1));
+$d = random(0,1,1);
+$genPoly = GenPolyString(~~@pc, "k"=>$d-2, "x"=>$x );
+
+$expr = Compute("($quad)*($genPoly)")->reduce('(-x)-y' => 0, '(-x)+y' => 0, 'x^(-1)' => 0);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute the derivative of \(f($x) = $expr\).
+$BR (Repeat this problem for additional practice.)
+
+$PAR
+\(f'($x) = \) \{ ans_rule(35) \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+$ans = $expr->D();
+ANS( $ans->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

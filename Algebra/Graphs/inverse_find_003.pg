@@ -1,0 +1,82 @@
+## DESCRIPTION
+##   Find the inverse relation.
+## ENDDESCRIPTION
+
+## KEYWORDS('inverse')
+## Tagged by dbw 10/18/10
+
+## DBsubject('Algebra')
+## DBchapter('Functions')
+## DBsection('Transformations')
+## Date('10/18/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$a = non_zero_random(-4,4);
+$m = non_zero_random(-5,5);
+$b = non_zero_random(-8,8);
+
+$fFcn = Compute("$a*x/[$m*x+$b]")->reduce();
+$fInv = Compute("-$b*x/($m*x-$a)")->reduce();
+
+Context("Interval");
+
+$domF = Interval("(-INF,-$b/$m) U (-$b/$m,INF)");
+$domFInv = Interval("(-INF,$a/$m) U ($a/$m,INF)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Find the inverse function to \(f(x) = $fFcn\).
+$BR
+\(f^{-1}(x) = \) \{ ans_rule(30) \}
+
+$PAR
+Identify the domains of the two functions:
+$BR
+domain(\(f\)) = \{ ans_rule(20) \}
+$BR
+domain(\(f^{-1}\)) = \{ ans_rule(20) \}
+
+$PAR
+What is the range of \(f\)?
+$BR
+range(\(f\)) = \{ ans_rule(20) \}
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answer checking
+$showPartialCorrectAnswers=1;
+
+ANS($fInv->cmp);
+
+ANS($domF->cmp);
+ANS($domFInv->cmp);
+ANS($domFInv->cmp);
+
+###################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

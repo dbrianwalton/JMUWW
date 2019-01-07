@@ -1,0 +1,72 @@
+# DESCRIPTION
+#   Open rectangular box (no top) with given surface area -- maximize volume
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('extreme value','optimization', 'volume')
+## Date('8/24/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+# Total available area
+$totalArea = 100 * random(4, 12, 0.25);
+
+@unitChoice = ('cm', 'in', 'ft', 'm');
+$unit = $unitChoice[random(0,@unitChoice-1)];
+
+$baseOpt = Real("sqrt($totalArea/3)");
+$heightOpt = $baseOpt / 2;
+$maxVolume = Real("$totalArea*sqrt($totalArea/3)/6");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+An open rectangular box (no top) is formed with a square base and rectangular sides 
+so that the total area of the five faces is $totalArea sq. $unit.  What is the greatest
+possible volume such a box can hold?
+
+$PAR
+Maximum volume: \{ ans_rule(10) \} (cu. $unit)
+$BR
+Length along square base: \{ ans_rule(10) \} ($unit)
+$BR
+Height of sides: \{ ans_rule(10) \} ($unit)
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $maxVolume->cmp );
+ANS( $baseOpt->cmp );
+ANS( $heightOpt->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

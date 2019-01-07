@@ -1,0 +1,85 @@
+## DESCRIPTION
+## Solve a simple exponential equation
+## ENDDESCRIPTION
+
+## KEYWORDS('exponential', 'equation', 'solve')
+## Tagged by dbw 7/18/11
+
+## DBsubject('Algebra')
+## DBchapter('Exponential and Logarithmic Functions')
+## DBsection('Exponential and Logarithmic Equations')
+## Date('7/18/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl",
+);
+
+
+###################################
+# Setup
+###################################
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$b = random(2,6,1);
+$k = random(2,5);
+$d = non_zero_random(-5,5);
+
+$expr = Formula("$k*x+$d")->reduce();
+
+$c = 0;
+while ($c == 0) {
+    $xval = non_zero_random(-4,4);
+    $c = $k*$xval+$d;
+}
+
+$xSoln = List(Real($xval));
+
+###################################
+# Display the Problem
+###################################
+TEXT(beginproblem);
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Solve the equation \($b^{$expr} = $b^{$c}\) to find \(x\).
+$BR $BR
+\(  x = \) \{ ans_rule(10) \}
+$PAR Enter multiple solutions as a comma-separated list.  Type $BBOLD NONE $EBOLD if there are no solutions.
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Check the Answers
+###################################
+$showPartialCorrectAnswers = 1;
+
+ANS( $xSoln->cmp );
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+${BBOLD}Solution:${EBOLD}
+
+$PAR
+Since the equation is comparing the equality of two exponential expressions
+with the same base, it is enough to compare the equality of the exponents,
+\($expr = $c\).  Solving for \(x\) we find \(x=$xval\).
+END_SOLUTION
+
+COMMENT('Solution provided. Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

@@ -1,0 +1,38 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$zscore = Compute("1.145"  )->with(tolType=>'absolute', tolerance=>'0.006');
+$prob   = Compute("0.12610")->with(tolType=>'absolute', tolerance=>'0.002');
+$height = Compute("68.1075")->with(tolType=>'absolute', tolerance=>'0.030');
+
+TEXT(beginproblem());
+Context()->texStrings;
+
+BEGIN_TEXT
+
+The height of a person can be characterized as having a normal distribution with a mean of 69.0 inches and a standard deviation of 3.5.
+$BR$BR
+
+(a) What proportion of the people are taller than 73.0 inches? (Carry 2 decimal digits for the z-score and 4 decimal digits for the probability.)
+$BR$BR
+
+\( P(X > 73.0) = P(Z > \) \{ans_rule(8)\} \( ) = \) \{ans_rule(8)\}
+$BR$BR
+
+(b) Above what height value do you find 60 percent of the people? (Carry 2 decimal digits.)
+$BR$BR
+
+Answer: \{ans_rule(8)\} inches.
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $zscore->cmp() );
+ANS( $prob->cmp() );
+ANS( $height->cmp() );
+
+ENDDOCUMENT();

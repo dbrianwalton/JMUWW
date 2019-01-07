@@ -1,0 +1,295 @@
+## DESCRIPTION
+## Solving an inequality |x^2+bx+c| [<,<=,>,>=] d
+## ENDDESCRIPTION
+
+## KEYWORDS('algebra','inequality','absolute value')
+## Tagged by dbw 6/4/12
+
+## DBsubject('Algebra')
+## DBchapter('Equations and Inequalities')
+## DBsection('Absolute Value')
+## Date('9/1/09')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGjmu_poly.pl",
+  "PGgraphmacros.pl",  # load graph for solution
+  "problemRandomize.pl"
+);
+
+
+###################################
+# Setup
+###################################
+Context("Interval");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Choose the random coefficients.
+$b = random(-5,5,1);             # degree 1 term
+$c = non_zero_random(-10,10,1);  # degree 0 term
+
+# Choose the target y-value
+$d = random(1,6,1);
+
+# Choose the type of inequality
+@ineq = ("<", "\le", ">", "\ge");
+$ineqType = random(0,3,1);
+$ltgt = $ineq[$ineqType];
+
+# Determine if this is open or closed.
+$isClosed = $ineqType % 2;
+$lP = ("(","[")[$isClosed];
+$rP = (")", "]")[$isClosed];
+
+# For the solution, we will want the reverse inequality.
+if ($ineqType >= 2) {
+  $gtlt = $ineq[$isClosed];
+  $joinWord = "or";
+  $setWord = "union";
+} else {
+  $gtlt = $ineq[2+$isClosed];
+  $joinWord = "and";
+  $setWord = "intersection";
+}
+@topC = (1, $b, $c-$d);
+$topQuadStr = GenPolyTeX(~~@topC);
+@botC = (1, $b, $c+$d);
+$botQuadStr = GenPolyTeX(~~@botC);
+
+# Define the function.
+$fcnStr = "x^2+$b*x+$c";
+$fcn = Compute($fcnStr)->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+$yVertex = $fcn->eval(x=>(-$b/2));
+
+# For solving the quadratic, determine the discriminants when add/subtract d
+$innerDisc = $b**2-4*($c+$d);
+$outerDisc = $b**2-4*($c-$d);
+
+# Case 1: Always greater than d.
+if ($outerDisc < 0) {
+    $topEqSoln = "there are no solutions";
+    $botEqSoln = "there are no solutions";
+
+    # Greater than inequality
+    if ($ineqType >= 2) {
+        $answer = Interval("(-INF,INF)");
+        $topIneqSoln = "\((-\infty,\infty)\)";
+        $botIneqSoln = "\(\emptyset\) (empty set)";
+    }
+    # Less than...
+    else {
+        $answer = Interval("{}");
+        $topIneqSoln = "\(\emptyset\) (empty set)";
+        $botIneqSoln = "\((-\infty,\infty)\)";
+    };
+
+# Case 2: Vertex is exactly equal to d.
+} elsif ($outerDisc == 0) {
+    $center = Real(-$b/2);
+
+    $topEqSoln = "\(x=$center\)";
+    $botEqSoln = "there are no solutions";
+
+    # greater than or equal ...
+    if ($ineqType == 3) {
+        $answer = Interval("(-INF,INF)");
+        $topIneqSoln = "\((-\infty,\infty)\)";
+        $botIneqSoln = "\(\emptyset\) (empty set)";
+
+    # greater than ...
+    } elsif ($ineqType == 2) {
+        $answer = Interval("(-INF,$center)U($center,INF)");
+        $topIneqSoln = "\(" . $answer->TeX . "\)";
+        $botIneqSoln = "\(\emptyset\) (empty set)";
+
+    # less than or equal ...
+    } elsif ($ineqType ==1) {
+        $answer = Interval("{$center}");
+        $topIneqSoln = "\(\{$center\}\) (a single point)";
+        $botIneqSoln = "\(\emptyset\) (empty set)";
+
+    # less than ...
+    } else {
+        $answer = Interval("{}");
+        $topIneqSoln = "\(\emptyset\) (empty set)";
+        $botIneqSoln = "\(\emptyset\) (empty set)";
+    }
+
+# Case 3: The vertex is below the top line.
+} else {
+    $leftOut = Real("(-$b - sqrt($outerDisc))/2");
+    $rightOut = Real("(-$b + sqrt($outerDisc))/2");
+
+    $topEqSoln = "\(x=$leftOut\) and \(x=$rightOut\)";
+
+    # Case 3a: The vertex is above the lower line.
+    if ($innerDisc < 0) {
+
+        $botEqSoln = "there are no solutions";
+
+        # greater than ...
+        if ($ineqType >= 2) {
+            $answer = Interval("(-INF,$leftOut" . $rP . "U" . 
+                          $lP . "$rightOut,INF)");
+
+            $topIneqSoln = "\(" . $answer->TeX . "\)";
+            $botIneqSoln = "\(\emptyset\) (empty set)";
+        }
+        # or less than ...
+        else {
+            $answer = Interval($lP ."$leftOut,$rightOut" . $rP);
+
+            $topIneqSoln = "\(" . $answer->TeX . "\)";
+            $botIneqSoln = "\((-\infty,\infty)\)";
+        };
+    }
+
+    # Case 3b: The vertex is on the lower line.
+    elsif ($innerDisc == 0) {
+        $center = -$b/2;
+        $botEqSoln = "\(x=$center\)";
+
+        # Go through each case ...
+        if ($ineqType == 3) { # Greater than or equal
+            $answerTop = Interval("(-INF,$leftOut]U[$rightOut,INF)");
+            $answerBot = Interval("{$center}");
+            $answer = Compute("$answerTop U $answerBot");
+
+            $topIneqSoln = "\(" . $answerTop->TeX . "\)";
+            $botIneqSoln = "\(\{$center\}\)";
+        }
+        elsif ($ineqType == 2) { # Greater than
+            $answer = Interval("(-INF,$leftOut)U($rightOut,INF)");
+
+            $topIneqSoln = "\(" . $answer->TeX . "\)";
+            $botIneqSoln = "\(\emptyset\) (empty set)";
+
+        }
+        elsif ($ineqType == 1) { # Less than or equal
+            $answer = Interval("[$leftOut, $rightOut]");
+
+            $topIneqSoln = "\(" . $answer->TeX . "\)";
+            $botIneqSoln = "\((-\infty,\infty)\)";
+
+        }
+        else { # Less than
+            $answer = Interval("($leftOut, $center)U($center,$rightOut)");
+
+            $topIneqSoln = "\(($leftOut,$rightOut)\)";
+            $botIneqSoln = "\((-\infty,$center) \cup ($center,\infty)\)";
+
+        };
+    }
+
+    # Case 3c: The vertex is below the lower line.
+    else {
+        $leftIn = (-$b - sqrt($innerDisc))/2;
+        $rightIn = (-$b + sqrt($innerDisc))/2;
+
+        $botEqSoln = "\(x=$leftIn\) and \(x=$rightIn\)";
+
+        # greater than ...
+        if ($ineqType >= 2) {
+            $answer = Interval("(-INF,$leftOut" . $rP . "U" . 
+                          $lP . "$leftIn,$rightIn" . $rP . "U" .
+                          $lP . "$rightOut,INF)");
+
+            $answerTop = Interval("(-INF,$leftOut". $rP . "U" . $lP . "$rightOut,INF)");
+            $topIneqSoln = "\(" . $answerTop->TeX . "\)";
+            $botIneqSoln = "\($lP $leftIn, $rightIn $rP\)";
+        }
+        # or less than ...
+        else {
+            $answer = Interval($lP ."$leftOut,$leftIn" . $rP . "U" . 
+                        $lP . "$rightIn,$rightOut" . $rP);
+
+            $topIneqSoln = "\($lP $leftOut, $rightOut $rP\)";
+            $answerBot = Interval("(-INF,$leftIn". $rP . "U" . $lP . "$rightIn,INF)");
+            $botIneqSoln = "\(" . $answerBot->TeX . "\)";
+        };
+    };
+};
+
+###################################
+# Display the Problem
+###################################
+TEXT(beginproblem);
+Context()->texStrings;
+BEGIN_TEXT
+Solve the inequality \(|$fcn| $ltgt $d\).  Express your answer in interval notation.  
+$PAR
+Solution Set: \{ ans_rule(30) \}
+
+$PAR
+Note: An empty set \(\emptyset\) is entered as $BBOLD {} $EBOLD.
+END_TEXT
+Context()->normalStrings;
+
+
+###################################
+# Answer checking
+###################################
+ANS( $answer->cmp );
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR ${BBOLD}Solution:${EBOLD}
+
+$PAR
+The inequality \(|$fcn| $ltgt $d\) can be replaced by the compound statement
+\[ $fcn $ltgt $d \quad \hbox{$joinWord} \quad $fcn $gtlt -$d.\]
+A graph showing \(y=$fcn\) (black), \(y=$d\) (blue) and \(y=-$d\) (red) is shown below.
+
+$PAR
+$BCENTER
+\{ 
+	$xMin = floor($leftOut)-1;
+	$xMax = ceil($rightOut)+1;
+	$yMin = min(-$d-1, floor($yVertex));
+	$yMax = max($d+1, ceil($yVertex));
+
+	$gr = init_graph($xMin, $yMin, $xMax, $yMax,
+		axes=>[0,0],
+		grid=>[$xMax-$xMin,$yMax-$yMin],
+		size=>[400,400]
+	);
+	add_functions($gr, "$fcnStr for x in <$xMin,$xMax> using color:black and weight:2");
+	add_functions($gr, "-$d for x in <$xMin,$xMax> using color:red and weight:2");
+	add_functions($gr, "$d for x in <$xMin,$xMax> using color:blue and weight:2");
+
+	image( insertGraph($gr), width=>200, height=>200, tex_size=>400);
+\}
+$ECENTER
+
+$PAR
+We can create a quadratic equation to find where the parabola intersects each of the horizontal lines, which we can then use to solve the inequalities.
+Solving the equation \[ $fcn = $d \] finds where the parabola intersects the top line \(y=$d\).  
+Adding \(-$d\) to both sides, the quadratic equation \($topQuadStr=0\) can be solved to find $topEqSoln. So the solution to the inequality \($fcn $ltgt $d\) corresponds to $topIneqSoln.
+
+$PAR
+Solving the equation \[ $fcn = -$d \] finds where the parabola intersects the top line \(y=-$d\).  
+Adding \($d\) to both sides, the quadratic equation \($botQuadStr=0\) can be solved to find $botEqSoln. So the solution to the inequality \($fcn $gtlt -$d\) corresponds to $botIneqSoln.
+
+$PAR
+The solution to the original problem corresponds to the $setWord of the solutions to the separate inequalities, which corresponds to \($answer\).
+END_SOLUTION
+Context()->normalStrings;
+
+###################################
+COMMENT('Random inequality direction and endpoint inclusion. Empty set is possible. Solution provided, including a graph. Typically requires quadratic formula.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

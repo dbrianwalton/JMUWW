@@ -1,0 +1,78 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative','chain rule', 'algebraic function')
+## Tagged by dbw 9/1/09
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('1/13/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Product with composition.
+$compCode = random(0,2,1);
+
+$k = non_zero_random(-1,1);
+
+# Need two basic functions
+$a1 = non_zero_random(2,5,1);
+$b1 = non_zero_random(-5,5,1);
+
+$domainLim = -$b1/$a1;
+$a = max(0, $domainLim);
+
+$func = Compute("sqrt($a1*x+$b1)^$k")->reduce('(-x)-y'=>0);
+
+$df = $func->D();
+$df->{limits} = [$a, $a+5];
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute
+$BR
+\(\displaystyle \frac{d}{dx}[$func] = \) \{ ans_rule(40) \}
+$BR
+END_TEXT
+Context()->normalStrings;
+
+$showHint = 2;
+$outFun = Compute("sqrt(x)^$k")->reduce();
+
+Context()->texStrings;
+BEGIN_HINT
+First, think about your function as a composition of \($outFun\).  Use the chain rule.
+END_HINT
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $df->cmp );
+
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

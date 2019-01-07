@@ -1,0 +1,116 @@
+## DESCRIPTION
+## Rewriting an absolute value of a quadratic polynomial as a piecewise function.
+## ENDDESCRIPTION
+
+## KEYWORDS('algebra','piecewise','absolute value')
+## Tagged by dbw 9/1/09
+
+## DBsubject('Precalculus')
+## DBchapter('Functions')
+## DBsection('Piecewise Defined Functions')
+## Date('9/1/09')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "contextInequalities.pl",
+  "PGchoicemacros.pl",
+  "problemRandomize.pl"
+);
+
+
+###################################
+# Setup
+###################################
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+# Generate a random quadratic by choosing distinct random roots between -9 and 9
+@values = NchooseK(19,2);
+$a = min(@values)-9;
+$b = max(@values)-9;
+
+# Calculate the actual coefficients.
+$c1 = $a+$b;
+$c2 = $a*$b;
+
+# This defines the quadratic itself.
+$fcn = Compute("x^2-$c1*x+$c2")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+$fcnOpp = Compute("-x^2+$c1*x-$c2")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+$fcnFactor = Compute("(x-$a)*(x-$b)")->reduce();
+$factorLeft = Compute("x-$a")->reduce();
+$factorRight = Compute("x-$b")->reduce();
+
+# For solving the inequality f(x) >= 0, we get disjoint union.
+Context("Inequalities-Only");
+$setNonNeg = Compute("x<=$a or x>=$b");
+$setNeg = Compute("x>$a and x<$b");
+
+###################################
+# Display the Problem
+###################################
+TEXT(beginproblem);
+Context()->texStrings;
+BEGIN_TEXT
+Rewrite \(|\{$fcn\}|\) as a piecewise function by filling in the blanks with appropriate statements involving inequalities
+\[ |\{$fcn\}| = \begin{cases} $fcn, & \hbox{if } x \hbox{ satisfies condition }A, \\ 
+$fcnOpp, & \hbox{if } x \hbox{ satisfies condition }B. \end{cases}\]
+
+$PAR
+Provide the conditions \(A\) and \(B\), expressed as simple inequalities.
+$BR
+Condition \(A\): \{ ans_rule(20) \}
+$BR
+Condition \(B\): \{ ans_rule(20) \}
+$BR
+${BBOLD}Note:${EBOLD} Type ${BBOLD}<=${EBOLD} to say \(\le\) and type $BBOLD >= $EBOLD to say \(\ge\).  Use the words $BBOLD and $EBOLD and $BBOLD or $EBOLD to properly join multiple inequalities.
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answer checking
+###################################
+$showPartialCorrectAnswers = 1;
+
+ANS( $setNonNeg->cmp );
+ANS( $setNeg->cmp );
+
+###################################
+# Solution
+###################################
+Context()->texStrings;
+BEGIN_SOLUTION
+$PAR
+$BBOLD Solution: $EBOLD
+
+$PAR
+Absolute value looks at the input, tests if it is negative, and if so, changes the sign to positive by multiplying by -1.  
+Since the input to this absolute value is \($fcn\), we need to solve the inequality \($fcn < 0\).
+The easiest way to solve this inequality is to factor the left-hand side, \($fcnFactor < 0\).
+
+$PAR
+If we find the zeros of each factor, we can test points between these points to determine the sign of the quadratic.  The first factor \($factorLeft\) has a zero at \(x=$a\). The second factor \($factorRight\) has a zero at \(x=$b\).  Testing the value of \($fcn\) at points in each of the intervals \((-\infty,$a)\), \(($a,$b)\), and \(($b,\infty)\), we find the solution to \($fcn < 0\) is \($a < x < $b\), which means \(x > $a\) $BBOLD and $EBOLD \(x < $b\).
+
+$PAR
+The inequality we just solved gives the condition for when the absolute value changes the sign of the input formula.  
+At all other points, the absolute value leaves the input formula alone.  
+So the piecewise formula is
+\[ |\{$fcn\}| = \begin{cases} 
+$fcn, & x \le $a \hbox{ or } x \ge $b, \\ 
+$fcnOpp, & x > $a \hbox{ and } x < $b. 
+\end{cases}\]
+END_SOLUTION
+Context()->normalStrings;
+
+COMMENT('Solution provided. Rerandomized.');
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

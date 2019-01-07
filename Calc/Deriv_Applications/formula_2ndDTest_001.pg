@@ -1,0 +1,108 @@
+# DESCRIPTION
+#   Given the algebraic formula for a function (quadratic polynomial),
+#   identify all of the critical points and then apply the 2nd derivative test.
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('function','derivative', 'first derivative test')
+## Date('8/18/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextString.pl",
+  "PGchoicemacros.pl",
+  "PGgraphmacros.pl",
+  "PGpolynomialmacros.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+# Want f'(x) = 3(x-a)(x-b) = 3[x^2-(a+b)x+ab] so f(x) = x^3 -3(a+b)/2 x^2 + 3ab x + c
+#  So we want a+b to be even so that this has integer coefficients.
+
+$a[0] = random(-7,2);
+$a[1] = $a[0] + 2*random(1,4);
+
+$sgn = non_zero_random(-1,1);
+
+$c1 = $sgn*3*($a[0]+$a[1])/2;
+$c2 = $sgn*3*$a[0]*$a[1];
+$c3 = random(-8,8);
+
+$func = Compute("$sgn*x^3 - $c1*x^2 + $c2*x + $c3")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+$f1d = $func->D();
+$f2d = $f1d->D();
+
+@f2vals = ($f2d->eval(x=>$a[0]), $f2d->eval(x=>$a[1]));
+
+if ($sgn > 0) {
+    @classify = ("MAX", "MIN");
+} else {
+    @classify = ("MIN", "MAX");
+}
+
+$critPtsAns = List(@a);
+$f2valAns = List(@f2vals);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+Identify all $BBOLD critical points $EBOLD of the function \(f(x) = $func\).
+List the \(x\)-values of these critical points as a comma-separated list in increasing order.
+$BR
+Critical points of \(f\): \{ ans_rule(30) \}
+
+$PAR
+Compute the value \(f''(x)\) at each of the critical points.
+Use a comma-separated list matching the order of the critical points.
+$BR
+Values of \(f''(x)\): \{ ans_rule(30) \}
+
+$PAR
+For each of the critical points above (and in the same order), indicate if the Second Derivative Test indicates
+that the critical point is a local maximum, a local minimum, not an extreme, or undetermined by creating a comma-separated list 
+using keywords $BBOLD MAX $EBOLD, $BBOLD MIN $EBOLD, $BBOLD NOT $EBOLD, or $BBOLD UND $EBOLD, respectively.
+$BR
+Classification of points: \{ ans_rule(40) \}
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+
+ANS( $critPtsAns->cmp(ordered=>1) );
+ANS( $f2valAns->cmp(ordered=>1) );
+
+Context("String")->strings->add("MAX"=>{}, "MIN"=>{}, "NOT"=>{}, "UND"=>{});
+Context()->operators->redefine(",", from=>"Numeric");
+ANS( List(@classify)->cmp(ordered=>1, entry_type=>"classification", showHints=>0) );
+
+COMMENT("Two critical points; the 2nd derivative test is conclusive for both.");
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

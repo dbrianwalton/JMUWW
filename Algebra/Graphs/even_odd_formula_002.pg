@@ -1,0 +1,119 @@
+## DESCRIPTION
+##   Algebraically determine if a function is even or odd.
+## ENDDESCRIPTION
+
+## KEYWORDS('symmetry','even', 'odd')
+## Tagged by dbw 10/18/10
+
+## DBsubject('Algebra')
+## DBchapter('Functions')
+## DBsection('Transformations')
+## Date('10/18/10')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserPopUp.pl",
+  "contextLimitedPolynomial.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$numerEven = random(0,1);
+$denomEven = random(0,1);
+
+if ($numerEven == $denomEven) {
+    $pchoice = "even";
+} else {
+    $pchoice = "odd";
+}
+$popup = PopUp(["?", "even", "odd", "neither"], $pchoice);
+
+Context("LimitedPolynomial");
+
+# Now determine the two polynomials.  Keep them simple.
+@c = ( non_zero_random(-3,3), non_zero_random(-3,3) );
+if ($numerEven) {
+    $numer = Compute("$c[0]*x^2 + $c[1]")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+    $numerHR = $numer;
+} else {
+    $numer = Compute("$c[0]*x^3 + $c[1]*x")->reduce('(-x)-y'=>0, '(-x)+y'=>0); 
+    $numerHR = Compute("-($c[0])*x^3 - ($c[1])*x")->reduce('(-x)-y'=>0, '(-x)+y'=>0); 
+}
+
+@d = ( non_zero_random(-3,3), non_zero_random(-3,3) );
+if ($denomEven) {
+    $denom = Compute("$d[0]*x^2 + $d[1]")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+    $denomHR = $denom;
+} else {
+    $denom = Compute("$d[0]*x^3 + $d[1]*x")->reduce('(-x)-y'=>0, '(-x)+y'=>0); 
+    $denomHR = Compute("-($d[0])*x^3 - ($d[1])*x")->reduce('(-x)-y'=>0, '(-x)+y'=>0); 
+}
+
+Context("Numeric");
+$ratlFcn = Compute("($numer)/($denom)");
+
+Context()->texStrings;
+BEGIN_TEXT
+The function \(\displaystyle f(x) = $ratlFcn\) is a ratio of two polynomials, \(\displaystyle f(x) = \frac{p(x)}{q(x)}\).
+
+$PAR
+Identify the polynomials \(p(x)\) and \(q(x)\).
+$BR
+$BBLOCKQUOTE
+\(p(x) = \) \{ ans_rule(25) \}
+$BR
+\(q(x) = \) \{ ans_rule(25) \}
+$EBLOCKQUOTE
+
+$PAR
+For each of the polynomials, determine \(p(-x)\) and \(q(-x)\).
+$BR
+$BBLOCKQUOTE
+\(p(-x) = \) \{ ans_rule(25) \}
+$BR
+\(q(-x) = \) \{ ans_rule(25) \}
+$EBLOCKQUOTE
+$BR Be sure to simplify your answers.
+
+$PAR
+Based on these calculations, the original function \(f\) is what type of function?
+$BR
+$BBLOCKQUOTE
+\(f\) is \{ $popup->menu() \}
+$EBLOCKQUOTE
+
+END_TEXT
+Context()->normalStrings;
+
+###################################
+# Answer checking
+install_problem_grader(~~&std_problem_grader);
+
+$showPartialCorrectAnswers = 1;
+
+ANS($numer->cmp);
+ANS($denom->cmp);
+ANS($numerHR->cmp);
+ANS($denomHR->cmp);
+ANS($popup->cmp);
+
+###################################
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

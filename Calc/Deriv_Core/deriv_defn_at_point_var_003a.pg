@@ -1,0 +1,94 @@
+# DESCRIPTION
+#   Apply the definition of the derivative to find the derivative function.
+#    f(x) = x^3+bx+c or x^3+bx^2+c(cubic)
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('derivative','limit')
+## Date('5/27/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "contextLimitedPolynomial.pl",
+  "answerHints.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("LimitedPolynomial");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+Context()->variables->are(x=>'Real', t=>'Real');
+Context()->{error}{msg}{"In a polynomial, you can only divide by numbers"} 
+= "You need to simplify your fraction";
+
+$b = non_zero_random(-9,9,1);
+$c = random(-10, 10, 1);
+$k = random(1,2);
+
+$a = random(-10,10);
+
+$expr = Compute("x^3+$b*x^$k+$c")->reduce('(-x)+y'=>0, '(-x)-y'=>0);
+$exprAa = $expr->substitute(x=>t);
+$exprAb = $expr->eval(x=>$a);
+$exprB = Compute($exprAa - $exprAb);
+if ($k == 1) {
+    $exprC = Compute("t^2+$a*t+($a)^2+$b");
+} else {
+    $exprC = Compute("t^2+($a+$b)*t+($a)^2+($b)*($a)")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+}
+$exprD = $exprC->eval(t=>$a);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute the derivative \(\displaystyle \left. \frac{dy}{dx} \right|_{$a}\) where \(y = $expr\) using the definition involving \(t\) in a step-by-step manner.
+$BR (Repeat this problem for additional practice.)
+
+$PAR
+Step 1a.  Compute \(y(t)\) = \{ ans_rule(15) \}
+$BR
+Step 1b.  Compute \(y($a)\) = \{ ans_rule(15) \}
+
+$PAR
+Step 2.  Compute \(y(t) - y($a)\) = \{ ans_rule(15) \}
+
+$PAR
+Step 3.  Compute and simplify \(\displaystyle \frac{y(t) - y($a)}{t-$a}\) = \{ ans_rule(20) \}
+
+$PAR
+Step 4.  Compute \(\displaystyle \left. \frac{dy}{dx}\right|_{$a} = \lim_{t \to $a} \frac{y(t) - y($a)}{t-$a}\) = \{ ans_rule(10) \}
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $exprAa->cmp );
+ANS( $exprAb->cmp );
+
+ANS( $exprB->cmp );
+ANS( $exprC->cmp );
+ANS( $exprD->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

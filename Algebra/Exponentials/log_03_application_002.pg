@@ -1,0 +1,64 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('logarithm','exponential', 'equation', 'Newton', 'cooling')
+## Tagged by dbw 7/20/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('7/20/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('Introductory Calculus')
+## EditionText1('JMU special')
+## AuthorText1('Tan')
+## Section1('5.2')
+## Problem1('54')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "problemRandomize.pl",
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$k = -0.01*random(2,4,0.5);
+$temp = 85+random(0,10,2);
+$roomTemp = random(70,78);
+$bodyGap = 98.6 - $roomTemp;
+
+$pVal = random(10,25,0.1);
+$time = Real("ln[($temp-$roomTemp)/$bodyGap]/($k)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR $BBOLD Newton's Law of Cooling$EBOLD.  Crime scene scientists determined that the temperature (in degrees Fahrenheit) of a body would be modeled by
+\[ T(t) = $roomTemp + $bodyGap e^{$k t}, \quad t \ge 0,\]
+where \(t\) is the number of hours since death.
+
+$PAR
+At the time of discovery, the body has a temperature of \(T=$temp^\circ\)F.  According to the model, how many hours have
+passed since the time of death? $BR $BR
+\(t\) = \{ ans_rule(15) \} (hours)
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $time->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

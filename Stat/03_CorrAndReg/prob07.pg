@@ -1,0 +1,37 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$pred  = Compute("32.5" )->with(tolType=>'absolute', tolerance=>'0.001' );
+$resid = Compute( "1.8" )->with(tolType=>'absolute', tolerance=>'0.001' );
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+A 3rd-grade school teacher collected data on height (in centimeters) and weight (in kilograms) from her 30 students. She conducted a regression analysis using her data. The obtained regression equation was \( \hat{y} = -85 + 0.94x \), where \(x\) was the height and \(y\) was the weight.
+$BR$BR
+
+(a) One student in her class is 125 centimeters tall. Predict the weight of this student using the regression equation.
+$BR$BR
+
+Answer: \{ans_rule(8)\} (Carry 1 decimal digit.)
+$BR$BR
+
+(b) The aforementioned student's actual weight is 34.3 kilograms. Calculate the residual (prediction error) for this student.
+$BR$BR
+
+Answer: \{ans_rule(8)\} (Carry 1 decimal digit.)
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $pred->cmp() );
+ANS( $resid->cmp() );
+
+ENDDOCUMENT();

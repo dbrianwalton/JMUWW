@@ -1,0 +1,67 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('calculus','derivative', 'logarithm', 'logarithmic differentiation')
+## Tagged by dbw 8/1/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('8/1/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "parserMultiAnswer.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+
+Context("Numeric");
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+
+
+$a = random(-10,10);
+$b = random(1,5);
+
+Context()->variables->set(x=>{limits=>[$a+0.5,$a+2.5]});
+
+$func = Compute("(x-$a)^($b*x)")->reduce();
+$logFunc = Compute("$b* x * ln(abs(x-$a))");
+$logDeriv = Formula("$b*ln(|x-$a|) + ($b*x)/(x-$a)");
+$deriv = Compute("(x-$a)^($b*x)*($b*ln(|x-$a|) + $b*x/(x-$a))")
+         ->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Use logarithmic differentiation to find the derivative of the function \(f(x) = $func\).
+
+$BR $BR
+\(f'(x)\) = \{ ans_rule(40) \}
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $deriv->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

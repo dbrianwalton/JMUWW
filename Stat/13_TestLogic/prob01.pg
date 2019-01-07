@@ -1,0 +1,60 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "PGchoicemacros.pl");
+
+$mc1=new_multiple_choice();
+$mc1->qa(
+"1. What is the probability that the test will commit a Type I error?",
+"0.05"
+);
+$mc1->extra(
+"0.01",
+"0.10"
+);
+$mc1->makeLast("None of the above.");
+
+$mc2=new_multiple_choice();
+$mc2->qa(
+"2. Suppose that the same study, using the same design, is conducted at 20 different cities. If in fact the mean rent is 400.00 dollars in all 20 cities, how many of the 20 tests is (are) expected to be statistically significant by chance alone?",
+"1"
+);
+$mc2->extra(
+"5",
+"10"
+);
+$mc2->makeLast("Insufficient information to determine.");
+
+$mc3=new_multiple_choice();
+$mc3->qa(
+"3. In the study, a Type II error occurs when the researcher fails to conclude that the true mean rent is higher than 400.00 dollars when in fact the mean is, for example, 420.00 dollars. If the consequence of making such an error is considered to be serious and the probability of making the error must be made small, what should the researcher do?",
+"Increase the significance level."
+);
+$mc3->extra(
+"Reduce the significance level.",
+"Reduce the sample size."
+);
+$mc3->makeLast("Type II error rates cannot be controlled.");
+
+BEGIN_TEXT
+
+Consider a study that investigates whether the mean rent of one-bedroom apartments in a city is higher than 400.00 dollars. A random sample of 50 apartments is selected and the rent information obtained. A test of hypotheses is performed at the significance level of 0.05.
+$BR$BR
+
+\{ $mc1->print_q() \} $BR
+\{ $mc1->print_a() \} $BR
+
+\{ $mc2->print_q() \} $BR
+\{ $mc2->print_a() \} $BR
+
+\{ $mc3->print_q() \} $BR
+\{ $mc3->print_a() \}
+
+END_TEXT
+
+$showPartialCorrectAnswers = 0;
+
+ANS( radio_cmp( $mc1->correct_ans() ) );
+ANS( radio_cmp( $mc2->correct_ans() ) );
+ANS( radio_cmp( $mc3->correct_ans() ) );
+
+ENDDOCUMENT();

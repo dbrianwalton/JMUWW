@@ -1,0 +1,76 @@
+# DESCRIPTION
+#   Typical fence/area problem with one side missing.
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('extreme value','optimization', 'area')
+## Date('8/24/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+# Total fencing
+$totalFence = 100 * random(4, 12, 0.25);
+
+@unitChoice = ('ft', 'm', 'yd');
+$unit = $unitChoice[random(0,@unitChoice-1)];
+
+@sideConstraint = ('river', 'cliff', 'building wall');
+$side = $sideConstraint[random(0,@sideConstraint-1)];
+
+$maxArea = Real("$totalFence^2/8");
+$alongSide = Real("$totalFence/2");
+$awaySide = Real("$totalFence/4");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR
+A landowner has $totalFence $unit of fencing material
+with which to enclose a rectangular space immediately next
+to a $side.  If the $side does not require any fencing
+along that edge, what is the largest area that can be enclosed?
+
+$PAR
+Maximum area: \{ ans_rule(10) \} (sq. $unit)
+$BR
+Length parallel to $side: \{ ans_rule(10) \} ($unit)
+$BR
+Length perpendicular to $side: \{ ans_rule(10) \} ($unit)
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $maxArea->cmp );
+ANS( $alongSide->cmp );
+ANS( $awaySide->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

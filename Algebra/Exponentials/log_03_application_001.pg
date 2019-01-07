@@ -1,0 +1,58 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('logarithm','exponential', 'equation')
+## Tagged by dbw 7/20/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('7/20/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('Introductory Calculus')
+## EditionText1('JMU special')
+## AuthorText1('Tan')
+## Section1('5.2')
+## Problem1('48')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "problemRandomize.pl",
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+##############################################
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$pVal = random(10,25,0.1);
+$xVal = Real("ln($pVal/29.92)/(-0.2)");
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Air pressure decreases as you go up in altitude.  One model for barometric pressure as a function of altitude
+is given by Halley's law,
+\[ p(x) = 29.92e^{-0.2x}, \quad x \ge 0, \]
+where \(x\) is the altitude (miles) above sea level and \(p(x)\) gives the barometric pressure (in Hg = inches of mercury).
+
+$PAR If the barometric pressure is measured as $pVal (in Hg), what does the model predict for the altitude?
+\(x\) = \{ ans_rule(15) \} (miles)
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $xVal->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

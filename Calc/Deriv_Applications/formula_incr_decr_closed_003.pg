@@ -1,0 +1,81 @@
+# DESCRIPTION
+# This problem gives the formula of a polynomial
+# and asks the student to identify where it is
+# increasing and decreasing, using a list of intervals.
+#
+# WeBWorK problem written by Brian Walton (JMU) 
+# <waltondb (at) jmu(dot)edu>
+# ENDDESCRIPTION
+
+## DBsubject('Calculus')
+## DBchapter('Derivatives')
+## DBsection('Increasing')
+## KEYWORDS('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+## Author('Brian Walton')
+## Institution('JMU')
+
+DOCUMENT();
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "problemRandomize.pl",
+);
+
+# make sure we're in the context we want
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$a = -1*random(1,5,1);
+$b = random(-9,9,1);
+$c = random(-9,9,1);
+
+$func = Compute("$a*x^2+$b*x+$c")->reduce('(-x)-y'=>0, '(-x)+y'=>0);
+$deriv = $func->D();
+$deriv2 = $deriv->D();
+
+$leftInt = List(Interval("(-INF,-$b/(2*$a)]"));
+$rightInt = List(Interval("[-$b/(2*$a),INF)"));
+$fullInt = List(Interval("(-INF,INF)"));
+$emptyInt = List("NONE");
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+Find the derivative of the function \(f(x) = $func\).
+$BR
+$BBLOCKQUOTE
+\(f'(x) = \) \{ ans_rule(35) \}
+$EBLOCKQUOTE
+
+$PAR
+Use the derivative to determine where \(f(x)\) is increasing or decreasing.  For each property, create a list of intervals that are as large as possible (perhaps including endpoints), separated by commas (not a union).  If the list is empty, type $BBOLD NONE $EBOLD.  Type $BBOLD INF $EBOLD for \(\infty\).
+$BR
+$BBLOCKQUOTE
+\(f(x)\) is increasing on the intervals: \{ ans_rule(35) \}
+$BR
+\(f(x)\) is decreasing on the intervals: \{ ans_rule(35) \}
+$EBLOCKQUOTE
+END_TEXT
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $deriv->cmp() );
+
+if ($a > 0) {
+    ANS( $rightInt->cmp );
+    ANS( $leftInt->cmp );
+} else {
+    ANS( $leftInt->cmp );
+    ANS( $rightInt->cmp );
+};
+
+
+ENDDOCUMENT();

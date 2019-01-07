@@ -1,0 +1,26 @@
+DOCUMENT();
+
+loadMacros("PGstandard.pl", "MathObjects.pl");
+
+Context("Numeric");
+
+$prob = Compute("0.9375")->with(tolType=>'absolute', tolerance=>'0.0005');
+
+TEXT(beginproblem());
+
+Context()->texStrings;
+
+BEGIN_TEXT
+
+A family has four children. You have not met the children yet, and you do not know their genders. What is the probability that at least one of the children is a girl? Assume \( P(\mbox{boy}) = P(\mbox{girl}) = 0.5 \). Hint: Use complement.
+$BR$BR
+
+\( P(\mbox{at least one girl}) = 1 - P(\mbox{all boys}) = \) \{ ans_rule(8) \} (Carry 4 decimal digits.)
+
+END_TEXT
+
+Context()->normalStrings;
+
+ANS( $prob->cmp() );
+
+ENDDOCUMENT();

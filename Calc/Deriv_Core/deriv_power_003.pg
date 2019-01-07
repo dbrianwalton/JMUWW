@@ -1,0 +1,61 @@
+# DESCRIPTION
+#   Practice with the power rule.
+# ENDDESCRIPTION
+
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## KEYWORDS('derivative','differentiation', 'power rule')
+## Date('6/10/10')
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "answerHints.pl",
+  "problemRandomize.pl"
+);
+
+TEXT(beginproblem);
+
+##########
+# Setup context specific items
+##########
+Context("Numeric");
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+##########
+# Determine random character for problem.
+##########
+
+Context()->variables->are(x=>'Real');
+
+# Choose a power.
+$k = random(-10,9) + random(0.2, 0.8, 0.2);
+$C = non_zero_random(-9,9);
+
+$expr = Compute("$C*x^($k)")->reduce();
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Compute 
+\(\displaystyle \frac{d}{dx}[$expr] = \) \{ ans_rule(10)\}.
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+$ans = $expr->D();
+ANS( $ans->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;

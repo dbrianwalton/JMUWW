@@ -1,0 +1,102 @@
+## DESCRIPTION
+## Algebra
+## ENDDESCRIPTION
+
+## KEYWORDS('logarithm','rules')
+## Tagged by dbw 7/20/11
+
+## DBsubject('Calculus')
+## DBchapter('')
+## DBsection('')
+## Date('7/20/11')
+## Author('D. B. Walton')
+## Institution('James Madison University')
+## TitleText1('')
+## EditionText1('')
+## AuthorText1('')
+## Section1('')
+## Problem1('')
+
+DOCUMENT();        # This should be the first executable line in the problem.
+
+loadMacros(
+  "PGstandard.pl",
+  "MathObjects.pl",
+  "PGchoicemacros.pl",
+  "problemRandomize.pl",
+);
+
+TEXT(beginproblem);
+
+###################################
+# Setup
+##############################################
+
+## In order to prevent the student from submitting an unsimplified version of the function,
+## we redefine the logarithms to a different function so that all we are really wanting to
+## match is the appropriate sum of terms.  For convenience, we use square roots as the
+## replacement function for comparison purposes.
+
+Context()->functions->remove("ln");
+package NewFunc;
+# this next line makes the function a 
+# function from reals to reals
+our @ISA = qw(Parser::Function::numeric);
+sub ln {
+  shift; my $x = shift;
+  return CORE::sqrt($x);
+}
+package main;
+# Make it work on formulas as well as numbers
+# if uncommented, this next line will generate error messages
+#sub ln {Parser::Function->call('ln',@_)} 
+#  Add the new functions to the Context
+Context()->functions->add( ln => {class => 'NewFunc', TeX => '\ln'}, );
+
+Context()->functions->remove("log");
+package NewFunc;
+# this next line makes the function a 
+# function from reals to reals
+our @ISA = qw(Parser::Function::numeric);
+sub log {
+  shift; my $x = shift;
+  return CORE::sqrt($x)/CORE::log(10);
+}
+package main;
+# Make it work on formulas as well as numbers
+# if uncommented, this next line will generate error messages
+#sub log {Parser::Function->call('log',@_)} 
+#  Add the new functions to the Context
+Context()->functions->add( log => {class => 'NewFunc', TeX => '\log'}, );
+
+$pr = ProblemRandomize(onlyAfterDue=>0);
+
+$A = random(1,9);
+$c = non_zero_random(-9,9);
+$b = non_zero_random(1,9);
+
+$xmin = -$c;
+
+$expr = Formula("$A*sqrt(x+$c)/(x^2+$b)")->reduce();
+
+$ans = Formula("ln($A) + 1/2*ln(x+$c) - ln(x^2+$b)")->with(
+  limits => [$xmin+1,$xmin+6]
+);
+
+
+Context()->texStrings;
+BEGIN_TEXT
+$PAR Use the properties of logarithms to rewrite the following expression without including any logarithms of products, quotients, or powers.
+
+$PAR
+\(\displaystyle \ln\left($expr\right)\) = \{ ans_rule(30) \} 
+
+END_TEXT
+
+Context()->normalStrings;
+
+$showPartialCorrectAnswers = 1;
+
+ANS( $ans->cmp );
+
+ENDDOCUMENT();        # This should be the last executable line in the problem.;
