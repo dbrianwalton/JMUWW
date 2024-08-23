@@ -23,7 +23,6 @@ loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
   "PGchoicemacros.pl",
-  "problemRandomize.pl",
 );
 
 TEXT(beginproblem);
@@ -32,7 +31,6 @@ TEXT(beginproblem);
 # Setup
 ##############################################
 
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 Context()->variables()->are(x=>'Real', y=>'Real', z=>'Real');
 Context()->variables->set(x=>{limits=>[0,1]}, y=>{limits=>[0,1]}, z=>{limits=>[0,1]});

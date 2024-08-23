@@ -24,7 +24,6 @@ loadMacros(
   "MathObjects.pl",
   "PGpolynomialmacros.pl",
   "parserMultiAnswer.pl",
-  "problemRandomize.pl"
 );
 
 TEXT(beginproblem);
@@ -33,7 +32,6 @@ TEXT(beginproblem);
 # Setup
 
 Context("Numeric");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 # This is a composition of an square root (or 1/sqrt) with a quadratic
 $k = non_zero_random(-1,1,1);

@@ -27,14 +27,12 @@ loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
   "PGchoicemacros.pl",
-  "problemRandomize.pl"
 );
 
 # make sure we're in the context we want
 Context("Numeric");
 
 # Allow retrys with different values.
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 # We have two sets coming from {0, 1, 2, ..., 7}
 # We need to assign them to sets A and B randomly so that 

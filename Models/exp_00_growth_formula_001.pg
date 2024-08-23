@@ -24,7 +24,6 @@ loadMacros(
   "MathObjects.pl",
   "PGchoicemacros.pl",
   "weightedGrader.pl",
-  "problemRandomize.pl"
 );
 
 TEXT(beginproblem);
@@ -35,7 +34,6 @@ TEXT(beginproblem);
 Context("Numeric");
 ##############################################
 
-$pr = ProblemRandomize(onlyAfterDue=>0);
 Context()->variables->are(t=>'Real');
 install_weighted_grader();
 

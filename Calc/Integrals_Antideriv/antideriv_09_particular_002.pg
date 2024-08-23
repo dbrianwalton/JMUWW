@@ -24,7 +24,6 @@ loadMacros(
   "MathObjects.pl",
   "parserFormulaUpToConstant.pl",
   "PGjmu_poly.pl",
-  "problemRandomize.pl"
 );
 
 TEXT(beginproblem);
@@ -35,7 +34,6 @@ TEXT(beginproblem);
 Context("Numeric");
 ##############################################
 
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 $m = random(2,8);
 $A = non_zero_random(-10,10,1);

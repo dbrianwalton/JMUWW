@@ -27,7 +27,6 @@ loadMacros(
   "MathObjects.pl",
   "contextLimitedPolynomial.pl",
   "PGjmu_poly.pl",
-  "problemRandomize.pl"
 );
 
 TEXT(beginproblem);
@@ -36,7 +35,6 @@ TEXT(beginproblem);
 # Setup context specific items
 ##########
 Context("Numeric");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 $showPartialCorrectAnswers = 1;
 
 ##########

@@ -27,7 +27,6 @@ loadMacros(
   "PGgraphmacros.pl",
   "PGpolynomialmacros.pl",
   "answerHints.pl",
-  "problemRandomize.pl"
 );
 
 TEXT(beginproblem);
@@ -36,7 +35,6 @@ TEXT(beginproblem);
 # Setup context specific items
 ##########
 Context("Interval");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 $refreshCachedImages=1;
 
 $enforceParens = 1;

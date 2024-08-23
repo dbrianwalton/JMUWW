@@ -26,7 +26,6 @@ loadMacros(
   "MathObjects.pl",
   "contextString.pl",
   "parserMultiAnswer.pl",
-  "problemRandomize.pl"
 );
 
 TEXT(beginproblem);
@@ -35,7 +34,6 @@ TEXT(beginproblem);
 # Setup context specific items
 ##########
 Context("Numeric");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 Context()->strings->add(INDET=>{});
 
 $cVal = random(-5, 5, 0.1);

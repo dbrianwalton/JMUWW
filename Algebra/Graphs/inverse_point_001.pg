@@ -23,7 +23,6 @@ loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
   "PGchoicemacros.pl",
-  "problemRandomize.pl"
 );
 
 TEXT(beginproblem);
@@ -32,7 +31,6 @@ TEXT(beginproblem);
 # Setup
 
 Context("Numeric");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 # Choose the original points.
 @xVals = 1..6;

@@ -23,7 +23,6 @@ loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
   "PGchoicemacros.pl",
-  "problemRandomize.pl",
 );
 
 TEXT(beginproblem);
@@ -32,7 +31,6 @@ TEXT(beginproblem);
 # Setup
 ##############################################
 
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 $b1 = random(2,5,1);
 do { $b2 = random(2,5,1); } while ($b1 == $b2);

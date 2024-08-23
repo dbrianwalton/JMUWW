@@ -24,7 +24,6 @@ loadMacros(
   "PGunion.pl",            # Union College utilities
   "MathObjects.pl",
   "alignedChoice.pl",      # for aligned answer blanks
-  "problemRandomize.pl"
 );
 
 TEXT(beginproblem);
@@ -33,7 +32,6 @@ TEXT(beginproblem);
 # Setup
 
 Context("Interval");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 # probType=0 means union, =1 means intersection
 @probType = (0, 0, 1, 1);

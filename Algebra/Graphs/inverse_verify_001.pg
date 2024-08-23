@@ -25,7 +25,6 @@ loadMacros(
   "PGchoicemacros.pl",
   "PGjmu_poly.pl",
   "contextLimitedPolynomial.pl",
-  "problemRandomize.pl"
 );
 
 TEXT(beginproblem);
@@ -40,7 +39,6 @@ Context()->{error}{msg}{"You can only use '-' with monomials"}
 Context()->{error}{msg}{"Multiplication can only be used between coefficients and variables"} 
 = "Simplify your answer.";
 
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 $whichInverse = random(0,1);
 

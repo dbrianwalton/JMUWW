@@ -23,7 +23,6 @@ loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
   "PGchoicemacros.pl",
-  "problemRandomize.pl",
 );
 
 TEXT(beginproblem);
@@ -69,7 +68,6 @@ package main;
 #  Add the new functions to the Context
 Context()->functions->add( log => {class => 'NewFunc', TeX => '\log'}, );
 
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 $A = random(1,9);
 $c = non_zero_random(-9,9);

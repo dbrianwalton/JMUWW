@@ -24,7 +24,6 @@ loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
   "PGjmu_poly.pl",
-  "problemRandomize.pl"
 );
 
 
@@ -32,7 +31,6 @@ loadMacros(
 # Setup context specific items
 ##########
 Context("Numeric");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 Context()->flags->set(reduceConstants=>0, reduceConstantFunctions=>0);
 
 ##########
@@ -139,7 +137,7 @@ so that
 END_SOLUTION
 Context()->normalStrings;
 
-COMMENT('Solution provided.  Rerandomized.');
+COMMENT('Solution provided.');
 
 
 ENDDOCUMENT();        # This should be the last executable line in the problem.;

@@ -24,7 +24,6 @@ loadMacros(
   "MathObjects.pl",
   "PGjmu_poly.pl",
   "parserFormulaUpToConstant.pl",
-  "problemRandomize.pl"
 );
 
 TEXT(beginproblem);
@@ -35,7 +34,6 @@ TEXT(beginproblem);
 Context("Numeric");
 ##############################################
 
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 @vars = ('t', 'x', 'u', 'z');
 $nvars = 4;

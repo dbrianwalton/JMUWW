@@ -24,7 +24,6 @@ loadMacros(
   "MathObjects.pl",
   "parserPopUp.pl",
   "PGjmu_poly.pl",
-  "problemRandomize.pl"
 );
 
 TEXT(beginproblem);
@@ -35,7 +34,6 @@ TEXT(beginproblem);
 Context("Numeric");
 ##############################################
 
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 @fcnLabel = ('f', 'g');
 $which = 0;

@@ -23,7 +23,6 @@ loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
   "parserMultiAnswer.pl",
-  "problemRandomize.pl"
 );
 
 TEXT(beginproblem);
@@ -32,7 +31,6 @@ TEXT(beginproblem);
 # Setup
 
 Context("Numeric");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 # This is a composition of an integer power function with a linear function
 $k = non_zero_random(-1,1,1) * random(2,5,1);

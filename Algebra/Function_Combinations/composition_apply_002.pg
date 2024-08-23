@@ -23,7 +23,6 @@ loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
   "PGpolynomialmacros.pl",
-  "problemRandomize.pl"
 );
 
 TEXT(beginproblem);
@@ -32,7 +31,6 @@ TEXT(beginproblem);
 # Setup
 
 Context("Numeric");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 # This is a composition of an quadratic with a simple function
 @c = ( random(1,4), random(-5,5), random(-5,5) );

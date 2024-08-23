@@ -23,7 +23,6 @@ loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
   "parserFormulaUpToConstant.pl",
-  "problemRandomize.pl"
 );
 
 TEXT(beginproblem);
@@ -34,7 +33,6 @@ TEXT(beginproblem);
 Context("Numeric");
 ##############################################
 
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 $a = random(1,6,1);
 $c = non_zero_random(-8,8,1);

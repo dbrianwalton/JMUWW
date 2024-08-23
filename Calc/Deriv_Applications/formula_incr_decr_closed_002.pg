@@ -23,12 +23,10 @@ DOCUMENT();
 loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
-  "problemRandomize.pl",
 );
 
 # make sure we're in the context we want
 Context("Numeric");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 $a = random(1,5,1);
 $b = random(-9,9,1);

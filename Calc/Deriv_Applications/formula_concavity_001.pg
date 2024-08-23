@@ -23,7 +23,6 @@ DOCUMENT();        # This should be the first executable line in the problem.
 loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
-  "problemRandomize.pl",
   "parserUtils.pl"
 );
 
@@ -33,7 +32,6 @@ TEXT(beginproblem);
 # Setup context specific items
 ##########
 Context("Numeric");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 ##########
 # Determine random character for problem.

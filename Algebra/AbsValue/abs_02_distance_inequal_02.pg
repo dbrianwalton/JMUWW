@@ -24,7 +24,6 @@ loadMacros(
   "MathObjects.pl",
   "parserPopUp.pl",
   "weightedGrader.pl",
-  "problemRandomize.pl"
 );
 
 
@@ -32,7 +31,6 @@ loadMacros(
 # Setup
 ###################################
 Context("Interval");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 # Identify the center.
 $c = non_zero_random(-15,15,1);

@@ -25,7 +25,6 @@ loadMacros(
   "parserPopUp.pl",
   "PGchoicemacros.pl",
   "PGjmu_poly.pl",
-  "problemRandomize.pl"
 );
 
 TEXT(beginproblem);
@@ -38,7 +37,6 @@ Context("Numeric");
 
 Context()->variables->set(x=>{limits=>[-3,3]});
 
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 @fcnLabel = ('f', 'g');
 $which = random(0,1);

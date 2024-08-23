@@ -23,7 +23,6 @@ loadMacros(
   "MathObjects.pl",
   "PGchoicemacros.pl",
   "answerHints.pl",
-  "problemRandomize.pl"
 );
 
 TEXT(beginproblem);
@@ -34,7 +33,6 @@ TEXT(beginproblem);
 Context("Numeric");
 ##############################################
 
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 Context()->variables->are(x=>'Real', y=>'Real');
 

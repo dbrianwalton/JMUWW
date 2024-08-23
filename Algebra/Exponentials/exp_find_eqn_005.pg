@@ -25,7 +25,6 @@ loadMacros(
   "PGchoicemacros.pl",
   "parserPopUp.pl",
   "parserMultiAnswer.pl",
-  "problemRandomize.pl",
   "contextLimitedPowers.pl"
 );
 
@@ -35,7 +34,6 @@ TEXT(beginproblem);
 # Setup
 ##############################################
 Context("Numeric");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 # Find a random base, allow it to be a fraction.
 $bn = random(1,12);

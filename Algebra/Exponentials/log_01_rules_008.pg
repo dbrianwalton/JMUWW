@@ -25,7 +25,6 @@ loadMacros(
   "PGchoicemacros.pl",
   "parserPopUp.pl",
   "parserMultiAnswer.pl",
-  "problemRandomize.pl",
 );
 
 TEXT(beginproblem);
@@ -35,7 +34,6 @@ TEXT(beginproblem);
 
 ##############################################
 
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 $m = non_zero_random(-8,8,1);
 if ($m == 1) {

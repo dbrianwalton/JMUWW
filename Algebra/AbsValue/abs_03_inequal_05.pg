@@ -24,7 +24,6 @@ loadMacros(
   "MathObjects.pl",
   "PGjmu_poly.pl",
   "PGgraphmacros.pl",  # load graph for solution
-  "problemRandomize.pl"
 );
 
 
@@ -32,7 +31,6 @@ loadMacros(
 # Setup
 ###################################
 Context("Interval");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 # Choose the random coefficients.
 $b = random(-5,5,1);             # degree 1 term

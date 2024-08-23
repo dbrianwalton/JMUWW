@@ -23,14 +23,12 @@ loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
   "parserPopUp.pl",
-  "problemRandomize.pl"
 );
 
 ###################################
 # Setup
 ###################################
 Context("Interval");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 # Start with center and distance.
 $c = random(-15,15,0.5);

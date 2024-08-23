@@ -23,7 +23,6 @@ loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
   "answerHints.pl",
-  "problemRandomize.pl"
 );
 
 
@@ -33,7 +32,6 @@ TEXT(beginproblem);
 # Setup context specific items
 ##########
 Context("Numeric");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 ##########
 # Determine random character for problem.   f(x) = x^2+bx

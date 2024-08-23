@@ -23,7 +23,6 @@ loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
   "contextLimitedNumeric.pl",
-  "problemRandomize.pl",
 );
 
 
@@ -31,7 +30,6 @@ loadMacros(
 # Setup
 ##############################################
 Context("LimitedNumeric");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 $rawBase = random(2,4);
 $basePow = random(2,3);
@@ -84,6 +82,6 @@ so that \(($rawBase^{$basePow})^{$sumC} = $rawBase^{$c}\).
 END_SOLUTION
 Context()->normalStrings;
 
-COMMENT('Solution provided. Rerandomized.');
+COMMENT('Solution provided.');
 
 ENDDOCUMENT();        # This should be the last executable line in the problem.;

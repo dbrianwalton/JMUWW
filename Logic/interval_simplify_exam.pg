@@ -24,7 +24,6 @@ loadMacros(
   "MathObjects.pl",
   "PGchoicemacros.pl",
   "weightedGrader.pl",
-  "problemRandomize.pl"
 );
 
 TEXT(beginproblem);
@@ -33,7 +32,6 @@ TEXT(beginproblem);
 # Setup
 
 Context("Interval");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 $showPartialCorrectAnswers = 1;
 
 @overlapLeft = (0, 0, 1, 1);

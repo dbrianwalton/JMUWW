@@ -23,12 +23,10 @@ DOCUMENT();
 loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
-  "problemRandomize.pl",
 );
 
 # make sure we're in the context we want
 Context("Numeric");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 # Create a cubic with nice derivative.
 # f(x) = a/(mx+b)  OR  ax/(mx+b)

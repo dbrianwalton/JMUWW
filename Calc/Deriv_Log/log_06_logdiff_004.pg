@@ -24,7 +24,6 @@ loadMacros(
   "MathObjects.pl",
   "PGchoicemacros.pl",
   "parserMultiAnswer.pl",
-  "problemRandomize.pl"
 );
 
 TEXT(beginproblem);
@@ -35,7 +34,6 @@ TEXT(beginproblem);
 Context("Numeric");
 ##############################################
 
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 $n = 4;
 $numNumer = random(1,$n-1);

@@ -23,7 +23,6 @@ loadMacros(
   "PGstandard.pl",
   "contextInequalities.pl",
   "PGchoicemacros.pl",
-  "problemRandomize.pl"
 );
 
 
@@ -31,7 +30,6 @@ loadMacros(
 # Setup
 ###################################
 Context("Numeric");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 # Generate a random quadratic by choosing distinct random roots between -9 and 9
 @values = NchooseK(19,2);
@@ -111,6 +109,6 @@ $fcnOpp, & x > $a \hbox{ and } x < $b.
 END_SOLUTION
 Context()->normalStrings;
 
-COMMENT('Solution provided. Rerandomized.');
+COMMENT('Solution provided.');
 
 ENDDOCUMENT();        # This should be the last executable line in the problem.;

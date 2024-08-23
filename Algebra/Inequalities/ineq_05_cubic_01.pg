@@ -24,7 +24,6 @@ loadMacros(
   "MathObjects.pl",
   "PGchoicemacros.pl",
   "PGjmu_poly.pl",
-  "problemRandomize.pl"
 );
 
 
@@ -32,7 +31,6 @@ loadMacros(
 # Setup
 ###################################
 Context("Numeric");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 # Choose the random roots for the quadratic.
 # Do not allow repeats.
@@ -167,5 +165,5 @@ So the solution set is \($solnInterval\).
 END_SOLUTION
 Context()->normalStrings;
 
-COMMENT('Cubic always factors nicely. Random inequality. Solution provided. Rerandomized.');
+COMMENT('Cubic always factors nicely. Random inequality. Solution provided.');
 ENDDOCUMENT();        # This should be the last executable line in the problem.;

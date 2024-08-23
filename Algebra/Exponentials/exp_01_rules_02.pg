@@ -24,7 +24,6 @@ loadMacros(
   "MathObjects.pl",
   "PGjmu_poly.pl",
   "contextLimitedNumeric.pl",
-  "problemRandomize.pl",
 );
 
 
@@ -32,7 +31,6 @@ loadMacros(
 # Setup the problem
 ###################################
 Context("Numeric");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 $a1= non_zero_random(-5,5);
 $p1 = non_zero_random(-4,4);
@@ -91,7 +89,7 @@ So \(\displaystyle \frac{$exp1}{$exp2} = \frac{$a1}{$a2} \cdot \frac{x^{$p1}}{x^
 END_SOLUTION
 Context()->normalStrings;
 
-COMMENT('Solution provided. Rerandomized.');
+COMMENT('Solution provided.');
 
 
 ENDDOCUMENT();        # This should be the last executable line in the problem.;

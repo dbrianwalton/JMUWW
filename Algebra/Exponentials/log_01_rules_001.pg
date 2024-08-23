@@ -23,7 +23,6 @@ loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
   "PGchoicemacros.pl",
-  "problemRandomize.pl",
 );
 
 TEXT(beginproblem);
@@ -32,7 +31,6 @@ TEXT(beginproblem);
 # Setup
 ##############################################
 
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 @list = (1.25, 1.5, 2, 3, 4, 5, 7);
 @choices = NchooseK(7,2);

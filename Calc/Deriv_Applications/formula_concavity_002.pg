@@ -27,7 +27,6 @@ loadMacros(
   "PGchoicemacros.pl",
   "PGgraphmacros.pl",
   "PGpolynomialmacros.pl",
-  "problemRandomize.pl",
   "parserUtils.pl"
 );
 
@@ -37,7 +36,6 @@ TEXT(beginproblem);
 # Setup context specific items
 ##########
 Context("Numeric");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 ##########
 # Determine random character for problem.

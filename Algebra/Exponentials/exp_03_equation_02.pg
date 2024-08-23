@@ -22,14 +22,12 @@ DOCUMENT();        # This should be the first executable line in the problem.
 loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
-  "problemRandomize.pl",
 );
 
 ###################################
 # Setup
 ###################################
 Context("Numeric");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 ## Choose a base
 $b = (2, 3, 4, 5)[random(0,3)];
@@ -77,6 +75,6 @@ Use a logarithm to isolate the exponent, \(\ln($b^x)=x \ln($b)\).
 END_SOLUTION
 Context()->normalStrings;
 
-COMMENT('Solution provided.  Rerandomized.');
+COMMENT('Solution provided.');
 
 ENDDOCUMENT();        # This should be the last executable line in the problem.;

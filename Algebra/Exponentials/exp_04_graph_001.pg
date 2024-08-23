@@ -23,7 +23,6 @@ loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
   "PGgraphmacros.pl",
-  "problemRandomize.pl",
 );
 
 TEXT(beginproblem);
@@ -32,7 +31,6 @@ TEXT(beginproblem);
 # Setup
 ##############################################
 
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 
 $gr = init_graph(-3,-10,3,10,

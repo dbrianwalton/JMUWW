@@ -22,7 +22,6 @@ DOCUMENT();        # This should be the first executable line in the problem.
 loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
-  "problemRandomize.pl",
 );
 
 ###################################
@@ -31,7 +30,6 @@ loadMacros(
 Context("Numeric");
 Context()->variables->are(t=>'Real', 'P'=>'Real');
 
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 $intRate = random(0.5, 3, 0.25);
 $decRate = 0.01*$intRate;
@@ -90,6 +88,6 @@ to get \(P=$present\).
 END_SOLUTION
 Context()->normalStrings;
 
-COMMENT('Solution provided. Rerandomized.');
+COMMENT('Solution provided.');
 
 ENDDOCUMENT();        # This should be the last executable line in the problem.;

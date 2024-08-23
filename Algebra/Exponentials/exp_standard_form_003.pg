@@ -25,7 +25,6 @@ loadMacros(
   "PGchoicemacros.pl",
   "parserPopUp.pl",
   "parserMultiAnswer.pl",
-  "problemRandomize.pl",
   "contextLimitedPowers.pl"
 );
 
@@ -37,7 +36,6 @@ TEXT(beginproblem);
 Context("Numeric");
 Context()->variables->are(t=>"Real");
 
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 $A = non_zero_random(-1,1)*random(2,8);
 $b = random(2,4,1);

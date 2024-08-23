@@ -25,7 +25,6 @@ loadMacros(
   "PGchoicemacros.pl",
   "parserPopUp.pl",
   "parserMultiAnswer.pl",
-  "problemRandomize.pl"
 );
 
 TEXT(beginproblem);
@@ -36,7 +35,6 @@ TEXT(beginproblem);
 Context("Numeric");
 ##############################################
 
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 # List of valid variables.
 $base = non_zero_random(2,9,1);

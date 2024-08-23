@@ -23,14 +23,12 @@ loadMacros(
   "PGstandard.pl",
   "MathObjects.pl",
   "PGjmu_poly.pl",
-  "problemRandomize.pl",
 );
 
 ###################################
 # Setup
 ###################################
 Context("Numeric");
-$pr = ProblemRandomize(onlyAfterDue=>0);
 
 $b = random(2,8,1);
 $c = random(2.1,10,0.1);
@@ -82,6 +80,6 @@ Now solve for \(x\).
 END_SOLUTION
 Context()->normalStrings;
 
-COMMENT('Solution provided.  Rerandomized.');
+COMMENT('Solution provided.');
 
 ENDDOCUMENT();        # This should be the last executable line in the problem.;
