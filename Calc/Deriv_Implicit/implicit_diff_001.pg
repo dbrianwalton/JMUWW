@@ -4,9 +4,9 @@
 
 ## KEYWORDS('calculus','derivative', 'implicit differentiation')
 
-## DBsubject('Calculus')
-## DBchapter('')
-## DBsection('')
+## DBsubject('Calculus - single variable')
+## DBchapter('Differentiation')
+## DBsection('Implicit differentiation')
 ## Date('6/14/10')
 ## Author('D. B. Walton')
 ## Institution('James Madison University')

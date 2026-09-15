@@ -1,4 +1,8 @@
 
+## DBsubject('Probability')
+## DBchapter('Random variables')
+## DBsection('Discrete: probability mass function')
+
 DOCUMENT();
 
     loadMacros(

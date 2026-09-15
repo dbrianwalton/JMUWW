@@ -5,9 +5,9 @@
 ## KEYWORDS('calculus','definite integral', 'Riemann sum')
 ## Tagged by dbw 8/8/11
 
-## DBsubject('Calculus')
-## DBchapter('')
-## DBsection('')
+## DBsubject('Calculus - single variable')
+## DBchapter('Integrals')
+## DBsection('Riemann sums')
 ## Date('8/8/11')
 ## Author('D. B. Walton')
 ## Institution('James Madison University')

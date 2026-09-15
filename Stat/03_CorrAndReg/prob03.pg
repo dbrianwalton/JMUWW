@@ -1,3 +1,7 @@
+## DBsubject('Statistics')
+## DBchapter('Simple linear regression')
+## DBsection('Regression')
+
 DOCUMENT();
 
     loadMacros(

@@ -7,9 +7,9 @@
 # <waltondb (at) jmu(dot)edu>
 # ENDDESCRIPTION
 
-## DBsubject('Calculus')
-## DBchapter('Derivatives')
-## DBsection('Increasing')
+## DBsubject('Calculus - single variable')
+## DBchapter('Applications of differentiation')
+## DBsection('Summary of curve sketching')
 ## KEYWORDS('')
 ## TitleText1('')
 ## EditionText1('')

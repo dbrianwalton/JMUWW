@@ -1,3 +1,7 @@
+## DBsubject('Probability')
+## DBchapter('Sample Space')
+## DBsection('Independence')
+
 DOCUMENT();
 
     loadMacros(

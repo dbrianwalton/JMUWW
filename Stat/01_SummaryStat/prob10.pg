@@ -1,3 +1,7 @@
+## DBsubject('Statistics')
+## DBchapter('Exploratory data analysis/descriptive statistics')
+## DBsection('Graphical representations')
+
 DOCUMENT();
 
     loadMacros(

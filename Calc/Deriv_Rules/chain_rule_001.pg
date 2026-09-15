@@ -5,9 +5,9 @@
 ## KEYWORDS('calculus','derivative','chain rule',  'algebraic function')
 ## Tagged by dbw 9/1/09
 
-## DBsubject('Calculus')
-## DBchapter('')
-## DBsection('')
+## DBsubject('Calculus - single variable')
+## DBchapter('Differentiation')
+## DBsection('Chain rule (without trigonometric functions)')
 ## Date('1/13/10')
 ## Author('D. B. Walton')
 ## Institution('James Madison University')

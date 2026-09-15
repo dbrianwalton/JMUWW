@@ -1,3 +1,7 @@
+## DBsubject('Probability')
+## DBchapter('Continuous distributions')
+## DBsection('Application of a normal distribution')
+
 DOCUMENT();
 
     loadMacros(

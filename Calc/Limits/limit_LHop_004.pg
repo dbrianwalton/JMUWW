@@ -9,9 +9,9 @@
 ## KEYWORDS('limit','indeterminate')
 ## Date('5/19/10')
 
-## DBsubject('Calculus')
-## DBchapter('')
-## DBsection('')
+## DBsubject('Calculus - single variable')
+## DBchapter('Applications of differentiation')
+## DBsection('Indeterminate forms and L\'Hopital\'s rule')
 ## TitleText1('')
 ## EditionText1('')
 ## AuthorText1('')

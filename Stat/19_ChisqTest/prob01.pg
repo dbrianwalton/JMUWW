@@ -1,3 +1,7 @@
+## DBsubject('Statistics')
+## DBchapter('Hypothesis tests')
+## DBsection('Chi-squared test for independence')
+
 DOCUMENT();
 
     loadMacros(

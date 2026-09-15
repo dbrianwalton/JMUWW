@@ -1,3 +1,7 @@
+## DBsubject('Probability')
+## DBchapter('Random variables')
+## DBsection('Expectation')
+
 DOCUMENT();
 
 loadMacros("PGstandard.pl", "MathObjects.pl");

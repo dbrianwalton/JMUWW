@@ -1,3 +1,7 @@
+## DBsubject('Probability')
+## DBchapter('Sample Space')
+## DBsection('Probability: direct computation, inclusion/exclusion')
+
 DOCUMENT();
 
 loadMacros("PGstandard.pl", "MathObjects.pl");

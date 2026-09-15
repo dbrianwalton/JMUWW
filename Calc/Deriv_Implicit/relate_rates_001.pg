@@ -4,9 +4,9 @@
 
 ## KEYWORDS('calculus','derivative', 'related rates')
 
-## DBsubject('Calculus')
-## DBchapter('')
-## DBsection('')
+## DBsubject('Calculus - single variable')
+## DBchapter('Applications of differentiation')
+## DBsection('Related rates')
 ## Date('6/14/10')
 ## Author('D. B. Walton')
 ## Institution('James Madison University')

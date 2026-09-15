@@ -1,3 +1,7 @@
+## DBsubject('Statistics')
+## DBchapter('Hypothesis tests')
+## DBsection('One sample proportion')
+
 DOCUMENT();
 
     loadMacros(

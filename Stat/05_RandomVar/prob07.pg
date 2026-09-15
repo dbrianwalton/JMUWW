@@ -1,4 +1,8 @@
 
+## DBsubject('Probability')
+## DBchapter('Sample Space')
+## DBsection('Outcomes & events')
+
 DOCUMENT();
 
     loadMacros(

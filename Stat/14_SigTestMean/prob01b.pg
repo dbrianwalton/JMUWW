@@ -1,3 +1,7 @@
+## DBsubject('Statistics')
+## DBchapter('Hypothesis tests')
+## DBsection('One sample mean - t')
+
 DOCUMENT();
 
     loadMacros(

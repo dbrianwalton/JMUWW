@@ -5,9 +5,9 @@
 ## KEYWORDS('calculus','antiderivative', 'indefinite integral')
 ## Tagged by dbw 8/5/11
 
-## DBsubject('Calculus')
-## DBchapter('')
-## DBsection('')
+## DBsubject('Calculus - single variable')
+## DBchapter('Integrals')
+## DBsection('Antiderivatives (without trigonometric functions)')
 ## Date('8/5/11')
 ## Author('D. B. Walton')
 ## Institution('James Madison University')

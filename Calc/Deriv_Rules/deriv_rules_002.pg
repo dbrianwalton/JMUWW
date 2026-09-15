@@ -9,9 +9,9 @@
 ## KEYWORDS('derivative','differentiation')
 ## Date('5/31/10')
 
-## DBsubject('Calculus')
-## DBchapter('')
-## DBsection('')
+## DBsubject('Calculus - single variable')
+## DBchapter('Differentiation')
+## DBsection('Derivatives involving multiple rules (no product, quotient, or chain rule)')
 ## TitleText1('')
 ## EditionText1('')
 ## AuthorText1('')

@@ -5,9 +5,9 @@
 ## KEYWORDS('calculus','derivative', 'logarithm')
 ## Tagged by dbw 8/1/11
 
-## DBsubject('Calculus')
-## DBchapter('')
-## DBsection('')
+## DBsubject('Calculus - single variable')
+## DBchapter('Differentiation')
+## DBsection('Higher-order derivatives')
 ## Date('8/1/11')
 ## Author('D. B. Walton')
 ## Institution('James Madison University')

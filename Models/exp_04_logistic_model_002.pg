@@ -5,9 +5,9 @@
 ## KEYWORDS('calculus','exponential', 'logistic model')
 ## Tagged by dbw 8/2/11
 
-## DBsubject('Calculus')
-## DBchapter('')
-## DBsection('')
+## DBsubject('Differential equations')
+## DBchapter('First order differential equations')
+## DBsection('Applications - logistic')
 ## Date('8/2/11')
 ## Author('D. B. Walton')
 ## Institution('James Madison University')

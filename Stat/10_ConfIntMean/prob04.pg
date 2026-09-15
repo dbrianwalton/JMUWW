@@ -1,3 +1,7 @@
+## DBsubject('Statistics')
+## DBchapter('Confidence intervals')
+## DBsection('One sample mean - t')
+
 DOCUMENT();
 
     loadMacros(

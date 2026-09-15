@@ -5,9 +5,9 @@
 ## KEYWORDS('equation', 'slope', 'line')
 
 
-## DBsubject('Discrete Mathematics')
-## DBchapter('Sets')
-## DBsection('Union and Intersection')
+## DBsubject('Set theory and logic')
+## DBchapter('Operations on sets')
+## DBsection('Boolean operations on sets')
 ## Date('')
 ## Author('D. B. Walton')
 ## Institution('JMU')

@@ -1,3 +1,7 @@
+## DBsubject('Statistics')
+## DBchapter('Sampling distributions')
+## DBsection('Sample mean')
+
 DOCUMENT();
 
     loadMacros(
