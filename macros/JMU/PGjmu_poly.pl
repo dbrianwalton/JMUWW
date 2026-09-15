@@ -104,12 +104,11 @@ sub GenMonEncode{
 	    );
         if ($inFracFlag == 1) {
 	    if ($kn >= 0) {
-                $pStr = ($pm == 1 && $kn > 0) ? "" : "$pm";
                 $monStr = $sign . ($pd == 1 
-                                   ? "$pStr $powStr" 
+                                   ? (($pm==1 && $kn>0) ? "$powStr" : "$pm $powStr")
                                    : ($texMode==1
-				      ? "\\frac{$pStr $powStr}{$pd}"
-				      : "($pStr $powStr)/($pd)")
+				      ? "\\frac{$pm}{$pd} $powStr"
+				      : "($pm/$pd) $powStr")
                                   );
 	    } else {
                 $qStr = ($pd == 1) ? "" : "$pd";

@@ -23,7 +23,7 @@ sub GenMonTeX{
     my $q = $_[1];
     my $k = $_[2];
 
-    my ($sign, $pStr, $qStr, $powStr, $monStr);
+    my ($sign, $qStr, $powStr, $monStr);
     my ($posFlag, $pm, $km);
 
     if ($narg>3) {
@@ -58,16 +58,10 @@ sub GenMonTeX{
             $powStr = "x^{$km}";
         }
         if ($k >= 0) {
-            if ($pm == 1 && $k > 0) {
-                $pStr = "";
-            } else {
-                $pStr = "$pm";
-            }
-            if ($q == 1) {
-                $monStr = $sign . "$pStr $powStr";
-            } else {
-                $monStr = $sign . "\\frac{$pStr}{$q} $powStr";
-            }
+            $monStr = $sign . ($q == 1
+                               ? (($pm == 1 && $k > 0) ? "$powStr" : "$pm $powStr")
+                               : "\\frac{$pm}{$q} $powStr"
+                              );
         } else {
             if ($q == 1) {
                 $qStr = "";
@@ -96,7 +90,7 @@ sub GenMonString{
     my $q = $_[1];
     my $k = $_[2];
 
-    my ($sign, $pStr, $qStr, $powStr, $monStr);
+    my ($sign, $qStr, $powStr, $monStr);
     my ($posFlag, $pm, $km);
 
     if ($narg>3) {
@@ -131,25 +125,16 @@ sub GenMonString{
             $powStr = "x^{$km}";
         }
         if ($k >= 0) {
-            if ($pm == 1 && $k > 0) {
-                $pStr = "";
-            } else {
-                $pStr = "$pm";
-            }
-            if ($q == 1) {
-#                $monStr = $sign . "$pStr $powStr (A: $po $qo)";
-                $monStr = $sign . "$pStr $powStr";
-            } else {
-#                $monStr = $sign . "[($pStr $powStr)/$q (B: $po $qo)]";
-                $monStr = $sign . "[($pStr/$q) $powStr]";
-            }
+            $monStr = $sign . ($q == 1
+                               ? (($pm == 1 && $k > 0) ? "$powStr" : "$pm $powStr")
+                               : "[($pm/$q) $powStr]"
+                              );
         } else {
             if ($q == 1) {
                 $qStr = "";
             } else {
                 $qStr = "$q";
             }
-#            $monStr = $sign . "[$pm/($qStr $powStr) (C: $po $qo)]";
             $monStr = $sign . "[$pm/($qStr $powStr)]";
         }
     }
